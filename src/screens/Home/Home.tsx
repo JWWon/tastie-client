@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text} from 'react-native';
 
-import * as styles from './Home.styles';
+import MainView from '@components/templates/MainView';
 
 const Home = () => (
-  <styles.Container>
-    <Text>Hello Stranger!</Text>
-  </styles.Container>
+  <MainView contentType="fit">
+    <Text>Hello there :)</Text>
+  </MainView>
 );
 
 export default Home;
