@@ -1,16 +1,29 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
+import {Provider} from 'react-redux';
+import {ThemeProvider} from 'styled-components';
 
-import Home from './pages/Home';
+import network from '@services/axios.base';
+import theme from '@styles/theme';
+import Navigator from './navigations';
+import {configStore} from './store';
 
-const App = () => {
+const App: React.FC = () => {
+  const store = configStore();
+
+  useEffect(() => {
+    network.init();
+  });
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <Home />
-      </SafeAreaView>
-    </>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView>
+          <Navigator />
+        </SafeAreaView>
+      </ThemeProvider>
+    </Provider>
   );
 };
 
