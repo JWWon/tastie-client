@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {SafeAreaView, StatusBar} from 'react-native';
+import {StatusBar} from 'react-native';
 // import {Provider} from 'react-redux';
 import {ThemeProvider} from 'styled-components';
 
