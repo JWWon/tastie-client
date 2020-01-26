@@ -1,11 +1,11 @@
 import React from 'react';
-import {Text} from 'react-native';
 
 import MainView from '@components/templates/MainView';
+import MainText from '@components/atoms/MainText';
 
-const Home = () => (
+const Home: React.FC = () => (
   <MainView contentType="fit">
-    <Text>Hello there :)</Text>
+    <MainText leadMessage="오늘 " message="은," />
   </MainView>
 );
 
