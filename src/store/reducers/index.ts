@@ -1,7 +1,12 @@
 import {combineReducers} from 'redux';
+import {StateType} from 'typesafe-actions';
 
-interface ReducerInterface {}
+import situation from './situation';
 
-const rootReducer: ReducerInterface = {};
+const rootReducer = combineReducers({
+  situation,
+});
 
-export default combineReducers(rootReducer);
+export default rootReducer;
+
+export type RootState = StateType<typeof rootReducer>;

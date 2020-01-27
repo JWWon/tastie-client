@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import {Dimensions} from 'react-native';
 
 export const Placeholder = styled.Text`
   margin-top: 4px;
@@ -9,7 +10,7 @@ export const Placeholder = styled.Text`
 
 export const AutoCompleteWrapper = styled.View`
   flex-direction: row;
-  width: 100%;
+  width: ${Dimensions.get('screen').width}px;
   height: 24px;
   margin: 8px -${props => props.theme.size.templatePadding}px 0;
   padding: 0 ${props => props.theme.size.templatePadding}px;
@@ -23,7 +24,7 @@ export const AutoCompleteItem = styled.TouchableOpacity`
 `;
 
 export const AutoCompleteText = styled.Text`
-  font-family: NanumSquareB;
-  font-size: 14px;
+  font-family: NanumSquareEB;
+  font-size: 16px;
   color: ${props => props.theme.color.greyDark};
 `;

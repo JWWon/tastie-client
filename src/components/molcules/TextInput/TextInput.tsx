@@ -8,12 +8,12 @@ import Helper from '@components/atoms/HelperRow';
 const TextInput: React.FC<Props> = ({
   autocomplete,
   placeholder,
-  onPress: onClick,
+  onSelect,
   ...texts
 }) => (
   <style.Container>
     <TextRow {...texts} />
-    <Helper {...{autocomplete, placeholder, onPress: onClick}} />
+    <Helper {...{autocomplete, placeholder, onSelect}} />
   </style.Container>
 );
 

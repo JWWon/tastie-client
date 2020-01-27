@@ -1,5 +1,5 @@
 export interface Props {
   autocomplete?: string[];
   placeholder?: string;
-  onPress?: (data: string) => void;
+  onSelect?: (value: string) => void;
 }

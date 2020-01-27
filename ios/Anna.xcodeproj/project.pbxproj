@@ -18,6 +18,7 @@
 		3A45D2A1A2DF4C26870A38C3 /* NotoSansKR-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6F6813FC781146D5BE7C13ED /* NotoSansKR-Regular.otf */; };
 		477677FE4C984D278E178304 /* NanumSquareB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F8F83B5D72884083A38C2DDD /* NanumSquareB.ttf */; };
 		5E6CF01ED8CB42F882014F87 /* NotoSansKR-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 91BE1E60E5FD4D0CBACB67FA /* NotoSansKR-Bold.otf */; };
+		D01D535DF93D41809F602BF3 /* NanumSquareEB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB7DCFA078134A48BBE16C66 /* NanumSquareEB.ttf */; };
 		D6A0EBC9D94D414DA6EDC87C /* NotoSansKR-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = E09F24508DD44B92ACAA0DBB /* NotoSansKR-Light.otf */; };
 		E794BE579CC7A8137E49D104 /* libPods-AnnaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F422573D281670C9FF3736B0 /* libPods-AnnaTests.a */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		93B05257C7D1AD105B27610F /* Pods-Anna.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Anna.release.xcconfig"; path = "Target Support Files/Pods-Anna/Pods-Anna.release.xcconfig"; sourceTree = "<group>"; };
 		97E1842A631246A3A1478AB3 /* NotoSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSans-Regular.ttf"; path = "../src/assets/fonts/NotoSans-Regular.ttf"; sourceTree = "<group>"; };
 		A461586EA13B7742691F0534 /* Pods-Anna.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Anna.debug.xcconfig"; path = "Target Support Files/Pods-Anna/Pods-Anna.debug.xcconfig"; sourceTree = "<group>"; };
+		BB7DCFA078134A48BBE16C66 /* NanumSquareEB.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = file; name = NanumSquareEB.ttf; path = ../src/assets/fonts/NanumSquareEB.ttf; sourceTree = "<group>"; };
 		CABEB195D0CF6F47C8F52F27 /* Pods-Anna-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Anna-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Anna-tvOS/Pods-Anna-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		E0279FFA96C3404990585DC2 /* NanumSquareR.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareR.ttf; path = ../src/assets/fonts/NanumSquareR.ttf; sourceTree = "<group>"; };
 		E09F24508DD44B92ACAA0DBB /* NotoSansKR-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSansKR-Light.otf"; path = "../src/assets/fonts/NotoSansKR-Light.otf"; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				91BE1E60E5FD4D0CBACB67FA /* NotoSansKR-Bold.otf */,
 				E09F24508DD44B92ACAA0DBB /* NotoSansKR-Light.otf */,
 				6F6813FC781146D5BE7C13ED /* NotoSansKR-Regular.otf */,
+				BB7DCFA078134A48BBE16C66 /* NanumSquareEB.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				5E6CF01ED8CB42F882014F87 /* NotoSansKR-Bold.otf in Resources */,
 				D6A0EBC9D94D414DA6EDC87C /* NotoSansKR-Light.otf in Resources */,
 				3A45D2A1A2DF4C26870A38C3 /* NotoSansKR-Regular.otf in Resources */,
+				D01D535DF93D41809F602BF3 /* NanumSquareEB.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
