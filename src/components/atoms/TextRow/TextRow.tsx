@@ -7,7 +7,7 @@ const MainText: React.FC<Props> = ({
   message,
   leadMessage,
   maxSize,
-  ...options
+  ...props
 }) => (
   <style.Wrapper>
     {leadMessage && <style.Content>{leadMessage}</style.Content>}
@@ -16,7 +16,7 @@ const MainText: React.FC<Props> = ({
         <style.TextInput
           size={maxSize}
           underlineColorAndroid="transparent"
-          {...options}
+          {...props}
         />
       </style.InputWrapper>
     )}

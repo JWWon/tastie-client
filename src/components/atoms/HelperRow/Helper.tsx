@@ -3,9 +3,18 @@ import React from 'react';
 import * as style from './Helper.style';
 import {Props} from './Helper.type';
 
-const Helper: React.FC<Props> = ({autocomplete, placeholder, onSelect}) => {
+// TODO: Implement animation effect when show & hide
+const Helper: React.FC<Props> = ({
+  autocomplete,
+  placeholder,
+  onSelect,
+  value,
+}) => {
   if (placeholder) {
     return <style.Placeholder>{placeholder}</style.Placeholder>;
+  }
+  if (value) {
+    return null;
   }
   if (autocomplete && onSelect) {
     return (

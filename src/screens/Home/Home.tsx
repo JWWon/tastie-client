@@ -21,6 +21,7 @@ const Home: React.FC = () => {
         leadMessage="오늘 "
         maxSize={3}
         message="은,"
+        editable={false}
         autocomplete={['저녁', '야식', '술자리']}
         onSelect={handleSelect}
         value={mealType}
