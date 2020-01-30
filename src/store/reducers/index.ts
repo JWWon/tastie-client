@@ -1,10 +1,10 @@
 import {combineReducers} from 'redux';
 import {StateType} from 'typesafe-actions';
 
-import situation from './situation';
+import caseReducer from './case';
 
 const rootReducer = combineReducers({
-  situation,
+  case: caseReducer,
 });
 
 export default rootReducer;

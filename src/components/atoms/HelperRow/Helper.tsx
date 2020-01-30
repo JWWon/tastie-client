@@ -1,9 +1,9 @@
 import React from 'react';
+import {FlatList} from 'react-native';
 
 import * as style from './Helper.style';
-import {Props} from './Helper.type';
+import {Props, AutoCompleteInterface} from './Helper.type';
 
-// TODO: Implement animation effect when show & hide
 const Helper: React.FC<Props> = ({
   autocomplete,
   placeholder,
@@ -19,11 +19,17 @@ const Helper: React.FC<Props> = ({
   if (autocomplete && onSelect) {
     return (
       <style.AutoCompleteWrapper>
-        {autocomplete.map((item, idx) => (
-          <style.AutoCompleteItem key={idx} onPress={() => onSelect(item)}>
-            <style.AutoCompleteText>{item}</style.AutoCompleteText>
-          </style.AutoCompleteItem>
-        ))}
+        <FlatList<AutoCompleteInterface>
+          data={autocomplete}
+          renderItem={({item}) => (
+            <style.AutoCompleteItem onPress={() => onSelect(item.name)}>
+              <style.AutoCompleteText>{item.name}</style.AutoCompleteText>
+            </style.AutoCompleteItem>
+          )}
+          keyExtractor={item => item.name}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
       </style.AutoCompleteWrapper>
     );
   }

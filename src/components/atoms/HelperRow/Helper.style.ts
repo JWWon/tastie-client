@@ -9,7 +9,6 @@ export const Placeholder = styled.Text`
 `;
 
 export const AutoCompleteWrapper = styled.View`
-  flex-direction: row;
   width: ${Dimensions.get('screen').width}px;
   height: 24px;
   margin: 8px -${props => props.theme.size.templatePadding}px 0;

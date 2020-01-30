@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 
-// Container, Wrapper
-export const Container = styled.View`
-  padding: 6px 0;
-`;
+import RawFading from '@components/atoms/Fading';
+
+export const Fading = styled(RawFading).attrs({
+  paddingVertical: 8,
+})``;

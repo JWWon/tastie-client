@@ -1,5 +1,9 @@
+export interface AutoCompleteInterface {
+  name: string;
+}
+
 export interface Props {
-  autocomplete?: string[];
+  autocomplete?: AutoCompleteInterface[];
   placeholder?: string;
   onSelect?: (value: string) => void;
   value?: string;
