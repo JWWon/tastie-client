@@ -6,12 +6,14 @@ import {
   UPDATE_LOCATION,
   UPDATE_SITUATION,
   CaseAction,
+  UPDATE_PREFERENCE,
 } from '../actions/case';
 
 interface CaseState {
   category: string;
-  situation: string;
+  situation: string; // meta data
   place: string;
+  preference?: string; // meta data
   location?: {latitude: number; longitude: number};
 }
 
@@ -33,6 +35,7 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
   [UPDATE_PLACE]: pastePayload,
   [UPDATE_LOCATION]: (state, action) => ({...state, location: action.payload}),
   [UPDATE_SITUATION]: pastePayload,
+  [UPDATE_PREFERENCE]: pastePayload,
 });
 
 export default caseReducer;

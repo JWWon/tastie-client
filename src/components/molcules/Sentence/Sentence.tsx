@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {Props} from './TextInput.type';
-import * as style from './TextInput.style';
+import {Props} from './Sentence.type';
+import * as style from './Sentence.style';
 import TextRow from '@components/atoms/TextRow';
 import Helper from '@components/atoms/HelperRow';
 
-const TextInput: React.FC<Props> = ({
+const Sentence: React.FC<Props> = ({
   autocomplete,
   placeholder,
   onSelect,
@@ -18,4 +18,4 @@ const TextInput: React.FC<Props> = ({
   </style.Fading>
 );
 
-export default TextInput;
+export default Sentence;

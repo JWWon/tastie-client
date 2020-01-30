@@ -52,10 +52,24 @@ export const updateSituation = createAction(
 )();
 // END UPDATE_SITUATION
 
+// UPDATE_PREFERENCE
+interface UpdatePreference {
+  preference: string;
+}
+
+export const UPDATE_PREFERENCE = '@case/UPDATE_PREFERENCE';
+
+export const updatePreference = createAction(
+  UPDATE_PREFERENCE,
+  (payload: UpdatePreference) => payload,
+)();
+// END UPDATE_PREFERENCE
+
 const actions = {
   updateCategory,
   updatePlace,
   updateLocation,
   updateSituation,
+  updatePreference,
 };
 export type CaseAction = ActionType<typeof actions>;

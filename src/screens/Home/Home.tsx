@@ -1,28 +1,31 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 import MainView from '@components/templates/MainView';
-import TextInput from '@components/molcules/TextInput';
+import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
+import {Props as SentenceProps} from '@components/molcules/Sentence';
 import {Props as HelperProps} from '@components/atoms/HelperRow';
 import {RootState} from '@store/reducers';
 import {
   updateCategory,
   updatePlace,
   updateSituation,
+  updatePreference,
 } from '@store/actions/case';
+import * as style from './Home.style';
+import {FlatList} from 'react-native';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
-  const {category, place, situation} = useSelector(
+  const {category, place, situation, preference} = useSelector(
     (state: RootState) => state.case,
   );
-
-  const [showMore, setShowMore] = useState<boolean>(false);
 
   const categoryExist = category !== '';
   const placeExist = place !== '';
   const situationExist = situation !== '';
+  const preferenceExist = preference !== undefined;
 
   const handleSelectCategory: HelperProps['onSelect'] = (value: string) => {
     dispatch(updateCategory({category: value}));
@@ -36,13 +39,17 @@ const Home: React.FC = () => {
     dispatch(updateSituation({situation: value}));
   };
 
+  const handleSelectPreference: HelperProps['onSelect'] = (value: string) => {
+    dispatch(updatePreference({preference: value}));
+  };
+
   const handlePressMore = () => {
-    setShowMore(true);
+    dispatch(updatePreference({preference: ''}));
   };
 
   return (
     <MainView contentType="fit">
-      <TextInput
+      <Sentence
         leadMessage="오늘 "
         maxSize={3}
         message="은,"
@@ -52,7 +59,7 @@ const Home: React.FC = () => {
         value={category}
       />
       {categoryExist && (
-        <TextInput
+        <Sentence
           maxSize={12}
           message="에서"
           autocomplete={[{name: '내 위치'}, {name: '지도에서 선택'}]}
@@ -64,7 +71,7 @@ const Home: React.FC = () => {
         />
       )}
       {placeExist && (
-        <TextInput
+        <Sentence
           maxSize={12}
           message="이야."
           autocomplete={[
@@ -77,12 +84,40 @@ const Home: React.FC = () => {
           value={situation}
         />
       )}
-      {categoryExist && placeExist && situationExist && !showMore && (
+      {categoryExist && placeExist && situationExist && !preferenceExist && (
         <MoreButton
           marginTop={28}
           message="더 알려주기"
           onPress={handlePressMore}
         />
+      )}
+      {preferenceExist && (
+        <style.MoreSentenceWrapper>
+          <FlatList<SentenceProps>
+            data={[
+              {
+                leadMessage: '왠지 ',
+                maxSize: 8,
+                message: '한게',
+                editable: false,
+                autocomplete: [
+                  {name: '매콤한'},
+                  {name: '느끼한'},
+                  {name: '자극적인'},
+                  {name: '깔끔한'},
+                ],
+                onSelect: handleSelectPreference,
+                value: preference,
+              },
+              {
+                maxSize: 0,
+                message: '먹고싶어.',
+              },
+            ]}
+            renderItem={({item}) => <Sentence {...item} />}
+            keyExtractor={(_, idx) => idx.toString()}
+          />
+        </style.MoreSentenceWrapper>
       )}
     </MainView>
   );
