@@ -13,10 +13,10 @@ import {
   updateSituation,
   updatePreference,
 } from '@store/actions/case';
-import * as style from './Home.style';
+import * as style from './Case.style';
 import {FlatList} from 'react-native';
 
-const Home: React.FC = () => {
+const Case: React.FC = () => {
   const dispatch = useDispatch();
   const {category, place, situation, preference} = useSelector(
     (state: RootState) => state.case,
@@ -123,4 +123,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Case;

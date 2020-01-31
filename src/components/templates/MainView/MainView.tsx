@@ -12,12 +12,14 @@ const Container: React.FC<Props> = props => {
     props.contentType === 'full' ? style.ContentFull : style.ContentFit;
 
   return (
-    <style.Wrapper>
-      <ContentWrapper>{props.children}</ContentWrapper>
-      <style.NavWrapper>
-        <Navbar />
-      </style.NavWrapper>
-    </style.Wrapper>
+    <style.Container>
+      <style.SafeAreaView>
+        <ContentWrapper>{props.children}</ContentWrapper>
+        <style.NavWrapper>
+          <Navbar />
+        </style.NavWrapper>
+      </style.SafeAreaView>
+    </style.Container>
   );
 };
 

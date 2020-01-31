@@ -1,9 +1,12 @@
 import styled from 'styled-components/native';
 
-export const Wrapper = styled.SafeAreaView`
-  /* !imp View is not FullSize */
+export const Container = styled.View`
   flex: 1;
-  margin: 0 ${props => props.theme.size.templatePadding}px;
+  padding: 0 ${props => props.theme.size.templatePadding}px;
+`;
+
+export const SafeAreaView = styled.SafeAreaView`
+  flex: 1;
 `;
 
 export const ContentFull = styled.View`
