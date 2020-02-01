@@ -27,6 +27,7 @@ interface InputProps {
 const letterWidth = 23;
 export const TextInput = styled.TextInput<InputProps>`
   width: ${props => props.size * letterWidth + 8}px;
+  padding: 0; /* Corresponding Android */
   text-align: center;
   font-family: NanumSquareB;
   font-size: 24px;

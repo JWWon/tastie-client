@@ -18,5 +18,5 @@ export const ContentFit = styled(ContentFull)`
 `;
 
 export const NavWrapper = styled.View`
-  padding: 4px 0 8px;
+  padding-bottom: ${({theme}) => theme.size.verticalPadding}px;
 `;
