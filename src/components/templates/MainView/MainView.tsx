@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Navbar from '@components/molcules/Navbar';
+import Navbar from '@components/organisms/Navbar';
 import * as s from './MainView.style';
 
 interface Props {

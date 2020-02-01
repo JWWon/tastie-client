@@ -1,8 +1,9 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
 
-import * as s from './Message.style';
 import {RootState} from '@store/reducers';
+import Loading from '@components/atoms/Loading';
+import * as s from './Message.style';
 
 const Message: React.FC = () => {
   const {content, loading, hide, onPress} = useSelector(
@@ -17,7 +18,7 @@ const Message: React.FC = () => {
   return (
     <s.Fading>
       <s.Bubble alert={alert}>
-        <s.Content alert={alert}>{loading ? '로딩중...' : content}</s.Content>
+        {loading ? <Loading /> : <s.Content alert={alert}>{content}</s.Content>}
       </s.Bubble>
       <s.TriangleBorder>
         <s.TriangleBackground alert={alert} />
