@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Navbar from '@components/molcules/Navbar';
-import * as style from './MainView.style';
+import * as s from './MainView.style';
 
 interface Props {
   contentType: 'full' | 'fit';
@@ -9,17 +9,17 @@ interface Props {
 
 const Container: React.FC<Props> = props => {
   const ContentWrapper =
-    props.contentType === 'full' ? style.ContentFull : style.ContentFit;
+    props.contentType === 'full' ? s.ContentFull : s.ContentFit;
 
   return (
-    <style.Container>
-      <style.SafeAreaView>
+    <s.Container>
+      <s.SafeAreaView>
         <ContentWrapper>{props.children}</ContentWrapper>
-        <style.NavWrapper>
+        <s.NavWrapper>
           <Navbar />
-        </style.NavWrapper>
-      </style.SafeAreaView>
-    </style.Container>
+        </s.NavWrapper>
+      </s.SafeAreaView>
+    </s.Container>
   );
 };
 

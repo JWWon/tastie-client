@@ -1,11 +1,10 @@
 import styled from 'styled-components/native';
 
-const buttonSize = 52;
 export const Button = styled.TouchableOpacity`
-  width: ${buttonSize}px;
-  height: ${buttonSize}px;
+  width: ${({theme}) => theme.size.navButton}px;
+  height: ${({theme}) => theme.size.navButton}px;
   border: 1px solid rgba(188, 188, 188, 0.1);
-  border-radius: ${buttonSize / 2}px;
+  border-radius: ${({theme}) => theme.size.navButton / 2}px;
   background: #ffffff;
   display: flex;
   align-items: center;

@@ -1,5 +1,6 @@
 import {createReducer} from 'typesafe-actions';
 
+import {copyPayload} from '@utils/helper';
 import {
   UPDATE_CATEGORY,
   UPDATE_PLACE,
@@ -17,13 +18,6 @@ interface CaseState {
   location?: {latitude: number; longitude: number};
 }
 
-// HELPER
-const pastePayload = (state: CaseState, action: CaseAction) => ({
-  ...state,
-  ...action.payload,
-});
-// END HELPER
-
 const initState: CaseState = {
   category: '',
   situation: '',
@@ -31,11 +25,11 @@ const initState: CaseState = {
 };
 
 const caseReducer = createReducer<CaseState, CaseAction>(initState, {
-  [UPDATE_CATEGORY]: pastePayload,
-  [UPDATE_PLACE]: pastePayload,
+  [UPDATE_CATEGORY]: copyPayload,
+  [UPDATE_PLACE]: copyPayload,
   [UPDATE_LOCATION]: (state, action) => ({...state, location: action.payload}),
-  [UPDATE_SITUATION]: pastePayload,
-  [UPDATE_PREFERENCE]: pastePayload,
+  [UPDATE_SITUATION]: copyPayload,
+  [UPDATE_PREFERENCE]: copyPayload,
 });
 
 export default caseReducer;

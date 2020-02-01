@@ -1,24 +1,28 @@
 import React from 'react';
+import {useSelector} from 'react-redux';
 
-import Fading from '@components/atoms/Fading';
 import * as s from './Message.style';
-import {Props} from './Message.type';
+import {RootState} from '@store/reducers';
 
-const Message: React.FC<Props> = ({message, loading, disable, onPress}) => {
-  if (message === '' || loading === true) {
+const Message: React.FC = () => {
+  const {content, loading, hide, onPress} = useSelector(
+    (state: RootState) => state.message,
+  );
+
+  if (hide) {
     return null;
   }
 
-  const pressActive = onPress !== undefined && !disable;
+  const alert = onPress !== undefined && !loading;
   return (
-    <Fading alignItems="center" marginBottom={6}>
-      <s.Wrapper pressActive={pressActive}>
-        <s.Content pressActive={pressActive}>{message}</s.Content>
-      </s.Wrapper>
+    <s.Fading>
+      <s.Bubble alert={alert}>
+        <s.Content alert={alert}>{loading ? '로딩중...' : content}</s.Content>
+      </s.Bubble>
       <s.TriangleBorder>
-        <s.TriangleBackground pressActive={pressActive} />
+        <s.TriangleBackground alert={alert} />
       </s.TriangleBorder>
-    </Fading>
+    </s.Fading>
   );
 };
 

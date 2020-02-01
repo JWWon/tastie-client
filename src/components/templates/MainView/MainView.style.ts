@@ -15,8 +15,8 @@ export const ContentFull = styled.View`
 
 export const ContentFit = styled(ContentFull)`
   justify-content: center;
+  padding-bottom: ${({theme}) =>
+    theme.size.navButton + theme.size.verticalPadding}px;
 `;
 
-export const NavWrapper = styled.View`
-  padding-bottom: ${({theme}) => theme.size.verticalPadding}px;
-`;
+export const NavWrapper = styled.View``;

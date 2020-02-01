@@ -1,14 +1,21 @@
 import styled from 'styled-components/native';
 
+import RawFading from '@components/atoms/Fading';
+
 interface MessageProps {
-  pressActive: boolean;
+  alert: boolean;
 }
+
+export const Fading = styled(RawFading).attrs({
+  marginBottom: 6,
+  alignItems: 'center',
+})``;
 
 const selectBgColor = ({theme, pressActive}: any) =>
   pressActive ? theme.color.blue : '#ffffff';
 
 const borderWidth = 1;
-export const Wrapper = styled.View<MessageProps>`
+export const Bubble = styled.View<MessageProps>`
   background: ${selectBgColor};
   border: ${borderWidth}px solid ${({theme}) => theme.color.blackBorder};
   border-radius: ${({theme}) => theme.size.roundBorder}px;
@@ -41,9 +48,7 @@ export const TriangleBackground = styled(TriangleBorder)<MessageProps>`
 // END TRIANGLE
 
 export const Content = styled.Text<MessageProps>`
-  font-family: ${({pressActive}) =>
-    pressActive ? 'NanumSquareB' : 'NanumSquareR'};
+  font-family: ${({alert}) => (alert ? 'NanumSquareB' : 'NanumSquareR')};
   font-size: 14px;
-  color: ${({theme, pressActive}) =>
-    pressActive ? '#ffffff' : theme.color.blackMild};
+  color: ${({theme, alert}) => (alert ? '#ffffff' : theme.color.blackMild)};
 `;
