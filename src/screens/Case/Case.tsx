@@ -1,5 +1,6 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {FlatList} from 'react-native';
 
 import MainView from '@components/templates/MainView';
 import Sentence from '@components/molcules/Sentence';
@@ -13,8 +14,8 @@ import {
   updateSituation,
   updatePreference,
 } from '@store/actions/case';
+import {updateContent, updateLoading} from '@store/actions/message';
 import * as style from './Case.style';
-import {FlatList} from 'react-native';
 
 const Case: React.FC = () => {
   const dispatch = useDispatch();
@@ -29,14 +30,22 @@ const Case: React.FC = () => {
 
   const handleSelectCategory: HelperProps['onSelect'] = (value: string) => {
     dispatch(updateCategory({category: value}));
+    dispatch(updateContent({content: '어디서 먹나옹?'}));
   };
 
   const handleSelectPlace: HelperProps['onSelect'] = (value: string) => {
     dispatch(updatePlace({place: value}));
+    dispatch(updateContent({content: '누구랑 먹나옹?'}));
   };
 
   const handleSelectSituation: HelperProps['onSelect'] = (value: string) => {
     dispatch(updateSituation({situation: value}));
+    dispatch(
+      updateContent({
+        content: '뭐 먹을지 정해줄까옹?',
+        onPress: () => dispatch(updateLoading({loading: true})),
+      }),
+    );
   };
 
   const handleSelectPreference: HelperProps['onSelect'] = (value: string) => {

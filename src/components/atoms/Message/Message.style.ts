@@ -11,8 +11,8 @@ export const Fading = styled(RawFading).attrs({
   alignItems: 'center',
 })``;
 
-const selectBgColor = ({theme, pressActive}: any) =>
-  pressActive ? theme.color.blue : '#ffffff';
+const selectBgColor = ({theme, alert}: any) =>
+  alert ? theme.color.blue : '#ffffff';
 
 const borderWidth = 1;
 export const Bubble = styled.View<MessageProps>`

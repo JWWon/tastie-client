@@ -17,8 +17,8 @@ export interface MessageState {
 }
 
 const initState: MessageState = {
-  content: '',
-  loading: true,
+  content: '배고프나옹?',
+  loading: false,
   hide: false,
 };
 
