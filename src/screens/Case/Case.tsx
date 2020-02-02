@@ -64,10 +64,11 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
 
   return (
     <s.Home>
+      <Sentence message="<b>Anna</b>야," />
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
-        message="은,"
+        message="은"
         editable={false}
         autocomplete={[{name: '저녁'}, {name: '야식'}, {name: '술자리'}]}
         onSelect={handleSelectCategory}
@@ -95,6 +96,7 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
             {name: '대학 친구들과의 회식'},
             {name: '데이트'},
           ]}
+          editable={false}
           onSelect={handleSelectSituation}
           value={situation}
         />
@@ -125,7 +127,6 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
                 value: preference,
               },
               {
-                maxSize: 0,
                 message: '먹고싶어.',
               },
             ]}

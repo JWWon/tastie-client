@@ -1,27 +1,26 @@
 import React from 'react';
 
-import * as style from './TextRow.style';
 import {Props} from './TextRow.type';
+import * as s from './TextRow.style';
 
-const MainText: React.FC<Props> = ({
-  message,
-  leadMessage,
-  maxSize,
-  ...props
-}) => (
-  <style.Wrapper>
-    {leadMessage && <style.Content>{leadMessage}</style.Content>}
-    {maxSize > 0 && (
-      <style.InputWrapper>
-        <style.TextInput
-          size={maxSize}
-          underlineColorAndroid="transparent"
-          {...props}
-        />
-      </style.InputWrapper>
-    )}
-    <style.Content>{message}</style.Content>
-  </style.Wrapper>
-);
+/**
+ * If you put <b>, </b> tag inside string,
+ * it automatical converts into Keyword component.
+ */
+const TextRow: React.FC<Props> = ({message}) => {
+  const list = message.match(/(.*)<b>(.*)<\/b>(.*)/i);
+  if (list === null) {
+    return <s.Content>{message}</s.Content>;
+  }
+  // remove message itself on list
+  list.splice(0, 1);
+  return (
+    <s.Content>
+      {list[0]}
+      <s.Keyword>{list[1]}</s.Keyword>
+      {list[2]}
+    </s.Content>
+  );
+};
 
-export default MainText;
+export default TextRow;
