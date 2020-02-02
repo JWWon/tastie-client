@@ -5,6 +5,7 @@ import {Animated} from 'react-native';
 
 import Home from '@components/templates/Home';
 import Sentence from '@components/molcules/Sentence';
+import ImageSwiper from '@components/atoms/ImageSwiper';
 import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
 
@@ -79,6 +80,14 @@ class Recommend extends React.PureComponent<Props, State> {
         {!loading && (
           <>
             <Sentence message={`오늘 <b>${category}</b>은,`} />
+            <ImageSwiper
+              images={[
+                'https://placeimg.com/640/480/any',
+                'https://placeimg.com/640/480/any',
+                'https://placeimg.com/640/480/any',
+                'https://placeimg.com/640/480/any',
+              ]}
+            />
           </>
         )}
       </Home>
