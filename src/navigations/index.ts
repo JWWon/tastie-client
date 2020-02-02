@@ -1,13 +1,21 @@
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import {createAppContainer} from 'react-navigation';
+import {createBottomTabNavigator} from 'react-navigation-tabs';
 
-import CaseScreen from '../screens/Case';
+import Navbar from '@components/organisms/Navbar';
+import CaseScreen from '@screens/Case';
+import RecommendScreen from '@screens/Recommend';
+import consts from '@utils/consts';
 
-const RootNavigator = createSwitchNavigator(
+const {SCREEN} = consts;
+
+const RootNavigator = createBottomTabNavigator(
   {
-    Case: CaseScreen,
+    [SCREEN.CASE]: CaseScreen,
+    [SCREEN.RECOMMEND]: RecommendScreen,
   },
   {
-    initialRouteName: 'Case',
+    initialRouteName: SCREEN.CASE,
+    tabBarComponent: Navbar,
   },
 );
 

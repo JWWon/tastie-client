@@ -1,8 +1,8 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
+import {NavigationTabScreenProps} from 'react-navigation-tabs';
 
-import MainView from '@components/templates/MainView';
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
@@ -15,9 +15,12 @@ import {
   updatePreference,
 } from '@store/actions/case';
 import {updateContent, updateLoading} from '@store/actions/message';
-import * as style from './Case.style';
+import consts from '@utils/consts';
+import * as s from './Case.style';
 
-const Case: React.FC = () => {
+const {SCREEN} = consts;
+
+const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
   const {category, place, situation, preference} = useSelector(
     (state: RootState) => state.case,
@@ -43,7 +46,10 @@ const Case: React.FC = () => {
     dispatch(
       updateContent({
         content: '뭐 먹을지 정해줄까옹?',
-        onPress: () => dispatch(updateLoading({loading: true})),
+        onPress: () => {
+          navigation.navigate(SCREEN.RECOMMEND);
+          dispatch(updateLoading({loading: true}));
+        },
       }),
     );
   };
@@ -57,7 +63,7 @@ const Case: React.FC = () => {
   };
 
   return (
-    <MainView contentType="fit">
+    <s.Home>
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
@@ -101,7 +107,7 @@ const Case: React.FC = () => {
         />
       )}
       {preferenceExist && (
-        <style.MoreSentenceWrapper>
+        <s.MoreSentenceWrapper>
           <FlatList<SentenceProps>
             data={[
               {
@@ -126,9 +132,9 @@ const Case: React.FC = () => {
             renderItem={({item}) => <Sentence {...item} />}
             keyExtractor={(_, idx) => idx.toString()}
           />
-        </style.MoreSentenceWrapper>
+        </s.MoreSentenceWrapper>
       )}
-    </MainView>
+    </s.Home>
   );
 };
 

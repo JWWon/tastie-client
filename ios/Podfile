@@ -41,13 +41,3 @@ target 'Anna' do
 
   use_native_modules!
 end
-
-target 'Anna-tvOS' do
-  # Pods for Anna-tvOS
-
-  target 'Anna-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end
