@@ -27,32 +27,25 @@ export const updateLoading = createAction(
 )();
 // END UPDATE_LOADING
 
-// UPDATE_HIDE
-interface UpdateHide {
-  hide: boolean;
-}
+// HIDE_MESSAGE
+export const HIDE_MESSAGE = '@message/HIDE_MESSAGE';
 
-export const UPDATE_HIDE = '@message/UPDATE_HIDE';
+export const hideMessage = createAction(HIDE_MESSAGE, () => undefined)();
+// END HIDE_MESSAGE
 
-export const updateHide = createAction(
-  UPDATE_HIDE,
-  (payload: UpdateHide) => payload,
-)();
-// END UPDATE_HIDE
+// RESET_PRESS_ACTION
+export const RESET_PRESS_ACTION = '@message/RESET_PRESS_ACTION';
 
-// DELETE_PRESS_ACTION
-export const DELETE_PRESS_ACTION = '@message/DELETE_PRESS_ACTION';
-
-export const deletePressAction = createAction(
-  DELETE_PRESS_ACTION,
+export const resetPressAction = createAction(
+  RESET_PRESS_ACTION,
   () => undefined,
 )();
-// END DELETE_PRESS_ACTION
+// END RESET_PRESS_ACTION
 
 const actions = {
   updateContent,
   updateLoading,
-  updateHide,
-  deletePressAction,
+  hideMessage,
+  resetPressAction,
 };
 export type MessageAction = ActionType<typeof actions>;

@@ -33,11 +33,19 @@ class Fading extends React.PureComponent<Props, State> {
   }
 
   private fadeIn = () => {
-    Animated.timing(this.state.value, {toValue: 1, duration: 360}).start();
+    Animated.timing(this.state.value, {
+      toValue: 1,
+      duration: 360,
+      useNativeDriver: true,
+    }).start();
   };
 
   private fadeOut = () => {
-    Animated.timing(this.state.value, {toValue: 0, duration: 360}).start();
+    Animated.timing(this.state.value, {
+      toValue: 0,
+      duration: 360,
+      useNativeDriver: true,
+    }).start();
   };
 
   public render() {

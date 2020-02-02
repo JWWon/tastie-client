@@ -14,6 +14,7 @@ const TextRow: React.FC<Props> = ({message}) => {
   }
   // remove message itself on list
   list.splice(0, 1);
+
   return (
     <s.Content>
       {list[0]}

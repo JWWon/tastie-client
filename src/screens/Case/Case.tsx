@@ -48,7 +48,11 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
         content: '뭐 먹을지 정해줄까옹?',
         onPress: () => {
           navigation.navigate(SCREEN.RECOMMEND);
+          // TODO: control loading on redux-saga
           dispatch(updateLoading({loading: true}));
+          setTimeout(() => {
+            dispatch(updateLoading({loading: false}));
+          }, 1200);
         },
       }),
     );

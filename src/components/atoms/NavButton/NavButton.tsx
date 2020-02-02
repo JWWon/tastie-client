@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {Animated, Easing} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 
 import * as s from './NavButton.style';
 import {RootState} from '@store/reducers';
+import {resetPressAction} from '@store/actions/message';
 
 const NavButton: React.FC = () => {
   const {onPress, loading} = useSelector((state: RootState) => state.message);
+  const dispatch = useDispatch();
   const [opacity] = useState(new Animated.Value(0.25));
 
   const alert = onPress !== undefined && !loading;
@@ -28,6 +30,13 @@ const NavButton: React.FC = () => {
     ]),
   );
 
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+      dispatch(resetPressAction());
+    }
+  };
+
   useEffect(() => {
     if (alert) {
       glow.start();
@@ -40,7 +49,7 @@ const NavButton: React.FC = () => {
   glow.start();
 
   return (
-    <s.Button onPress={onPress}>
+    <s.Button onPress={handlePress}>
       <s.ButtonBorder as={Animated.View} alert={alert} style={{opacity}} />
       <s.IconCat />
     </s.Button>
