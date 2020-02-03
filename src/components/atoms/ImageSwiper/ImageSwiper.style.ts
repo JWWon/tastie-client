@@ -5,9 +5,11 @@ import {
 } from '@crowdlinker/react-native-pager';
 import {ViewStyle} from 'react-native';
 
+import sizes from '@styles/sizes';
+
 export const Container = styled.View`
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 1.2;
 `;
 
 export const Pager = styled(RawPager)`
@@ -51,7 +53,7 @@ export const DotWrapper = styled.View`
   align-items: center;
 `;
 
-const dotSize = 8;
+const dotSize = 10;
 export const Dot = styled.View<DotInterface>`
   width: ${dotSize}px;
   height: ${dotSize}px;
@@ -64,6 +66,6 @@ export const Dot = styled.View<DotInterface>`
 export const pagination: ViewStyle = {
   height: dotSize,
   position: 'absolute',
-  bottom: 20,
+  bottom: sizes.placeCardHover + 8,
 };
 // END PAGINATION

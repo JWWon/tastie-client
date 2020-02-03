@@ -1,11 +1,14 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {LayoutChangeEvent} from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {RootState} from '@store/reducers';
 import Loading from '@components/atoms/Loading';
+import {updateMessageHeight} from '@store/actions/device';
 import * as s from './Message.style';
 
 const Message: React.FC = () => {
+  const dispatch = useDispatch();
   const {content, loading, hide, onPress} = useSelector(
     (state: RootState) => state.message,
   );
@@ -14,9 +17,14 @@ const Message: React.FC = () => {
     return null;
   }
 
+  function layoutDidMount(e: LayoutChangeEvent) {
+    const {height: messageHeight} = e.nativeEvent.layout;
+    dispatch(updateMessageHeight({messageHeight}));
+  }
+
   const alert = onPress !== undefined && !loading;
   return (
-    <s.Fading>
+    <s.Fading onLayout={layoutDidMount}>
       <s.Bubble alert={alert}>
         {loading ? <Loading /> : <s.Content alert={alert}>{content}</s.Content>}
       </s.Bubble>

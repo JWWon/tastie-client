@@ -6,7 +6,7 @@ import colors from './colors';
 export const content = css`
   font-family: NanumSquareR;
   font-size: 24px;
-  color: ${colors.greyDark};
+  color: ${colors.grayDark};
 `;
 
 export const keyword = css`

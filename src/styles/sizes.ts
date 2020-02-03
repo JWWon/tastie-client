@@ -7,4 +7,6 @@ export default {
   roundBorder: 12,
   // Button Size
   navButton: 52,
+  // View Position
+  placeCardHover: 24,
 };

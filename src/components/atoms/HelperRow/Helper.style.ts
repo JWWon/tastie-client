@@ -5,7 +5,7 @@ export const Placeholder = styled.Text`
   margin-top: 4px;
   font-family: NanumSquareR;
   font-size: 14px;
-  color: ${props => props.theme.color.greyLight};
+  color: ${props => props.theme.color.grayLight};
 `;
 
 export const AutoCompleteWrapper = styled.View`
@@ -25,5 +25,5 @@ export const AutoCompleteItem = styled.TouchableOpacity`
 export const AutoCompleteText = styled.Text`
   font-family: NanumSquareEB;
   font-size: 16px;
-  color: ${props => props.theme.color.greyDark};
+  color: ${props => props.theme.color.grayDark};
 `;

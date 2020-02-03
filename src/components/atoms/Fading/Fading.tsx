@@ -1,8 +1,9 @@
 import React from 'react';
-import {Animated} from 'react-native';
+import {Animated, ViewStyle} from 'react-native';
 
 interface Props {
-  [style: string]: any;
+  style?: ViewStyle;
+  [options: string]: any;
 }
 
 interface State {
@@ -49,10 +50,10 @@ class Fading extends React.PureComponent<Props, State> {
   };
 
   public render() {
-    const {children, ...style} = this.props;
+    const {children, style, ...options} = this.props;
 
     return (
-      <Animated.View style={{...style, opacity: this.opacity}}>
+      <Animated.View {...options} style={[style, {opacity: this.state.value}]}>
         {children}
       </Animated.View>
     );

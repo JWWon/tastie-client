@@ -23,7 +23,6 @@ const Template: React.FC<Props> = ({children, ...options}) => {
         <s.ContentWrapper onLayout={layoutDidMount} {...options}>
           {children}
         </s.ContentWrapper>
-        <s.NavbarArea />
       </s.Container>
     </s.FullScreen>
   );

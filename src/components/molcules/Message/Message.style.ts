@@ -6,10 +6,10 @@ interface MessageProps {
   alert: boolean;
 }
 
-export const Fading = styled(RawFading).attrs({
-  marginBottom: 6,
-  alignItems: 'center',
-})``;
+export const Fading = styled(RawFading)`
+  margin-bottom: 6px;
+  align-items: center;
+`;
 
 const selectBgColor = ({theme, alert}: any) =>
   alert ? theme.color.blue : '#ffffff';
