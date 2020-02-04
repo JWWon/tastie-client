@@ -1,5 +1,6 @@
+import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
-import {SafeAreaView, StatusBar} from 'react-native';
+// import {StatusBar} from 'react-native';
 import {Provider} from 'react-redux';
 import {ThemeProvider} from 'styled-components';
 
@@ -18,10 +19,8 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
-          <Navigator />
-        </SafeAreaView>
+        {/* <StatusBar barStyle="dark-content" /> */}
+        <Navigator />
       </ThemeProvider>
     </Provider>
   );
