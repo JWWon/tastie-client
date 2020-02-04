@@ -22,7 +22,9 @@ export const Card = styled.View`
   flex: 1;
 `;
 
-export const Image = styled.Image`
+export const Image = styled.Image.attrs({
+  resizeMode: 'cover',
+})`
   flex: 1;
 `;
 

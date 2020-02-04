@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 import * as mixin from '@styles/mixins';
 
 // View
+const space = 16;
+
 export const Container = styled.View`
   flex: 1;
 `;
@@ -14,23 +16,50 @@ export const Header = styled.View`
 export const DynamicInfo = styled.View`
   flex-direction: row;
   margin-top: 4px;
-  justify-content: space-between;
   align-items: center;
 `;
 
+export const ButtonWrapper = styled.View`
+  flex-direction: row;
+  margin-top: ${space}px;
+`;
+
+export const StaticInfo = styled.View`
+  margin-top: ${space / 2}px;
+`;
+
+export const StaticInfoRow = styled.View`
+  margin-top: ${space / 2}px;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 // Text
-export const Title = styled.Text`
-  ${mixin.keyword}
-`;
-
-export const Category = styled.Text`
-  font-family: NanumSquareB;
-  font-size: 14px;
-  color: ${({theme}) => theme.color.grayLight};
-`;
-
-export const Distance = styled.Text`
+const NotoSansGray = styled.Text`
   font-family: NotoSansKR-Regular;
-  font-size: 12px;
   color: ${({theme}) => theme.color.grayLight};
+`;
+
+export const Name = styled.Text`
+  ${mixin.keyword}
+  font-family: NotoSansKR-Bold;
+`;
+
+export const Category = styled(NotoSansGray)`
+  font-size: 14px;
+`;
+
+export const Distance = styled(NotoSansGray)`
+  margin-left: auto;
+  font-size: 12px;
+`;
+
+export const InfoType = styled.Text`
+  font-family: NotoSansKR-Bold;
+  font-size: 12px;
+  color: ${({theme}) => theme.color.black};
+`;
+
+export const InfoContent = styled(NotoSansGray)`
+  font-size: 12px;
 `;
