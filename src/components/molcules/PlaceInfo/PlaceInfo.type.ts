@@ -1,8 +1,3 @@
-export interface Props {
-  name: string;
-  categories?: string[];
-  distance: number;
-  phone: string;
-  address: string;
-  priceLevel?: number;
-}
+import {GetRecommendRes} from '@services/recommend/recommend.type';
+
+export interface Props extends Omit<GetRecommendRes, 'photoUrls'> {}

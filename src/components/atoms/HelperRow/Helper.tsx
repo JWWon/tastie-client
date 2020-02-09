@@ -1,38 +1,39 @@
 import React from 'react';
 import {FlatList} from 'react-native';
 
-import * as style from './Helper.style';
+import * as s from './Helper.style';
 import {Props, AutoCompleteInterface} from './Helper.type';
 
-const Helper: React.FC<Props> = ({
-  autocomplete,
-  placeholder,
-  onSelect,
-  value,
-}) => {
+const Helper: React.FC<Props> = ({autocomplete, placeholder, value}) => {
   if (placeholder) {
-    return <style.Placeholder>{placeholder}</style.Placeholder>;
+    return <s.Placeholder>{placeholder}</s.Placeholder>;
   }
+
   if (value) {
     return null;
   }
-  if (autocomplete && onSelect) {
+
+  if (autocomplete !== undefined) {
+    const {data, onSelect} = autocomplete;
     return (
-      <style.AutoCompleteWrapper>
+      <s.AutoCompleteWrapper>
         <FlatList<AutoCompleteInterface>
-          data={autocomplete}
+          data={data}
           renderItem={({item}) => (
-            <style.AutoCompleteItem onPress={() => onSelect(item.name)}>
-              <style.AutoCompleteText>{item.name}</style.AutoCompleteText>
-            </style.AutoCompleteItem>
+            <s.AutoCompleteItem onPress={() => onSelect(item)}>
+              <s.AutoCompleteText isDefault={item.isDefault === true}>
+                {item.name}
+              </s.AutoCompleteText>
+            </s.AutoCompleteItem>
           )}
-          keyExtractor={item => item.name}
+          keyExtractor={({name}) => name}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         />
-      </style.AutoCompleteWrapper>
+      </s.AutoCompleteWrapper>
     );
   }
+
   return null;
 };
 
