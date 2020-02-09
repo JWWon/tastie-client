@@ -44,6 +44,7 @@
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@screens/*": ["screens/*"],
+      "@navigations/*": ["navigations/*"],
       "@services/*": ["services/*"],
       "@store/*": ["store/*"],
       "@styles/*": ["styles/*"],

@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
-import {NavigationTabScreenProps} from 'react-navigation-tabs';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
@@ -16,12 +16,17 @@ import {
   selectLocation,
   clearCase,
 } from '@store/actions/case';
+import {HomeParamList} from '@navigations/Home';
 import consts from '@utils/consts';
 import * as s from './Case.style';
 
-const {SCREEN, MY_LOCATION} = consts;
+const {MY_LOCATION} = consts;
 
-const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
+interface Props {
+  navigation: BottomTabNavigationProp<HomeParamList, 'Case'>;
+}
+
+const Case: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const {
     categories,
@@ -41,8 +46,7 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
   }
 
   function switchPage() {
-    navigation.navigate(SCREEN.RECOMMEND);
-    dispatch(getRecommend.request());
+    dispatch(getRecommend.request(navigation));
   }
 
   const handlePressMore = () => dispatch(selectPreference({preference: ''}));

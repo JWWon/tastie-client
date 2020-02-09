@@ -1,7 +1,9 @@
 import {ActionType, createAsyncAction, createAction} from 'typesafe-actions';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {AxiosError} from 'axios';
 
 import {GetRecommendRes} from '@services/recommend/recommend.type';
+import {HomeParamList} from '@navigations/Home';
 
 // GET_RECOMMEND
 export const GET_RECOMMEND = '@recommend/GET_RECOMMEND_REQUEST';
@@ -12,7 +14,11 @@ export const getRecommend = createAsyncAction(
   GET_RECOMMEND,
   GET_RECOMMEND_SUCCESS,
   GET_RECOMMEND_FAILURE,
-)<undefined, GetRecommendRes, AxiosError>();
+)<
+  BottomTabNavigationProp<HomeParamList, 'Case'>,
+  GetRecommendRes,
+  AxiosError
+>();
 // END GET_RECOMMEND
 
 // CLEAR_RECOMMEND

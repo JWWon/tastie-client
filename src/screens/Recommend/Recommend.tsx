@@ -1,13 +1,16 @@
+/* eslint-disable react/no-did-update-set-state */
 import React from 'react';
 import {Easing} from 'react-native';
 import {connect} from 'react-redux';
 import {Animated} from 'react-native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 import Home from '@components/templates/Home';
 import PlaceCard from '@components/organisms/PlaceCard';
 import Sentence from '@components/molcules/Sentence';
 import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
+import {HomeParamList} from '@navigations/Home';
 
 const mapStateToProps = (state: RootState) => ({
   recommend: state.recommend,
@@ -18,38 +21,60 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   updateMessage: updateContent,
-  hideMessage,
+  hide: hideMessage,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+type Props = ReturnType<typeof mapStateToProps> &
+  typeof mapDispatchToProps & {
+    navigation: BottomTabNavigationProp<HomeParamList, 'Recommend'>;
+  };
 
 interface State {
-  loading: boolean;
+  status: 'LOADING' | 'SUCCESS' | 'ERROR';
   value: Animated.Value;
 }
 
-const alert = '<b>Anna</b>가 정하는 중이에요...';
-const title = '<b>Anna</b>가 정한';
+function getTitle(status: State['status']) {
+  switch (status) {
+    case 'LOADING':
+      return '<b>Anna</b>가 정하는 중이에요...';
+    case 'SUCCESS':
+      return '<b>Anna</b>가 정한';
+    default:
+      return '<b>Anna</b>가 정하지 못했어요 :(';
+  }
+}
 
 class Recommend extends React.PureComponent<Props, State> {
-  public state = {
-    loading: true,
+  public state: State = {
+    status: 'LOADING',
     value: new Animated.Value(1),
   };
 
+  private handleDismiss = () => {
+    const {navigation, updateMessage} = this.props;
+    updateMessage({content: '다른 음식이 먹고싶나옹?'});
+    navigation.navigate('Case');
+  };
+
   public static getDerivedStateFromProps(props: Props, state: State) {
-    if (!state.loading && props.loading) {
+    if (state.status !== 'LOADING' && props.loading) {
       // loading start
-      return {loading: true};
+      return {status: 'LOADING'};
     }
     return null;
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const {loading, updateMessage} = this.props;
+    const {loading, recommend, updateMessage, hide} = this.props;
     if (prevProps.loading && !loading) {
-      // loading complete
-      this.props.hideMessage();
+      if (!recommend.id) {
+        // ERROR
+        this.setState({status: 'ERROR'});
+        return;
+      }
+      // SUCCESS
+      hide();
       Animated.timing(this.state.value, {
         toValue: 0,
         duration: 560,
@@ -57,17 +82,18 @@ class Recommend extends React.PureComponent<Props, State> {
         useNativeDriver: true,
       }).start(() => {
         updateMessage({content: '맘에 들었다면 츄르를 달라옹!'});
-        this.setState({loading: false});
+        this.setState({status: 'SUCCESS'});
       });
     } else if (!prevProps.loading && loading) {
-      // loading start
+      // LOADING
       this.state.value.setValue(1);
+      this.setState({status: 'LOADING'});
     }
   }
 
   public render() {
     const {category, recommend, homeHeight} = this.props;
-    const {loading, value} = this.state;
+    const {status, value} = this.state;
     const translateY = value.interpolate({
       inputRange: [0, 1],
       outputRange: [0, homeHeight / 2 - 20],
@@ -76,12 +102,12 @@ class Recommend extends React.PureComponent<Props, State> {
     return (
       <Home>
         <Animated.View style={{transform: [{translateY}]}}>
-          <Sentence message={loading ? alert : title} />
+          <Sentence message={getTitle(status)} />
         </Animated.View>
-        {!loading && (
+        {status === 'SUCCESS' && (
           <>
             <Sentence message={`오늘 <b>${category}</b>은,`} />
-            <PlaceCard {...recommend} />
+            <PlaceCard onDismiss={this.handleDismiss} {...recommend} />
           </>
         )}
       </Home>

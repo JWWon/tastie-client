@@ -5,8 +5,8 @@ export default {
     PRODUCTION: 'localhost:8000/api',
   },
   SCREEN: {
-    CASE: 'Case',
-    RECOMMEND: 'Recommend',
+    CASE: 'Case' as const,
+    RECOMMEND: 'Recommend' as const,
   },
   MY_LOCATION: '내 위치',
 };

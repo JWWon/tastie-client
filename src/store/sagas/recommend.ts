@@ -11,8 +11,11 @@ import {
 import * as api from '@services/recommend';
 import {RootState} from '@store/reducers';
 
-function* getRecommendSaga() {
+function* getRecommendSaga(action: ReturnType<typeof getRecommend.request>) {
+  const {navigate} = action.payload;
   yield put(updateLoading({loading: true}));
+  navigate('Recommend');
+
   try {
     const {
       category,
@@ -36,7 +39,12 @@ function* getRecommendSaga() {
     );
     yield put(getRecommend.success(response.data));
   } catch (e) {
-    yield put(updateContent({content: '추천 음식을 불러오는데 실패했어옹…'}));
+    yield put(
+      updateContent({
+        content: '미안해옹... 다시 알려줄래옹..?',
+        onPress: () => navigate('Case'),
+      }),
+    );
     yield put(getRecommend.failure(e));
   }
   yield put(updateLoading({loading: false}));
