@@ -4,16 +4,18 @@ import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
 import {ThemeProvider} from 'styled-components';
 
-import network from '@services/axios.base';
+import axios from '@services/axios.base';
 import theme from '@styles/theme';
 import Navigator from './navigations';
+import {checkPermission} from '@utils/helper';
 import {configStore} from './store';
 
 const App: React.FC = () => {
   const store = configStore();
 
   useEffect(() => {
-    network.init();
+    checkPermission();
+    axios.config();
   });
 
   return (

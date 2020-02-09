@@ -1,12 +1,10 @@
 import styled from 'styled-components/native';
 
-import RawFading from '@components/atoms/Fading';
-
 interface MessageProps {
   alert: boolean;
 }
 
-export const Fading = styled(RawFading)`
+export const Container = styled.View`
   margin-bottom: 6px;
   align-items: center;
 `;

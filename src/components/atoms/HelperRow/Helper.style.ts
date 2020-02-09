@@ -22,8 +22,13 @@ export const AutoCompleteItem = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-export const AutoCompleteText = styled.Text`
+interface TextProps {
+  isDefault: boolean;
+}
+
+export const AutoCompleteText = styled.Text<TextProps>`
   font-family: NanumSquareEB;
   font-size: 16px;
-  color: ${props => props.theme.color.grayDark};
+  color: ${({theme, isDefault}) =>
+    isDefault ? theme.color.black : theme.color.grayDark};
 `;

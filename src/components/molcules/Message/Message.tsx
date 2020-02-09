@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import {RootState} from '@store/reducers';
 import Loading from '@components/atoms/Loading';
+import Fading from '@components/atoms/Fading';
 import {updateMessageHeight} from '@store/actions/device';
 import * as s from './Message.style';
 
@@ -18,20 +19,27 @@ const Message: React.FC = () => {
   }
 
   function layoutDidMount(e: LayoutChangeEvent) {
-    const {height: messageHeight} = e.nativeEvent.layout;
-    dispatch(updateMessageHeight({messageHeight}));
+    const {height} = e.nativeEvent.layout;
+    dispatch(updateMessageHeight({messageHeight: height}));
   }
 
   const alert = onPress !== undefined && !loading;
+
   return (
-    <s.Fading onLayout={layoutDidMount}>
-      <s.Bubble alert={alert}>
-        {loading ? <Loading /> : <s.Content alert={alert}>{content}</s.Content>}
-      </s.Bubble>
-      <s.TriangleBorder>
-        <s.TriangleBackground alert={alert} />
-      </s.TriangleBorder>
-    </s.Fading>
+    <Fading>
+      <s.Container onLayout={layoutDidMount}>
+        <s.Bubble alert={alert}>
+          {loading ? (
+            <Loading />
+          ) : (
+            <s.Content alert={alert}>{content}</s.Content>
+          )}
+        </s.Bubble>
+        <s.TriangleBorder>
+          <s.TriangleBackground alert={alert} />
+        </s.TriangleBorder>
+      </s.Container>
+    </Fading>
   );
 };
 

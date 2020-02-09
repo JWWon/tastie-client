@@ -64,7 +64,6 @@ export const Dot = styled.View<DotInterface>`
     active ? theme.color.blue : theme.color.white};
 `;
 
-// TODO: Refactor as styled component
 export const pagination: ViewStyle = {
   height: dotSize,
   position: 'absolute',

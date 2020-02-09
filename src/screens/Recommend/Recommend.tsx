@@ -10,6 +10,7 @@ import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
 
 const mapStateToProps = (state: RootState) => ({
+  recommend: state.recommend,
   loading: state.message.loading,
   category: state.case.category,
   homeHeight: state.device.homeHeight,
@@ -65,7 +66,7 @@ class Recommend extends React.PureComponent<Props, State> {
   }
 
   public render() {
-    const {category, homeHeight} = this.props;
+    const {category, recommend, homeHeight} = this.props;
     const {loading, value} = this.state;
     const translateY = value.interpolate({
       inputRange: [0, 1],
@@ -80,13 +81,7 @@ class Recommend extends React.PureComponent<Props, State> {
         {!loading && (
           <>
             <Sentence message={`오늘 <b>${category}</b>은,`} />
-            <PlaceCard
-              images={[
-                'https://placeimg.com/640/480/any',
-                'https://placeimg.com/640/480/any',
-                'https://placeimg.com/640/480/any',
-              ]}
-            />
+            <PlaceCard {...recommend} />
           </>
         )}
       </Home>

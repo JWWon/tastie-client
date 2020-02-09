@@ -45,12 +45,15 @@ export const Name = styled.Text`
   font-family: NotoSansKR-Bold;
 `;
 
-export const Category = styled(NotoSansGray)`
+export const Types = styled(NotoSansGray).attrs({
+  numberOfLines: 1,
+  ellipsizeMode: 'tail',
+})`
+  flex: 1;
   font-size: 14px;
 `;
 
 export const Distance = styled(NotoSansGray)`
-  margin-left: auto;
   font-size: 12px;
 `;
 

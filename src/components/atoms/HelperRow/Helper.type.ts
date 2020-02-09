@@ -1,10 +1,16 @@
 export interface AutoCompleteInterface {
   name: string;
+  isDefault?: boolean;
+  [option: string]: any;
 }
 
+export type SelectAutocomplete = (value: AutoCompleteInterface) => void;
+
 export interface Props {
-  autocomplete?: AutoCompleteInterface[];
+  autocomplete?: {
+    data: AutoCompleteInterface[];
+    onSelect: SelectAutocomplete;
+  };
   placeholder?: string;
-  onSelect?: (value: string) => void;
   value?: string;
 }

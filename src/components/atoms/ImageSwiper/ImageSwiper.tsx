@@ -37,7 +37,8 @@ const ImageSwiper: React.FC<Props> = ({images}) => {
       <s.Pager pageInterpolation={inlineCardsConfig} adjacentChildOffset={3}>
         {images.map((uri, idx) => (
           <s.Card key={idx.toString()}>
-            <s.Image source={{uri}} />
+            {/* TODO: relpace string to real uri data */}
+            <s.Image source={{uri: 'https://placeimg.com/640/480/any'}} />
             <s.Filter />
           </s.Card>
         ))}

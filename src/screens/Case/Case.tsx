@@ -6,65 +6,59 @@ import {NavigationTabScreenProps} from 'react-navigation-tabs';
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
-import {Props as HelperProps} from '@components/atoms/HelperRow';
+import {SelectAutocomplete} from '@components/atoms/HelperRow';
 import {RootState} from '@store/reducers';
+import {getRecommend} from '@store/actions/recommend';
 import {
-  updateCategory,
-  updatePlace,
-  updateSituation,
-  updatePreference,
+  selectCategory,
+  selectSituation,
+  selectPreference,
+  selectLocation,
+  clearCase,
 } from '@store/actions/case';
-import {updateContent, updateLoading} from '@store/actions/message';
 import consts from '@utils/consts';
 import * as s from './Case.style';
 
-const {SCREEN} = consts;
+const {SCREEN, MY_LOCATION} = consts;
 
 const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
-  const {category, place, situation, preference} = useSelector(
-    (state: RootState) => state.case,
-  );
+  const {
+    categories,
+    locations,
+    situations,
+    category,
+    location,
+    situation,
+    preference,
+    hasRequired,
+  } = useSelector((state: RootState) => state.case);
 
-  const categoryExist = category !== '';
-  const placeExist = place !== '';
-  const situationExist = situation !== '';
   const preferenceExist = preference !== undefined;
 
-  const handleSelectCategory: HelperProps['onSelect'] = (value: string) => {
-    dispatch(updateCategory({category: value}));
-    dispatch(updateContent({content: '어디서 먹나옹?'}));
+  function categoryDidMount() {
+    dispatch(clearCase());
+  }
+
+  function switchPage() {
+    navigation.navigate(SCREEN.RECOMMEND);
+    dispatch(getRecommend.request());
+  }
+
+  const handlePressMore = () => dispatch(selectPreference({preference: ''}));
+
+  const handleSelectCategory: SelectAutocomplete = ({name}) =>
+    dispatch(selectCategory({category: name, onPress: switchPage}));
+
+  const handleSelectLocation: SelectAutocomplete = value => {
+    dispatch(selectLocation.request({...value, onPress: switchPage}));
   };
 
-  const handleSelectPlace: HelperProps['onSelect'] = (value: string) => {
-    dispatch(updatePlace({place: value}));
-    dispatch(updateContent({content: '누구랑 먹나옹?'}));
-  };
+  const handleSelectSituation: SelectAutocomplete = ({name}) =>
+    dispatch(selectSituation({situation: name, onPress: switchPage}));
 
-  const handleSelectSituation: HelperProps['onSelect'] = (value: string) => {
-    dispatch(updateSituation({situation: value}));
-    dispatch(
-      updateContent({
-        content: '뭐 먹을지 정해줄까옹?',
-        onPress: () => {
-          navigation.navigate(SCREEN.RECOMMEND);
-          // TODO: move control loading on redux-saga
-          dispatch(updateLoading({loading: true}));
-          setTimeout(() => {
-            dispatch(updateLoading({loading: false}));
-          }, 1200);
-        },
-      }),
-    );
-  };
-
-  const handleSelectPreference: HelperProps['onSelect'] = (value: string) => {
-    dispatch(updatePreference({preference: value}));
-  };
-
-  const handlePressMore = () => {
-    dispatch(updatePreference({preference: ''}));
-  };
+  const handleSelectPreference: SelectAutocomplete = ({name}) =>
+    dispatch(selectPreference({preference: name}));
 
   return (
     <s.Home>
@@ -74,38 +68,38 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
         maxSize={3}
         message="은"
         editable={false}
-        autocomplete={[{name: '저녁'}, {name: '야식'}, {name: '술자리'}]}
-        onSelect={handleSelectCategory}
+        autocomplete={{
+          data: categories,
+          onSelect: handleSelectCategory,
+        }}
         value={category}
+        onLayout={categoryDidMount}
       />
-      {categoryExist && (
+      {category !== '' && (
         <Sentence
           maxSize={12}
           message="에서"
-          autocomplete={[{name: '내 위치'}, {name: '지도에서 선택'}]}
-          placeholder={
-            place === '내 위치' ? '서울특별시 이태원로 22' : undefined
-          }
-          onSelect={handleSelectPlace}
-          value={place}
+          autocomplete={{
+            data: [{name: MY_LOCATION, isDefault: true}, ...locations],
+            onSelect: handleSelectLocation,
+          }}
+          placeholder={location.address}
+          value={location.name}
         />
       )}
-      {placeExist && (
+      {location.name !== '' && (
         <Sentence
           maxSize={12}
           message="이야."
-          autocomplete={[
-            {name: '오랜 친구와의 약속'},
-            {name: '소개팅'},
-            {name: '대학 친구들과의 회식'},
-            {name: '데이트'},
-          ]}
+          autocomplete={{
+            data: situations,
+            onSelect: handleSelectSituation,
+          }}
           editable={false}
-          onSelect={handleSelectSituation}
           value={situation}
         />
       )}
-      {categoryExist && placeExist && situationExist && !preferenceExist && (
+      {hasRequired && !preferenceExist && (
         <MoreButton
           marginTop={28}
           message="더 알려주기"
@@ -121,13 +115,15 @@ const Case: React.FC<NavigationTabScreenProps> = ({navigation}) => {
                 maxSize: 8,
                 message: '한게',
                 editable: false,
-                autocomplete: [
-                  {name: '매콤한'},
-                  {name: '느끼한'},
-                  {name: '자극적인'},
-                  {name: '깔끔한'},
-                ],
-                onSelect: handleSelectPreference,
+                autocomplete: {
+                  data: [
+                    {name: '매콤한'},
+                    {name: '느끼한'},
+                    {name: '자극적인'},
+                    {name: '깔끔한'},
+                  ],
+                  onSelect: handleSelectPreference,
+                },
                 value: preference,
               },
               {

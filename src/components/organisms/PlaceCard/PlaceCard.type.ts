@@ -1,5 +1,5 @@
 import {NavigationInjectedProps} from 'react-navigation';
 
-import {Props as SwiperProps} from '@components/atoms/ImageSwiper';
+import {GetRecommendRes} from '@services/recommend/recommend.type';
 
-export type Props = SwiperProps & NavigationInjectedProps;
+export type Props = GetRecommendRes & NavigationInjectedProps;

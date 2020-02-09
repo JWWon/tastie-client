@@ -1,8 +1,10 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {withNavigation} from 'react-navigation';
 
 import {RootState} from '@store/reducers';
+import {clearCase} from '@store/actions/case';
+import {updateContent} from '@store/actions/message';
 import ImageSwiper from '@components/atoms/ImageSwiper';
 import PlaceInfo from '@components/molcules/PlaceInfo';
 import * as s from './PlaceCard.style';
@@ -12,26 +14,23 @@ import sizes from '@styles/sizes';
 
 const {SCREEN} = consts;
 
-const PlaceCard: React.FC<Props> = ({images, navigation}) => {
+const PlaceCard: React.FC<Props> = ({navigation, photoUrls, ...infos}) => {
+  const dispatch = useDispatch();
+
   const {messageHeight} = useSelector((state: RootState) => state.device);
   const marginBottom = messageHeight - sizes.templatePadding + 16;
 
   function handleDismiss() {
+    dispatch(clearCase());
+    dispatch(updateContent({content: '다른 음식이 먹고싶나옹?'}));
     navigation.navigate(SCREEN.CASE);
   }
 
   return (
     <s.Container style={{marginBottom}}>
-      <ImageSwiper images={images} />
+      <ImageSwiper images={photoUrls} />
       <s.InfoWrapper>
-        <PlaceInfo
-          name="Shake Shack Burger"
-          categories={['햄버거', '기다려서 먹는']}
-          distance={300}
-          phone="010-0000-0000"
-          address="서울시 이태원로 22"
-          priceLevel={1}
-        />
+        <PlaceInfo {...infos} />
       </s.InfoWrapper>
       <s.Dismiss
         onPress={handleDismiss}
