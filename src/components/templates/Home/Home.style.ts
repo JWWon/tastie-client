@@ -10,6 +10,10 @@ export const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
+export const HideContainer = styled.TouchableWithoutFeedback`
+  flex: 1;
+`;
+
 export const ContentWrapper = styled.View`
   flex: 1;
   padding-top: ${({theme}) => theme.size.templatePadding}px;

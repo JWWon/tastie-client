@@ -15,7 +15,11 @@ import {
   selectPreference,
   selectLocation,
   clearCase,
+  clearCasePartly,
+  searchLocations,
 } from '@store/actions/case';
+import {CaseIndex} from '@store/reducers/case';
+import {updateContent} from '@store/actions/message';
 import {HomeParamList} from '@navigations/Home';
 import consts from '@utils/consts';
 import * as s from './Case.style';
@@ -30,7 +34,8 @@ const Case: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const {
     categories,
-    locations,
+    nearbyLocations,
+    searchedLocations,
     situations,
     category,
     location,
@@ -50,6 +55,11 @@ const Case: React.FC<Props> = ({navigation}) => {
   }
 
   const handlePressMore = () => dispatch(selectPreference({preference: ''}));
+
+  const handleSearchLocation = (value: string) => {
+    dispatch(searchLocations.request({input: value}));
+    dispatch(updateContent({content: '장소를 선택하라옹'}));
+  };
 
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
     dispatch(selectCategory({category: name, onPress: switchPage}));
@@ -71,36 +81,42 @@ const Case: React.FC<Props> = ({navigation}) => {
         leadMessage="오늘 "
         maxSize={3}
         message="은"
-        editable={false}
         autocomplete={{
           data: categories,
           onSelect: handleSelectCategory,
         }}
         value={category}
+        onPress={() => dispatch(clearCasePartly(CaseIndex.CATEGORY))}
         onLayout={categoryDidMount}
       />
       {category !== '' && (
         <Sentence
-          maxSize={12}
           message="에서"
           autocomplete={{
-            data: [{name: MY_LOCATION, isDefault: true}, ...locations],
+            data: [
+              {name: MY_LOCATION, isDefault: true},
+              ...(searchedLocations.length > 0
+                ? searchedLocations
+                : nearbyLocations),
+            ],
             onSelect: handleSelectLocation,
           }}
           placeholder={location.address}
           value={location.name}
+          onPress={() => dispatch(clearCasePartly(CaseIndex.LOCATION))}
+          onChangeText={handleSearchLocation}
         />
       )}
       {location.name !== '' && (
         <Sentence
-          maxSize={12}
+          maxSize={10}
           message="이야."
           autocomplete={{
             data: situations,
             onSelect: handleSelectSituation,
           }}
-          editable={false}
           value={situation}
+          onPress={() => dispatch(clearCasePartly(CaseIndex.SITUATION))}
         />
       )}
       {hasRequired && !preferenceExist && (
@@ -118,7 +134,6 @@ const Case: React.FC<Props> = ({navigation}) => {
                 leadMessage: '왠지 ',
                 maxSize: 8,
                 message: '한게',
-                editable: false,
                 autocomplete: {
                   data: [
                     {name: '매콤한'},
@@ -129,6 +144,7 @@ const Case: React.FC<Props> = ({navigation}) => {
                   onSelect: handleSelectPreference,
                 },
                 value: preference,
+                onPress: () => dispatch(clearCasePartly(CaseIndex.PREFERENCE)),
               },
               {
                 message: '먹고싶어.',

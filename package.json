@@ -17,6 +17,7 @@
     "@react-navigation/compat": "^5.0.0",
     "@react-navigation/native": "^5.0.0",
     "axios": "^0.19.2",
+    "immer": "^5.3.4",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "react": "16.9.0",

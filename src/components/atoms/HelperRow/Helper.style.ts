@@ -10,7 +10,7 @@ export const Placeholder = styled.Text`
 
 export const AutoCompleteWrapper = styled.View`
   width: ${Dimensions.get('screen').width}px;
-  height: 24px;
+  height: 32px;
   margin: 8px -${props => props.theme.size.templatePadding}px 0;
   padding: 0 ${props => props.theme.size.templatePadding}px;
 `;

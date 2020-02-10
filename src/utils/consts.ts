@@ -9,4 +9,5 @@ export default {
     RECOMMEND: 'Recommend' as const,
   },
   MY_LOCATION: '내 위치',
+  GOOGLE_PLACE_KEY: 'AIzaSyBpJDvIpGqHSWQyDviBGcAZg4cb4_Qkiqk',
 };

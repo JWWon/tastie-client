@@ -1,15 +1,23 @@
-import React from 'react';
-import {LayoutChangeEvent} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  Animated,
+  Keyboard,
+  LayoutChangeEvent,
+  ViewStyle,
+  Easing,
+  Platform,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 
-import {updateHomeHeight} from '@store/actions/device';
+import {updateHomeHeight, updateKeyboardVisible} from '@store/actions/device';
 import * as s from './Home.style';
 
 interface Props {
-  [option: string]: any;
+  style?: ViewStyle;
 }
 
-const Template: React.FC<Props> = ({children, ...options}) => {
+const Template: React.FC<Props> = ({children, style}) => {
+  const [marginTop] = useState(new Animated.Value(0));
   const dispatch = useDispatch();
 
   function layoutDidMount(e: LayoutChangeEvent) {
@@ -17,12 +25,50 @@ const Template: React.FC<Props> = ({children, ...options}) => {
     dispatch(updateHomeHeight({homeHeight}));
   }
 
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      const keyboardDidShowListener = Keyboard.addListener(
+        'keyboardDidShow',
+        e => {
+          const {height} = e.endCoordinates;
+          Animated.timing(marginTop, {
+            toValue: -(height / 2),
+            duration: 320,
+            easing: Easing.inOut(Easing.quad),
+          }).start();
+          dispatch(updateKeyboardVisible({keyboardVisible: true}));
+        },
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        'keyboardDidHide',
+        () => {
+          Animated.timing(marginTop, {
+            toValue: 0,
+            duration: 320,
+            easing: Easing.inOut(Easing.quad),
+          }).start();
+          dispatch(updateKeyboardVisible({keyboardVisible: false}));
+        },
+      );
+
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    }
+  });
+
   return (
     <s.FullScreen>
       <s.Container>
-        <s.ContentWrapper onLayout={layoutDidMount} {...options}>
-          {children}
-        </s.ContentWrapper>
+        <s.HideContainer onPress={Keyboard.dismiss}>
+          <s.ContentWrapper
+            as={Animated.View}
+            onLayout={layoutDidMount}
+            style={[style, {marginTop}]}>
+            {children}
+          </s.ContentWrapper>
+        </s.HideContainer>
       </s.Container>
     </s.FullScreen>
   );
