@@ -5,10 +5,16 @@ import {AxiosError} from 'axios';
 import {
   GetCategoriesRes,
   GetSituationsRes,
-  GetNearbyLocationReq,
-  GetNearbyLocationRes,
-} from '@services/case/case.type';
-import {LocationInterface, CoordsInterface} from '@store/reducers/case';
+  GetNearbyLocationsReq,
+  GetNearbyLocationsRes,
+  SearchLocationsReq,
+  SearchLocationsRes,
+} from '@services/case';
+import {
+  LocationInterface,
+  CoordsInterface,
+  CaseIndex,
+} from '@store/reducers/case';
 
 interface ButtonInterface {
   onPress: () => void;
@@ -19,6 +25,15 @@ export const CLEAR_CASE = '@case/CLEAR_CASE';
 
 export const clearCase = createAction(CLEAR_CASE, () => {})();
 // END CLEAR_CASE
+
+// CLEAR_CASE_PARTLY
+export const CLEAR_CASE_PARTLY = '@case/CLEAR_CASE_PARTLY';
+
+export const clearCasePartly = createAction(
+  CLEAR_CASE_PARTLY,
+  (payload: CaseIndex) => payload,
+)();
+// END CLEAR_CASE_PARTLY
 
 // GET_CATEGORIES
 export const GET_CATEGORIES = '@case/GET_CATEGORIES_REQUEST';
@@ -67,8 +82,20 @@ export const getNearbyLocations = createAsyncAction(
   GET_NEARBY_LOCATIONS,
   GET_NEARBY_LOCATIONS_SUCCESS,
   GET_NEARBY_LOCATIONS_FAILURE,
-)<GetNearbyLocationReq, GetNearbyLocationRes, AxiosError>();
+)<GetNearbyLocationsReq, GetNearbyLocationsRes, AxiosError>();
 // END GET_NEARBY_LOCATIONS
+
+// SEARCH_LOCATIONS
+export const SEARCH_LOCATIONS = '@case/SEARCH_LOCATIONS_REQUEST';
+export const SEARCH_LOCATIONS_SUCCESS = '@case/SEARCH_LOCATIONS_SUCCESS';
+export const SEARCH_LOCATIONS_FAILURE = '@case/SEARCH_LOCATIONS_FAILURE';
+
+export const searchLocations = createAsyncAction(
+  SEARCH_LOCATIONS,
+  SEARCH_LOCATIONS_SUCCESS,
+  SEARCH_LOCATIONS_FAILURE,
+)<SearchLocationsReq, SearchLocationsRes, AxiosError>();
+// END SEARCH_LOCATIONS
 
 // SELECT_CATEGORY
 interface SelectCategory extends ButtonInterface {
@@ -86,10 +113,10 @@ export const selectCategory = createAction(
 // SELECT_LOCATION
 interface SelectLocation extends ButtonInterface {
   name: string;
-  // optional interface NearbyLocation
-  id?: string;
-  rating?: string;
+  // NearbyLocations optional params
   location?: CoordsInterface;
+  // SearchedLocations optional params
+  place_id?: string;
 }
 
 export const SELECT_LOCATION = '@case/SELECT_LOCATION_REQUEST';
@@ -144,10 +171,12 @@ export const updateHasRequired = createAction(
 
 const actions = {
   clearCase,
+  clearCasePartly,
   getCategories,
   getSituations,
   getUserCoords,
   getNearbyLocations,
+  searchLocations,
   selectCategory,
   selectLocation,
   selectSituation,

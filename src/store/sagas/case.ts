@@ -16,6 +16,7 @@ import _ from 'lodash';
 
 import {
   clearCase,
+  clearCasePartly,
   getCategories,
   getSituations,
   getUserCoords,
@@ -26,15 +27,20 @@ import {
   updateHasRequired,
   selectLocation,
   getNearbyLocations,
+  searchLocations,
 } from '@store/actions/case';
 import {RootState} from '@store/reducers';
 import {CoordsInterface} from '@store/reducers/case';
-import {updateContent} from '@store/actions/message';
+import {updateContent, updateLoading} from '@store/actions/message';
 import {
   GetCategoriesRes,
   GetSituationsRes,
-  GetNearbyLocationRes,
-} from '@services/case/case.type';
+  GetNearbyLocationsRes,
+  SearchLocationsAPIRes,
+  SearchLocationsRes,
+  GetLocationDetailsAPIRes,
+  GetAddressRes,
+} from '@services/case';
 import * as api from '@services/case';
 import consts from '@utils/consts';
 
@@ -46,6 +52,10 @@ function* clearCaseSaga() {
     put(getCategories.request()),
     put(getSituations.request()),
   ]);
+}
+
+function* clearCasePartlySaga() {
+  yield put(updateContent({content: '다시 고르겠나옹?', onPress: undefined}));
 }
 
 function* getCategoriesSaga() {
@@ -104,7 +114,7 @@ function* getNearbyLocationSaga(
   action: ReturnType<typeof getNearbyLocations.request>,
 ) {
   try {
-    const response: AxiosResponse<GetNearbyLocationRes> = yield call(
+    const response: AxiosResponse<GetNearbyLocationsRes> = yield call(
       api.getNearbyLocations,
       action.payload,
     );
@@ -114,32 +124,93 @@ function* getNearbyLocationSaga(
   }
 }
 
+function* searchLocationsSaga(
+  action: ReturnType<typeof searchLocations.request>,
+) {
+  yield put(updateLoading({loading: true}));
+  if (action.payload.input === '') {
+    // skip searching if input is empty
+    yield put(searchLocations.success([]));
+    yield put(updateLoading({loading: false}));
+    return;
+  }
+
+  try {
+    const {userCoords} = yield select((state: RootState) => state.case);
+    const response: AxiosResponse<SearchLocationsAPIRes> = yield call(
+      api.searchLocations,
+      {
+        ...action.payload,
+        location: userCoords,
+        radius: 10000, // 10km
+        types: 'establishment',
+        language: 'ko',
+      },
+    );
+    const flatten: SearchLocationsRes = response.data.predictions.map(item => ({
+      name: item.structured_formatting.main_text,
+      place_id: item.place_id,
+    }));
+    yield put(searchLocations.success(flatten));
+  } catch (e) {
+    yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));
+    yield put(searchLocations.failure(e));
+  }
+  yield put(updateLoading({loading: false}));
+}
+
 function* selectLocationSaga(
   action: ReturnType<typeof selectLocation.request>,
 ) {
   try {
-    const {name, location} = action.payload;
+    const {name, location, place_id} = action.payload;
     if (name === MY_LOCATION) {
-      // use current location
+      // * current user location
       const {userCoords}: RootState['case'] = yield select(
         (state: RootState) => state.case,
       );
-      // TODO: search location name from coords
-      yield put(
-        selectLocation.success({
-          ...userCoords,
-          name: '국방부',
-          address: '서울특별시 이태원로 22',
-        }),
+      const {data: address}: AxiosResponse<GetAddressRes> = yield call(
+        api.getAddress,
+        userCoords,
       );
+      yield put(selectLocation.success({name, address, ...userCoords}));
       return;
     }
 
-    if (location === undefined) {
-      throw new Error('좌표를 불러오지 못했습니다.');
+    if (location !== undefined) {
+      // * select from 'nearbyLocations'
+      const {data: address}: AxiosResponse<GetAddressRes> = yield call(
+        api.getAddress,
+        location,
+      );
+      yield put(selectLocation.success({name, address, ...location}));
+      return;
     }
-    // TODO: search location address
-    yield put(selectLocation.success({name, ...location}));
+
+    if (place_id !== undefined) {
+      // * select from 'searchedLocations'
+      const response: AxiosResponse<GetLocationDetailsAPIRes> = yield call(
+        api.getLocationDetails,
+        {
+          place_id,
+          language: 'ko',
+          fields: 'address_component,geometry',
+        },
+      );
+      // formatting data
+      const {address_components, geometry} = response.data.result;
+      const address = address_components
+        .slice(0, address_components.length - 2)
+        .reverse()
+        .map(item => item.short_name.replace(/\s+/g, ''))
+        .join(' ');
+      const {lat: latitude, lng: longitude} = geometry.location;
+
+      yield put(selectLocation.success({name, address, latitude, longitude}));
+      return;
+    }
+
+    throw new Error('잘못된 데이터입니다.');
   } catch (e) {
     yield put(selectLocation.failure(e));
   }
@@ -176,9 +247,11 @@ export default function* root() {
   yield takeEvery(getSituations.request, getSituationsSaga);
   yield takeEvery(getUserCoords.request, getUserCoordsSaga);
   yield takeEvery(getNearbyLocations.request, getNearbyLocationSaga);
+  yield takeEvery(searchLocations.request, searchLocationsSaga);
   yield takeEvery(selectLocation.request, selectLocationSaga);
   // sync
   yield takeEvery(clearCase, clearCaseSaga);
+  yield takeEvery(clearCasePartly, clearCasePartlySaga);
   yield takeEvery(SELECT_CATEGORY, selectCategorySaga);
   yield takeEvery(SELECT_SITUATION, selectSituationSaga);
 }

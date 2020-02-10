@@ -96,7 +96,7 @@ class Recommend extends React.PureComponent<Props, State> {
     const {status, value} = this.state;
     const translateY = value.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, homeHeight / 2 - 20],
+      outputRange: [0, homeHeight / 2 - 48],
     });
 
     return (

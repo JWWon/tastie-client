@@ -1,11 +1,14 @@
+/* eslint-disable no-fallthrough */
 import {createReducer} from 'typesafe-actions';
+import produce from 'immer';
 
 import {copyPayload, setError} from '@utils/helper';
 import {
   GetCategoriesRes,
   GetSituationsRes,
-  GetNearbyLocationRes,
-} from '@services/case/case.type';
+  GetNearbyLocationsRes,
+  SearchLocationsRes,
+} from '@services/case';
 import {
   CaseAction,
   CLEAR_CASE,
@@ -23,6 +26,9 @@ import {
   SELECT_LOCATION_FAILURE,
   GET_NEARBY_LOCATIONS_SUCCESS,
   GET_NEARBY_LOCATIONS_FAILURE,
+  CLEAR_CASE_PARTLY,
+  SEARCH_LOCATIONS_SUCCESS,
+  SEARCH_LOCATIONS_FAILURE,
 } from '../actions/case';
 
 export interface CoordsInterface {
@@ -32,13 +38,21 @@ export interface CoordsInterface {
 
 export interface LocationInterface extends CoordsInterface {
   name: string;
-  address?: string;
+  address: string;
+}
+
+export enum CaseIndex {
+  CATEGORY,
+  LOCATION,
+  SITUATION,
+  PREFERENCE,
 }
 
 interface CaseState {
   // AUTOCOMPLETE
   categories: GetCategoriesRes;
-  locations: GetNearbyLocationRes;
+  nearbyLocations: GetNearbyLocationsRes;
+  searchedLocations: SearchLocationsRes;
   situations: GetSituationsRes;
   // SELECTED VALUE
   category: string;
@@ -56,12 +70,13 @@ interface CaseState {
 const initState: CaseState = {
   // AUTOCOMPLETE
   categories: [],
-  locations: [],
+  nearbyLocations: [],
+  searchedLocations: [],
   situations: [],
   // SELECTED VALUE
   category: '',
   situation: '',
-  location: {latitude: 0, longitude: 0, name: ''},
+  location: {latitude: 0, longitude: 0, name: '', address: ''},
   userCoords: {latitude: 0, longitude: 0},
   // OTHERS
   hasRequired: false,
@@ -86,16 +101,37 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
   [GET_USER_COORDS_FAILURE]: setError,
   [GET_NEARBY_LOCATIONS_SUCCESS]: (state, action) => ({
     ...state,
-    locations: action.payload,
+    nearbyLocations: action.payload,
   }),
   [GET_NEARBY_LOCATIONS_FAILURE]: setError,
+  [SEARCH_LOCATIONS_SUCCESS]: (state, action) => ({
+    ...state,
+    searchedLocations: action.payload,
+  }),
+  [SEARCH_LOCATIONS_FAILURE]: setError,
   [SELECT_LOCATION_SUCCESS]: (state, action) => ({
     ...state,
+    searchedLocations: [], // initializing
     location: action.payload,
   }),
   [SELECT_LOCATION_FAILURE]: setError,
   // WITHOUT MIDDLEWARE
-  [CLEAR_CASE]: state => ({...state, ...initState}),
+  [CLEAR_CASE]: () => initState,
+  [CLEAR_CASE_PARTLY]: (state, action) =>
+    produce(state, draft => {
+      switch (action.payload) {
+        // IMPORTANT! do not put `break` keyword
+        case CaseIndex.CATEGORY:
+          draft.category = initState.category;
+        case CaseIndex.LOCATION:
+          draft.location = initState.location;
+        case CaseIndex.SITUATION:
+          draft.situation = initState.situation;
+          draft.hasRequired = initState.hasRequired;
+        case CaseIndex.PREFERENCE:
+          delete draft.preference;
+      }
+    }),
   [SELECT_CATEGORY]: copyPayload,
   [SELECT_SITUATION]: copyPayload,
   [SELECT_PREFERENCE]: copyPayload,

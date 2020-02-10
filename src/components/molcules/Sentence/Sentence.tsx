@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {Props} from './Sentence.type';
 import * as s from './Sentence.style';
@@ -11,16 +11,55 @@ const Sentence: React.FC<Props> = ({
   placeholder,
   onSelect,
   value,
+  onChangeText,
   ...props
-}) => (
-  <s.Fading>
-    {value !== undefined ? (
-      <Input {...{value, ...props}} />
-    ) : (
-      <Text {...props} />
-    )}
-    <Helper {...{autocomplete, placeholder, onSelect, value}} />
-  </s.Fading>
-);
+}) => {
+  const [cacheValue, setCacheValue] = useState<string | undefined>();
+  const [inputValue, setInputValue] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+
+  function handleFocus() {
+    if (value) {
+      setInputValue(value);
+    }
+    setIsEditing(true);
+  }
+
+  function handleBlur() {
+    if (onChangeText !== undefined) {
+      // send data to parent
+      onChangeText(inputValue);
+    }
+  }
+
+  function handleChangeText(name: string) {
+    setInputValue(name);
+  }
+
+  useEffect(() => {
+    if (value !== cacheValue) {
+      // store is updated
+      setIsEditing(false);
+      setCacheValue(value);
+    }
+  }, [value, cacheValue]);
+
+  return (
+    <s.Fading>
+      {value !== undefined ? (
+        <Input
+          editable={onChangeText !== undefined}
+          onChangeText={handleChangeText}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          {...{...props, value: isEditing ? inputValue : value}}
+        />
+      ) : (
+        <Text {...props} />
+      )}
+      <Helper {...{autocomplete, placeholder, onSelect, value}} />
+    </s.Fading>
+  );
+};
 
 export default Sentence;

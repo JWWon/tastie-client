@@ -26,8 +26,22 @@ export const updateMessageHeight = createAction(
 )();
 // END UPDATE_MESSAGE_HEIGHT
 
+// UPDATE_KEYBOARD_VISIBLE
+interface UpdateKeyboardVisible {
+  keyboardVisible: boolean;
+}
+
+export const UPDATE_KEYBOARD_VISIBLE = '@device/UPDATE_KEYBOARD_VISIBLE';
+
+export const updateKeyboardVisible = createAction(
+  UPDATE_KEYBOARD_VISIBLE,
+  (payload: UpdateKeyboardVisible) => payload,
+)();
+// UPDATE_KEYBOARD_VISIBLE
+
 const actions = {
   updateHomeHeight,
   updateMessageHeight,
+  updateKeyboardVisible,
 };
 export type DeviceAction = ActionType<typeof actions>;

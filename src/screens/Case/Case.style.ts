@@ -2,15 +2,13 @@ import styled from 'styled-components/native';
 
 import RawHome from '@components/templates/Home';
 
-export const Home = styled(RawHome).attrs({
-  justifyContent: 'center',
-})``;
+export const Home = styled(RawHome)`
+  justify-content: center;
+`;
 
+const space = 12;
 export const MoreSentenceWrapper = styled.View`
-  margin: ${({theme}) => theme.size.verticalPadding / 2}px -${({theme}) =>
-      theme.size.templatePadding}px 0;
-  margin-top: ${({theme}) => theme.size.verticalPadding / 2}px;
-  padding: ${({theme}) => theme.size.verticalPadding / 2}px
-    ${({theme}) => theme.size.templatePadding}px;
+  margin: ${space}px -${({theme}) => theme.size.templatePadding}px 0;
+  padding: ${space}px ${({theme}) => theme.size.templatePadding}px;
   background: #efefef;
 `;

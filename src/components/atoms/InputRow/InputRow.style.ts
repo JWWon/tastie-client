@@ -15,18 +15,25 @@ export const Content = styled.Text`
 // END Text Content
 
 // Text Input
-export const InputWrapper = styled.View`
+interface InputProps {
+  maxSize?: number;
+}
+
+export const InputWrapper = styled.TouchableOpacity.attrs({
+  activeOpacity: 1,
+})<InputProps>`
+  ${({maxSize}) =>
+    maxSize ? `width: ${maxSize * letterWidth + 8}px` : 'flex: 1'};
   border: 0px solid ${props => props.theme.color.blue};
   border-bottom-width: 1px;
   padding: 0 0 2px;
 `;
 
-interface InputProps {
-  size?: number;
-}
 const letterWidth = 23;
-export const TextInput = styled.TextInput<InputProps>`
-  width: ${props => (props.size || 1) * letterWidth + 8}px;
+export const TextInput = styled.TextInput.attrs({
+  pointerEvents: 'none',
+})`
+  width: 100%;
   padding: 0; /* Corresponding Android */
   text-align: center;
   ${mixin.keyword}
