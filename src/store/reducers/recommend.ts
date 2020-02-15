@@ -1,18 +1,23 @@
-import {createReducer} from 'typesafe-actions';
-import {AxiosError} from 'axios';
-
+import {GetRecommendRes} from '@services/recommend/recommend.type';
 import {
-  RecommendAction,
-  GET_RECOMMEND_SUCCESS,
-  GET_RECOMMEND_FAILURE,
   CLEAR_RECOMMEND,
   GET_RECOMMEND,
+  GET_RECOMMEND_FAILURE,
+  GET_RECOMMEND_SUCCESS,
+  RecommendAction,
 } from '@store/actions/recommend';
-import {GetRecommendRes} from '@services/recommend/recommend.type';
-import {copyPayload, setError} from '@utils/helper';
+import {
+  copyPayloadWithLoading,
+  setPendingWithLoading,
+  setErrorWithLoading,
+} from '@utils/helper';
+import {AxiosError} from 'axios';
+import {createReducer} from 'typesafe-actions';
 
 export interface RecommendState extends GetRecommendRes {
   distance: string; // meter
+  // OTHER
+  loading: boolean;
   error?: AxiosError<any>;
 }
 
@@ -33,15 +38,17 @@ const initState: RecommendState = {
     openNow: false,
     weekdayText: [],
   },
+  // OTHER
+  loading: false,
 };
 
 const recommendReducer = createReducer<RecommendState, RecommendAction>(
   initState,
   {
     // ASYNC
-    [GET_RECOMMEND]: state => ({...state, error: undefined}),
-    [GET_RECOMMEND_SUCCESS]: copyPayload,
-    [GET_RECOMMEND_FAILURE]: setError,
+    [GET_RECOMMEND]: setPendingWithLoading,
+    [GET_RECOMMEND_SUCCESS]: copyPayloadWithLoading,
+    [GET_RECOMMEND_FAILURE]: setErrorWithLoading,
     // SYNC
     [CLEAR_RECOMMEND]: () => initState,
   },

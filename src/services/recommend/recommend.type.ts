@@ -19,6 +19,6 @@ export interface GetRecommendRes {
   photoUrls: string[];
   openingHours: {
     openNow: boolean;
-    weekdayText: string[];
+    weekdayText?: string[];
   };
 }

@@ -7,16 +7,35 @@ import consts from '@utils/consts';
 const {APP_IDENTIFIER} = consts;
 
 // REDUX HELPER
+export const setPending = <S>(state: S) => ({...state, error: undefined});
+
+export const setPendingWithLoading = <S>(state: S) => ({
+  ...state,
+  loading: true,
+  error: undefined,
+});
+
 export const copyPayload = <S, A extends {payload: any}>(
+  state: S,
+  action: A,
+) => ({...state, ...action.payload});
+
+export const copyPayloadWithLoading = <S, A extends {payload: any}>(
+  state: S,
+  action: A,
+) => ({...state, ...action.payload, loading: false});
+
+export const setError = <S, A extends {payload: any}>(state: S, action: A) => ({
+  ...state,
+  error: action.payload,
+});
+
+export const setErrorWithLoading = <S, A extends {payload: any}>(
   state: S,
   action: A,
 ) => ({
   ...state,
-  ...action.payload,
-});
-
-export const setError = <S, A extends {payload: any}>(state: S, action: A) => ({
-  ...state,
+  loading: false,
   error: action.payload,
 });
 

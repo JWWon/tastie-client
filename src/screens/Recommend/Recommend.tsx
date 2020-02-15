@@ -32,7 +32,8 @@ const Recommend: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   // useSelector
   const {category} = useSelector((state: RootState) => state.case);
-  const {recommend, message, device} = useSelector((state: RootState) => state);
+  const {recommend, device} = useSelector((state: RootState) => state);
+  const {loading, ...data} = recommend;
   const startPosition = device.homeHeight / 2 - 48;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
@@ -46,7 +47,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
   };
 
   useEffect(() => {
-    if (message.loading) {
+    if (loading) {
       if (status !== 'LOADING') {
         // * Loading start
         translateY.setValue(startPosition);
@@ -76,7 +77,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message.loading]);
+  }, [loading]);
 
   return (
     <Home>
@@ -86,7 +87,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
       {status === 'SUCCESS' && (
         <>
           <Sentence message={`오늘 <b>${category}</b>은,`} />
-          <PlaceCard onDismiss={handleDismiss} {...recommend} />
+          <PlaceCard onDismiss={handleDismiss} {...data} />
         </>
       )}
     </Home>

@@ -10,7 +10,6 @@ import * as s from './PlaceInfo.style';
 interface StaticInfo {
   type: string;
   content: string;
-  hide?: boolean;
 }
 
 function priceMessage(level: number) {
@@ -30,10 +29,12 @@ function priceMessage(level: number) {
   }
 }
 
-function getTodayOpeningHours(text: string[]) {
-  const todayIdx = (moment().weekday() + 6) % 7;
-  return text[todayIdx].split(': ')[1];
-}
+const getTodayOpeningHours = (hours?: string[]) => {
+  const today = (moment().weekday() + 6) % 7;
+  return hours && typeof hours[today] === 'string'
+    ? hours[today].split(': ')[1]
+    : '';
+};
 
 const PlaceInfo: React.FC<Props> = ({
   name,
@@ -48,7 +49,6 @@ const PlaceInfo: React.FC<Props> = ({
     {
       type: '가격대',
       content: priceMessage(priceLevel),
-      hide: typeof priceLevel !== 'number',
     },
     {
       type: '영업 시간',
@@ -61,12 +61,12 @@ const PlaceInfo: React.FC<Props> = ({
   ];
 
   const renderStaticInfo = ({item}: {item: StaticInfo}) =>
-    item.hide ? null : (
+    item.content ? (
       <s.StaticInfoRow>
         <s.InfoType>{item.type}</s.InfoType>
         <s.InfoContent>{item.content}</s.InfoContent>
       </s.StaticInfoRow>
-    );
+    ) : null;
 
   return (
     <s.Container>
