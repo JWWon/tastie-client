@@ -8,6 +8,7 @@ import PlaceCard from '@components/organisms/PlaceCard';
 import Sentence from '@components/molcules/Sentence';
 import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
+import {clearRecommend} from '@store/actions/recommend';
 import {HomeParamList} from '@navigations/Home';
 
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
@@ -41,10 +42,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
     new Animated.Value(startPosition),
   );
 
-  const handleDismiss = () => {
-    dispatch(updateContent({content: '다른 음식이 먹고싶나옹?'}));
-    navigation.navigate('Case');
-  };
+  const handleDismiss = () => dispatch(clearRecommend(navigation));
 
   useEffect(() => {
     if (loading) {

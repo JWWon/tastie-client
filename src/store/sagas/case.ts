@@ -9,6 +9,7 @@ import {
   race,
 } from 'redux-saga/effects';
 import Geolocation from 'react-native-geolocation-service';
+import firebase from '@react-native-firebase/app';
 import {AxiosResponse} from 'axios';
 import {channel} from 'redux-saga';
 import * as moment from 'moment';
@@ -107,6 +108,7 @@ function* getUserCoordsSaga() {
     if (coords) {
       yield put(getUserCoords.success(coords));
       yield put(getNearbyLocations.request({...coords, count: 10}));
+      yield firebase.analytics().logEvent('user_location', coords);
     }
     if (error) {
       yield put(getUserCoords.failure(error));
@@ -153,12 +155,14 @@ function* searchLocationsSaga(
         language: 'ko',
       },
     );
+
     const flatten: SearchLocationsRes = response.data.predictions.map(item => ({
       name: item.structured_formatting.main_text,
       place_id: item.place_id,
     }));
     yield put(updateContent({content: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
+    yield firebase.analytics().logEvent('search_location_name', action.payload);
   } catch (e) {
     yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));
     yield put(searchLocations.failure(e));

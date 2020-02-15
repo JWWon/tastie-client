@@ -1,5 +1,6 @@
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
+import firebase from '@react-native-firebase/app';
 import {useDispatch} from 'react-redux';
 
 import {clearCase} from '@store/actions/case';
@@ -21,10 +22,8 @@ export default () => {
     const {name} = state.routes[state.index];
     if (prevName !== name) {
       routeNameRef.current = name;
-
-      // TODO: set firebase anayltics
-      console.log(`Route changed to '${name}'!`);
-
+      // SEND SCREEN NAME TO ANALYTICS
+      firebase.analytics().setCurrentScreen(name, name);
       // MIDDLEWARE
       switch (name) {
         case SCREEN.CASE:
@@ -33,6 +32,11 @@ export default () => {
       }
     }
   }
+
+  useEffect(() => {
+    // SEND SCREEN NAME TO ANALYTICS
+    firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
+  }, []);
 
   return (
     <NavigationContainer onStateChange={handleStateChange}>

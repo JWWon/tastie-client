@@ -10,6 +10,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+// @react-native-firebase/app
+#import <Firebase.h>
 
 @implementation AppDelegate
 
@@ -27,6 +29,12 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  // @react-native-firebase/app
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
+  
   return YES;
 }
 
