@@ -10,6 +10,7 @@ import {
 } from '@services/recommend/recommend.type';
 import * as api from '@services/recommend';
 import {RootState} from '@store/reducers';
+import {getDistance} from '@utils/helper';
 
 function* getRecommendSaga(action: ReturnType<typeof getRecommend.request>) {
   const {navigate} = action.payload;
@@ -18,9 +19,10 @@ function* getRecommendSaga(action: ReturnType<typeof getRecommend.request>) {
 
   try {
     const {
+      userCoords,
       category,
       situation,
-      location,
+      location: paramLocation,
       hasRequired,
     }: RootState['case'] = yield select((state: RootState) => state.case);
 
@@ -31,13 +33,18 @@ function* getRecommendSaga(action: ReturnType<typeof getRecommend.request>) {
     const payload: GetRecommendReq = {
       category,
       situation,
-      ..._.pick(location, ['latitude', 'longitude']),
+      ..._.pick(paramLocation, ['latitude', 'longitude']),
     };
-    const response: AxiosResponse<GetRecommendRes> = yield call(
+    const {data}: AxiosResponse<GetRecommendRes> = yield call(
       api.getRecommend,
       payload,
     );
-    yield put(getRecommend.success(response.data));
+    const recommend = {
+      ...data,
+      distance: getDistance(userCoords, data.location),
+    };
+
+    yield put(getRecommend.success(recommend));
   } catch (e) {
     yield put(
       updateContent({

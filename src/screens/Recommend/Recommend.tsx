@@ -1,8 +1,6 @@
-/* eslint-disable react/no-did-update-set-state */
-import React from 'react';
-import {Easing} from 'react-native';
-import {connect} from 'react-redux';
-import {Animated} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Animated, Easing} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 import Home from '@components/templates/Home';
@@ -12,29 +10,13 @@ import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
 import {HomeParamList} from '@navigations/Home';
 
-const mapStateToProps = (state: RootState) => ({
-  recommend: state.recommend,
-  loading: state.message.loading,
-  category: state.case.category,
-  homeHeight: state.device.homeHeight,
-});
+type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
-const mapDispatchToProps = {
-  updateMessage: updateContent,
-  hide: hideMessage,
-};
-
-type Props = ReturnType<typeof mapStateToProps> &
-  typeof mapDispatchToProps & {
-    navigation: BottomTabNavigationProp<HomeParamList, 'Recommend'>;
-  };
-
-interface State {
-  status: 'LOADING' | 'SUCCESS' | 'ERROR';
-  value: Animated.Value;
+interface Props {
+  navigation: BottomTabNavigationProp<HomeParamList, 'Recommend'>;
 }
 
-function getTitle(status: State['status']) {
+function getTitle(status: Status) {
   switch (status) {
     case 'LOADING':
       return '<b>Anna</b>가 정하는 중이에요...';
@@ -45,75 +27,70 @@ function getTitle(status: State['status']) {
   }
 }
 
-class Recommend extends React.PureComponent<Props, State> {
-  public state: State = {
-    status: 'LOADING',
-    value: new Animated.Value(1),
-  };
+const Recommend: React.FC<Props> = ({navigation}) => {
+  // useDispatch
+  const dispatch = useDispatch();
+  // useSelector
+  const {category} = useSelector((state: RootState) => state.case);
+  const {recommend, message, device} = useSelector((state: RootState) => state);
+  const startPosition = device.homeHeight / 2 - 48;
+  // useState
+  const [status, setStatus] = useState<Status>('LOADING');
+  const [translateY] = useState<Animated.Value>(
+    new Animated.Value(startPosition),
+  );
 
-  private handleDismiss = () => {
-    const {navigation, updateMessage} = this.props;
-    updateMessage({content: '다른 음식이 먹고싶나옹?'});
+  const handleDismiss = () => {
+    dispatch(updateContent({content: '다른 음식이 먹고싶나옹?'}));
     navigation.navigate('Case');
   };
 
-  public static getDerivedStateFromProps(props: Props, state: State) {
-    if (state.status !== 'LOADING' && props.loading) {
-      // loading start
-      return {status: 'LOADING'};
-    }
-    return null;
-  }
-
-  public componentDidUpdate(prevProps: Props) {
-    const {loading, recommend, updateMessage, hide} = this.props;
-    if (prevProps.loading && !loading) {
-      if (!recommend.id) {
-        // ERROR
-        this.setState({status: 'ERROR'});
+  useEffect(() => {
+    if (message.loading) {
+      if (status !== 'LOADING') {
+        // * Loading start
+        translateY.setValue(startPosition);
+        setStatus('LOADING');
         return;
       }
-      // SUCCESS
-      hide();
-      Animated.timing(this.state.value, {
-        toValue: 0,
-        duration: 560,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        updateMessage({content: '맘에 들었다면 츄르를 달라옹!'});
-        this.setState({status: 'SUCCESS'});
-      });
-    } else if (!prevProps.loading && loading) {
-      // LOADING
-      this.state.value.setValue(1);
-      this.setState({status: 'LOADING'});
+    } else {
+      if (status === 'LOADING') {
+        // * Loading finished
+        if (recommend.error) {
+          // Failure
+          setStatus('ERROR');
+          return;
+        }
+        // Success
+        dispatch(hideMessage());
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 560,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          dispatch(updateContent({content: '맘에 들었다면 츄르를 달라옹!'}));
+          setStatus('SUCCESS');
+        });
+        return;
+      }
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message.loading]);
 
-  public render() {
-    const {category, recommend, homeHeight} = this.props;
-    const {status, value} = this.state;
-    const translateY = value.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, homeHeight / 2 - 48],
-    });
+  return (
+    <Home>
+      <Animated.View style={{transform: [{translateY}]}}>
+        <Sentence message={getTitle(status)} />
+      </Animated.View>
+      {status === 'SUCCESS' && (
+        <>
+          <Sentence message={`오늘 <b>${category}</b>은,`} />
+          <PlaceCard onDismiss={handleDismiss} {...recommend} />
+        </>
+      )}
+    </Home>
+  );
+};
 
-    return (
-      <Home>
-        <Animated.View style={{transform: [{translateY}]}}>
-          <Sentence message={getTitle(status)} />
-        </Animated.View>
-        {status === 'SUCCESS' && (
-          <>
-            <Sentence message={`오늘 <b>${category}</b>은,`} />
-            <PlaceCard onDismiss={this.handleDismiss} {...recommend} />
-          </>
-        )}
-      </Home>
-    );
-  }
-}
-
-// eslint-disable-next-line prettier/prettier
-export default connect(mapStateToProps, mapDispatchToProps)(Recommend);
+export default Recommend;

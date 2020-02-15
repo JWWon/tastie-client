@@ -1,4 +1,4 @@
-package com.anna;
+package me.tastie.client;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -8,7 +8,7 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
-    return "Anna";
+    return "Tastie";
   }
 
   @Override

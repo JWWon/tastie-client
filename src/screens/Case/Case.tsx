@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
@@ -19,7 +19,6 @@ import {
   searchLocations,
 } from '@store/actions/case';
 import {CaseIndex} from '@store/reducers/case';
-import {updateContent} from '@store/actions/message';
 import {HomeParamList} from '@navigations/Home';
 import consts from '@utils/consts';
 import * as s from './Case.style';
@@ -37,6 +36,7 @@ const Case: React.FC<Props> = ({navigation}) => {
     nearbyLocations,
     searchedLocations,
     situations,
+    preferences,
     category,
     location,
     situation,
@@ -46,33 +46,25 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const preferenceExist = preference !== undefined;
 
-  function categoryDidMount() {
-    dispatch(clearCase());
-  }
-
-  function switchPage() {
-    dispatch(getRecommend.request(navigation));
-  }
+  const searchRecommend = () => dispatch(getRecommend.request(navigation));
 
   const handlePressMore = () => dispatch(selectPreference({preference: ''}));
 
-  const handleSearchLocation = (value: string) => {
+  const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
-    dispatch(updateContent({content: '장소를 선택하라옹'}));
-  };
-
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
-    dispatch(selectCategory({category: name, onPress: switchPage}));
-
-  const handleSelectLocation: SelectAutocomplete = value => {
-    dispatch(selectLocation.request({...value, onPress: switchPage}));
-  };
-
+    dispatch(selectCategory({category: name, onPress: searchRecommend}));
+  const handleSelectLocation: SelectAutocomplete = value =>
+    dispatch(selectLocation.request({...value, onPress: searchRecommend}));
   const handleSelectSituation: SelectAutocomplete = ({name}) =>
-    dispatch(selectSituation({situation: name, onPress: switchPage}));
-
+    dispatch(selectSituation({situation: name, onPress: searchRecommend}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
+
+  useEffect(() => {
+    dispatch(clearCase());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <s.Home>
@@ -87,7 +79,6 @@ const Case: React.FC<Props> = ({navigation}) => {
         }}
         value={category}
         onPress={() => dispatch(clearCasePartly(CaseIndex.CATEGORY))}
-        onLayout={categoryDidMount}
       />
       {category !== '' && (
         <Sentence
@@ -131,23 +122,18 @@ const Case: React.FC<Props> = ({navigation}) => {
           <FlatList<SentenceProps>
             data={[
               {
-                leadMessage: '왠지 ',
+                leadMessage: '나는 ',
                 maxSize: 8,
-                message: '한게',
+                message: '걸',
                 autocomplete: {
-                  data: [
-                    {name: '매콤한'},
-                    {name: '느끼한'},
-                    {name: '자극적인'},
-                    {name: '깔끔한'},
-                  ],
+                  data: preferences,
                   onSelect: handleSelectPreference,
                 },
                 value: preference,
                 onPress: () => dispatch(clearCasePartly(CaseIndex.PREFERENCE)),
               },
               {
-                message: '먹고싶어.',
+                message: '좋아해.',
               },
             ]}
             renderItem={({item}) => <Sentence {...item} />}

@@ -1,8 +1,17 @@
 import React from 'react';
+import {FlatList} from 'react-native';
+import moment from 'moment';
 
 import ImageButton from '@components/atoms/ImageButton';
+import {makePhoneCall, openNaverMap} from '@utils/helper';
 import {Props} from './PlaceInfo.type';
 import * as s from './PlaceInfo.style';
+
+interface StaticInfo {
+  type: string;
+  content: string;
+  hide?: boolean;
+}
 
 function priceMessage(level: number) {
   switch (level) {
@@ -21,53 +30,70 @@ function priceMessage(level: number) {
   }
 }
 
+function getTodayOpeningHours(text: string[]) {
+  const todayIdx = (moment().weekday() + 6) % 7;
+  return text[todayIdx].split(': ')[1];
+}
+
 const PlaceInfo: React.FC<Props> = ({
   name,
-  types,
+  distance,
   location,
   formattedPhoneNumber,
   formattedAddress,
   priceLevel,
   openingHours,
-}) => (
-  <s.Container>
-    <s.Header>
+}) => {
+  const staticInfos: StaticInfo[] = [
+    {
+      type: '가격대',
+      content: priceMessage(priceLevel),
+      hide: typeof priceLevel !== 'number',
+    },
+    {
+      type: '영업 시간',
+      content: getTodayOpeningHours(openingHours.weekdayText),
+    },
+    {
+      type: '영업 여부',
+      content: openingHours.openNow ? '영업중' : '준비중',
+    },
+  ];
+
+  const renderStaticInfo = ({item}: {item: StaticInfo}) =>
+    item.hide ? null : (
+      <s.StaticInfoRow>
+        <s.InfoType>{item.type}</s.InfoType>
+        <s.InfoContent>{item.content}</s.InfoContent>
+      </s.StaticInfoRow>
+    );
+
+  return (
+    <s.Container>
       <s.Name>{name}</s.Name>
       <s.DynamicInfo>
-        <s.Types>{types?.join(', ')}</s.Types>
-        {/* TODO: calculate distance by location */}
-        <s.Distance>300m</s.Distance>
+        <s.Types>{formattedAddress}</s.Types>
+        <s.Distance>{distance}</s.Distance>
       </s.DynamicInfo>
       <s.ButtonWrapper>
         <ImageButton
-          onPress={() => {
-            // TODO: link phone number with action
-          }}
+          onPress={() => makePhoneCall(formattedPhoneNumber)}
           source={require('@assets/images/icon-phone/icon-phone.png')}
         />
         <ImageButton
-          onPress={() => {
-            // TODO: link address with maps
-          }}
+          onPress={() => openNaverMap({name, ...location})}
           source={require('@assets/images/icon-pin/icon-pin.png')}
         />
       </s.ButtonWrapper>
       <s.StaticInfo>
-        {priceLevel !== undefined && (
-          <s.StaticInfoRow>
-            <s.InfoType>가격대</s.InfoType>
-            <s.InfoContent>{priceMessage(priceLevel)}</s.InfoContent>
-          </s.StaticInfoRow>
-        )}
-        <s.StaticInfoRow>
-          <s.InfoType>영업 여부</s.InfoType>
-          <s.InfoContent>
-            {openingHours.openNow ? '영업중' : '준비중'}
-          </s.InfoContent>
-        </s.StaticInfoRow>
+        <FlatList<StaticInfo>
+          data={staticInfos}
+          renderItem={renderStaticInfo}
+          keyExtractor={item => item.type}
+        />
       </s.StaticInfo>
-    </s.Header>
-  </s.Container>
-);
+    </s.Container>
+  );
+};
 
 export default PlaceInfo;

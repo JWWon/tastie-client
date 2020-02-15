@@ -8,14 +8,17 @@ export const FullScreen = styled.View`
 
 export const Container = styled.SafeAreaView`
   flex: 1;
+  background: transparent;
 `;
 
 export const HideContainer = styled.TouchableWithoutFeedback`
   flex: 1;
+  background: transparent;
 `;
 
 export const ContentWrapper = styled.View`
   flex: 1;
+  background: transparent;
   padding-top: ${({theme}) => theme.size.templatePadding}px;
   padding-bottom: ${({theme}) =>
     theme.size.navButton +

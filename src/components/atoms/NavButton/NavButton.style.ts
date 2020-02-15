@@ -1,12 +1,13 @@
 import styled from 'styled-components/native';
 
+import {shadow} from '@styles/mixins';
+
 export const Button = styled.TouchableOpacity`
   width: ${({theme}) => theme.size.navButton}px;
   height: ${({theme}) => theme.size.navButton}px;
   border-radius: ${({theme}) => theme.size.navButton / 2}px;
   background: #ffffff;
-  /* shadow */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  ${shadow}
 `;
 
 interface BorderProps {
@@ -37,6 +38,7 @@ export const IconWrapper = styled.View`
 const catSize = 0.56; // relative size
 export const IconCat = styled.Image.attrs(() => ({
   source: require('@assets/images/icon-cat/icon-cat.png'),
+  resizeMode: 'contain',
 }))`
   position: absolute;
   top: 50%;

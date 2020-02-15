@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
 	<name>Anna</name>
+=======
+	<name>Tastie</name>
+>>>>>>> 0954f87... MA-9 Test service on production mode
 	<comment>Project android created by Buildship.</comment>
 	<projects>
 	</projects>

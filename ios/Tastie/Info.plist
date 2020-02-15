@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Anna</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,6 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>telprompt</string>
+		<string>nmap</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -45,12 +51,6 @@
 		<string>NanumSquareL.ttf</string>
 		<string>NanumSquareR.ttf</string>
 		<string>NanumSquareEB.ttf</string>
-		<string>NotoSans-Bold.otf</string>
-		<string>NotoSans-Light.otf</string>
-		<string>NotoSans-Regular.otf</string>
-		<string>NotoSansKR-Bold.otf</string>
-		<string>NotoSansKR-Light.otf</string>
-		<string>NotoSansKR-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

@@ -1,5 +1,4 @@
-import React, {useRef} from 'react';
-import {TextInput} from 'react-native';
+import React from 'react';
 
 import * as s from './InputRow.style';
 import {Props} from './InputRow.type';
@@ -13,35 +12,18 @@ const MainText: React.FC<Props> = ({
   maxSize,
   onPress,
   ...props
-}) => {
-  const inputRef = useRef<TextInput>(null);
-
-  function handlePress() {
-    if (onPress) {
-      onPress();
-    }
-    if (editable) {
-      inputRef.current?.focus();
-    }
-  }
-
-  return (
-    <s.Wrapper>
-      {leadMessage && <s.Content>{leadMessage}</s.Content>}
-      <s.InputWrapper maxSize={maxSize} onPress={handlePress}>
-        <s.TextInput
-          {...props}
-          editable={editable}
-          ref={inputRef}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="search"
-          underlineColorAndroid="transparent"
-        />
-      </s.InputWrapper>
-      <s.Content>{message}</s.Content>
-    </s.Wrapper>
-  );
-};
+}) => (
+  <s.Wrapper>
+    {leadMessage && <s.Content>{leadMessage}</s.Content>}
+    <s.InputWrapper maxSize={maxSize} disabled={editable} onPress={onPress}>
+      <s.TextInput
+        editable={editable}
+        pointerEvents={editable ? 'auto' : 'none'}
+        {...props}
+      />
+    </s.InputWrapper>
+    <s.Content>{message}</s.Content>
+  </s.Wrapper>
+);
 
 export default MainText;

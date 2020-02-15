@@ -1,63 +1,80 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 import {Props} from './Sentence.type';
 import * as s from './Sentence.style';
 import Text from '@components/atoms/TextRow';
 import Input from '@components/atoms/InputRow';
-import Helper from '@components/atoms/HelperRow';
+import Helper, {SelectAutocomplete} from '@components/atoms/HelperRow';
 
 const Sentence: React.FC<Props> = ({
+  value: storeValue,
   autocomplete,
   placeholder,
-  onSelect,
-  value,
   onChangeText,
+  onPress,
   ...props
 }) => {
-  const [cacheValue, setCacheValue] = useState<string | undefined>();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState<string>('');
   const [isEditing, setIsEditing] = useState(false);
+  const editable = onChangeText !== undefined;
 
+  // * Active when editable={true}
   function handleFocus() {
-    if (value) {
-      setInputValue(value);
+    if (onPress) {
+      onPress();
     }
     setIsEditing(true);
+    // sync values with remote
+    setInputValue(storeValue || '');
   }
 
   function handleBlur() {
-    if (onChangeText !== undefined) {
+    if (onChangeText) {
       // send data to parent
       onChangeText(inputValue);
     }
   }
+  // END Active when editable={true}
 
-  function handleChangeText(name: string) {
-    setInputValue(name);
-  }
-
-  useEffect(() => {
-    if (value !== cacheValue) {
-      // store is updated
-      setIsEditing(false);
-      setCacheValue(value);
+  // * Active when editable={false}
+  function handlePress() {
+    if (!!storeValue && onPress) {
+      onPress();
     }
-  }, [value, cacheValue]);
+  }
+  // END Active when editable={false}
+
+  const handleSelect: SelectAutocomplete = value => {
+    if (autocomplete) {
+      autocomplete.onSelect(value);
+      setIsEditing(false);
+    }
+  };
 
   return (
     <s.Fading>
-      {value !== undefined ? (
+      {storeValue !== undefined ? (
         <Input
-          editable={onChangeText !== undefined}
-          onChangeText={handleChangeText}
+          editable={editable}
+          onChangeText={setInputValue}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          {...{...props, value: isEditing ? inputValue : value}}
+          onPress={handlePress}
+          value={isEditing ? inputValue : storeValue}
+          {...props}
         />
       ) : (
         <Text {...props} />
       )}
-      <Helper {...{autocomplete, placeholder, onSelect, value}} />
+      <Helper
+        value={storeValue}
+        placeholder={placeholder}
+        autocomplete={
+          autocomplete !== undefined
+            ? {...autocomplete, onSelect: handleSelect}
+            : undefined
+        }
+      />
     </s.Fading>
   );
 };

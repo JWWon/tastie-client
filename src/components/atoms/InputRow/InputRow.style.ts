@@ -15,13 +15,13 @@ export const Content = styled.Text`
 // END Text Content
 
 // Text Input
-interface InputProps {
+interface InputWrapperProps {
   maxSize?: number;
 }
 
 export const InputWrapper = styled.TouchableOpacity.attrs({
   activeOpacity: 1,
-})<InputProps>`
+})<InputWrapperProps>`
   ${({maxSize}) =>
     maxSize ? `width: ${maxSize * letterWidth + 8}px` : 'flex: 1'};
   border: 0px solid ${props => props.theme.color.blue};
@@ -31,10 +31,13 @@ export const InputWrapper = styled.TouchableOpacity.attrs({
 
 const letterWidth = 23;
 export const TextInput = styled.TextInput.attrs({
-  pointerEvents: 'none',
+  autoCapitalize: 'none',
+  autoCorrect: false,
+  returnKeyType: 'search',
+  underlineColorAndroid: 'transparent',
 })`
   width: 100%;
-  padding: 0; /* Corresponding Android */
+  margin: 0;
   text-align: center;
   ${mixin.keyword}
 `;

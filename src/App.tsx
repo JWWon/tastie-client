@@ -1,31 +1,30 @@
 import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
-// import {StatusBar} from 'react-native';
+import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import {ThemeProvider} from 'styled-components';
 
 import axios from '@services/axios.base';
 import theme from '@styles/theme';
 import Navigator from './navigations';
-import {checkPermission} from '@utils/helper';
 import {configStore} from './store';
 
-const App: React.FC = () => {
-  const store = configStore();
+const store = configStore();
 
-  useEffect(() => {
-    checkPermission();
+class App extends Component {
+  constructor(props: {}) {
+    super(props);
     axios.config();
-  });
+  }
 
-  return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        {/* <StatusBar barStyle="dark-content" /> */}
-        <Navigator />
-      </ThemeProvider>
-    </Provider>
-  );
-};
+  render() {
+    return (
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <Navigator />
+        </ThemeProvider>
+      </Provider>
+    );
+  }
+}
 
 export default App;

@@ -26,7 +26,7 @@ const Helper: React.FC<Props> = ({autocomplete, placeholder, value}) => {
               </s.AutoCompleteText>
             </s.AutoCompleteItem>
           )}
-          keyExtractor={({name}) => name}
+          keyExtractor={(_, idx) => idx.toString()}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         />

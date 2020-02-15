@@ -1,5 +1,5 @@
-import {GetRecommendRes} from '@services/recommend/recommend.type';
+import {RecommendState} from '@store/reducers/recommend';
 
-export interface Props extends GetRecommendRes {
+export interface Props extends RecommendState {
   onDismiss: () => void;
 }

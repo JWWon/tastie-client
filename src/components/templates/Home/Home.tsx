@@ -26,37 +26,40 @@ const Template: React.FC<Props> = ({children, style}) => {
   }
 
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      const keyboardDidShowListener = Keyboard.addListener(
-        'keyboardDidShow',
-        e => {
+    Keyboard.dismiss();
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      e => {
+        if (Platform.OS === 'ios') {
           const {height} = e.endCoordinates;
           Animated.timing(marginTop, {
             toValue: -(height / 2),
             duration: 320,
             easing: Easing.inOut(Easing.quad),
           }).start();
-          dispatch(updateKeyboardVisible({keyboardVisible: true}));
-        },
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        'keyboardDidHide',
-        () => {
+        }
+        dispatch(updateKeyboardVisible({keyboardVisible: true}));
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        if (Platform.OS === 'ios') {
           Animated.timing(marginTop, {
             toValue: 0,
             duration: 320,
             easing: Easing.inOut(Easing.quad),
           }).start();
-          dispatch(updateKeyboardVisible({keyboardVisible: false}));
-        },
-      );
+        }
+        dispatch(updateKeyboardVisible({keyboardVisible: false}));
+      },
+    );
 
-      return () => {
-        keyboardDidShowListener.remove();
-        keyboardDidHideListener.remove();
-      };
-    }
-  });
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, [marginTop, dispatch]);
 
   return (
     <s.FullScreen>

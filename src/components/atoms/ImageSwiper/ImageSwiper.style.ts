@@ -9,7 +9,7 @@ import sizes from '@styles/sizes';
 
 export const Container = styled.View`
   width: 100%;
-  aspect-ratio: 1.2;
+  flex: 1;
 `;
 
 export const Pager = styled(RawPager)`

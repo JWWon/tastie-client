@@ -1,3 +1,3 @@
-import {GetRecommendRes} from '@services/recommend/recommend.type';
+import {RecommendState} from '@store/reducers/recommend';
 
-export interface Props extends Omit<GetRecommendRes, 'photoUrls'> {}
+export interface Props extends Omit<RecommendState, 'photoUrls'> {}

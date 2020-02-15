@@ -30,7 +30,7 @@ import {
   searchLocations,
 } from '@store/actions/case';
 import {RootState} from '@store/reducers';
-import {CoordsInterface} from '@store/reducers/case';
+import {CoordsInterface, CaseIndex} from '@store/reducers/case';
 import {updateContent, updateLoading} from '@store/actions/message';
 import {
   GetCategoriesRes,
@@ -43,6 +43,7 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import consts from '@utils/consts';
+import {checkPermission} from '@utils/helper';
 
 const {MY_LOCATION} = consts;
 
@@ -54,8 +55,10 @@ function* clearCaseSaga() {
   ]);
 }
 
-function* clearCasePartlySaga() {
-  yield put(updateContent({content: '다시 고르겠나옹?', onPress: undefined}));
+function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {
+  if (action.payload !== CaseIndex.PREFERENCE) {
+    yield put(updateContent({content: '다시 고르겠나옹?', onPress: undefined}));
+  }
 }
 
 function* getCategoriesSaga() {
@@ -86,6 +89,7 @@ function* getUserCoordsSaga() {
   const successChannel = yield call(channel);
   const failureChannel = yield call(channel);
 
+  yield call(checkPermission);
   yield call(
     Geolocation.getCurrentPosition,
     ({coords}): CoordsInterface =>
@@ -113,6 +117,7 @@ function* getUserCoordsSaga() {
 function* getNearbyLocationSaga(
   action: ReturnType<typeof getNearbyLocations.request>,
 ) {
+  yield put(updateLoading({loading: true}));
   try {
     const response: AxiosResponse<GetNearbyLocationsRes> = yield call(
       api.getNearbyLocations,
@@ -122,6 +127,7 @@ function* getNearbyLocationSaga(
   } catch (e) {
     yield put(getNearbyLocations.failure(e));
   }
+  yield put(updateLoading({loading: false}));
 }
 
 function* searchLocationsSaga(
@@ -151,6 +157,7 @@ function* searchLocationsSaga(
       name: item.structured_formatting.main_text,
       place_id: item.place_id,
     }));
+    yield put(updateContent({content: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
   } catch (e) {
     yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));

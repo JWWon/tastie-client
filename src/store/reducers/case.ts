@@ -29,6 +29,7 @@ import {
   CLEAR_CASE_PARTLY,
   SEARCH_LOCATIONS_SUCCESS,
   SEARCH_LOCATIONS_FAILURE,
+  SEARCH_LOCATIONS,
 } from '../actions/case';
 
 export interface CoordsInterface {
@@ -54,6 +55,7 @@ interface CaseState {
   nearbyLocations: GetNearbyLocationsRes;
   searchedLocations: SearchLocationsRes;
   situations: GetSituationsRes;
+  preferences: {name: string}[];
   // SELECTED VALUE
   category: string;
   situation: string;
@@ -73,6 +75,13 @@ const initState: CaseState = {
   nearbyLocations: [],
   searchedLocations: [],
   situations: [],
+  preferences: [
+    {name: '매콤한'},
+    {name: '느끼한'},
+    {name: '담백한'},
+    {name: '분위기가 좋은'},
+    {name: '저렴한'},
+  ],
   // SELECTED VALUE
   category: '',
   situation: '',
@@ -104,6 +113,7 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
     nearbyLocations: action.payload,
   }),
   [GET_NEARBY_LOCATIONS_FAILURE]: setError,
+  [SEARCH_LOCATIONS]: state => ({...state, searchedLocations: []}),
   [SEARCH_LOCATIONS_SUCCESS]: (state, action) => ({
     ...state,
     searchedLocations: action.payload,
@@ -120,16 +130,20 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
   [CLEAR_CASE_PARTLY]: (state, action) =>
     produce(state, draft => {
       switch (action.payload) {
-        // IMPORTANT! do not put `break` keyword
         case CaseIndex.CATEGORY:
-          draft.category = initState.category;
+          // IMPORTANT! do not use `break` keyword
+          draft.category = '';
         case CaseIndex.LOCATION:
+          // IMPORTANT! do not use `break` keyword
           draft.location = initState.location;
         case CaseIndex.SITUATION:
-          draft.situation = initState.situation;
-          draft.hasRequired = initState.hasRequired;
-        case CaseIndex.PREFERENCE:
+          draft.situation = '';
+          draft.hasRequired = false;
           delete draft.preference;
+          break;
+        case CaseIndex.PREFERENCE:
+          draft.preference = '';
+          break;
       }
     }),
   [SELECT_CATEGORY]: copyPayload,
