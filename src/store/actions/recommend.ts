@@ -14,13 +14,20 @@ export const getRecommend = createAsyncAction(
   GET_RECOMMEND,
   GET_RECOMMEND_SUCCESS,
   GET_RECOMMEND_FAILURE,
-)<BottomTabNavigationProp<HomeParamList, 'Case'>, RecommendState, AxiosError>();
+)<
+  BottomTabNavigationProp<HomeParamList, 'Case'>,
+  Omit<RecommendState, 'loading'>,
+  AxiosError
+>();
 // END GET_RECOMMEND
 
 // CLEAR_RECOMMEND
 export const CLEAR_RECOMMEND = '@recommend/CLEAR_RECOMMEND';
 
-export const clearRecommend = createAction(CLEAR_RECOMMEND, () => {})();
+export const clearRecommend = createAction(
+  CLEAR_RECOMMEND,
+  (payload: BottomTabNavigationProp<HomeParamList, 'Recommend'>) => payload,
+)();
 // END CLEAR_RECOMMEND
 
 const actions = {getRecommend, clearRecommend};

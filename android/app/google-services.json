@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "297158642366",
+    "firebase_url": "https://tastie.firebaseio.com",
+    "project_id": "tastie",
+    "storage_bucket": "tastie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297158642366:android:228a5f25485fe712e16cef",
+        "android_client_info": {
+          "package_name": "me.tastie.client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297158642366-m7bm5ar854bciit82fuaq5srgsuvdj5f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.tastie.client",
+            "certificate_hash": "6e7f41dbac1ef1c9233045d56184f1cbc2493d66"
+          }
+        },
+        {
+          "client_id": "297158642366-a2t4cv987m1bclcp9bd6s28mqu7vv8po.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuXNEj5LiNHP9KLkt8ITNhTc9EpB-3xYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297158642366-a2t4cv987m1bclcp9bd6s28mqu7vv8po.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
