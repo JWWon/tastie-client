@@ -10,6 +10,7 @@ import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
 import {clearRecommend} from '@store/actions/recommend';
 import {HomeParamList} from '@navigations/Home';
+import consts from '@utils/consts';
 
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
@@ -17,16 +18,7 @@ interface Props {
   navigation: BottomTabNavigationProp<HomeParamList, 'Recommend'>;
 }
 
-function getTitle(status: Status) {
-  switch (status) {
-    case 'LOADING':
-      return '<b>Anna</b>가 정하는 중이에요...';
-    case 'SUCCESS':
-      return '<b>Anna</b>가 정한';
-    default:
-      return '<b>Anna</b>가 정하지 못했어요 :(';
-  }
-}
+const {CHARACTER_NAME} = consts;
 
 const Recommend: React.FC<Props> = ({navigation}) => {
   // useDispatch
@@ -43,6 +35,17 @@ const Recommend: React.FC<Props> = ({navigation}) => {
   );
 
   const handleDismiss = () => dispatch(clearRecommend(navigation));
+
+  function getTitle() {
+    switch (status) {
+      case 'LOADING':
+        return `<b>${CHARACTER_NAME}</b>가 정하는 중이에요...`;
+      case 'SUCCESS':
+        return `오늘 <b>${category}</b>은 이거애옹!`;
+      default:
+        return `<b>${CHARACTER_NAME}</b>가 정하지 못했어요 :(`;
+    }
+  }
 
   useEffect(() => {
     if (loading) {
@@ -80,13 +83,10 @@ const Recommend: React.FC<Props> = ({navigation}) => {
   return (
     <Home>
       <Animated.View style={{transform: [{translateY}]}}>
-        <Sentence message={getTitle(status)} />
+        <Sentence message={getTitle()} />
       </Animated.View>
       {status === 'SUCCESS' && (
-        <>
-          <Sentence message={`오늘 <b>${category}</b>은,`} />
-          <PlaceCard onDismiss={handleDismiss} {...data} />
-        </>
+        <PlaceCard onDismiss={handleDismiss} {...data} />
       )}
     </Home>
   );

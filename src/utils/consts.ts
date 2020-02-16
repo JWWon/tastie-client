@@ -10,4 +10,5 @@ export default {
   MY_LOCATION: '내 위치',
   GOOGLE_PLACE_KEY: 'AIzaSyCSGHrkS2azFA9oY6nGE_MnzvrQLuaLoq0',
   APP_IDENTIFIER: 'me.tastie.client',
+  CHARACTER_NAME: '고양이',
 };
