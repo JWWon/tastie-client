@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import * as mixin from '@styles/mixins';
 
 // View
-const space = 18;
+const space = 16;
 
 export const Container = styled.View``;
 
