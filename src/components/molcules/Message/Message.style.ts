@@ -36,7 +36,7 @@ export const TriangleBorder = styled.View`
 `;
 
 export const TriangleBackground = styled(TriangleBorder)<MessageProps>`
-  margin-top: -${height + borderWidth}px;
+  margin-top: -${height + borderWidth - 0.5}px;
   margin-left: -${width - borderWidth}px;
 
   border-width: ${width - borderWidth}px;

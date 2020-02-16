@@ -68,7 +68,6 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   return (
     <s.Home>
-      <Sentence message="<b>Anna</b>야," />
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
