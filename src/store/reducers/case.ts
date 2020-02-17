@@ -30,6 +30,8 @@ import {
   SEARCH_LOCATIONS_SUCCESS,
   SEARCH_LOCATIONS_FAILURE,
   SEARCH_LOCATIONS,
+  GET_PREFERENCES_SUCCESS,
+  GET_PREFERENCES_FAILURE,
 } from '../actions/case';
 
 export interface CoordsInterface {
@@ -75,13 +77,7 @@ const initState: CaseState = {
   nearbyLocations: [],
   searchedLocations: [],
   situations: [],
-  preferences: [
-    {name: '매콤한'},
-    {name: '느끼한'},
-    {name: '담백한'},
-    {name: '분위기가 좋은'},
-    {name: '저렴한'},
-  ],
+  preferences: [],
   // SELECTED VALUE
   category: '',
   situation: '',
@@ -119,6 +115,12 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
     searchedLocations: action.payload,
   }),
   [SEARCH_LOCATIONS_FAILURE]: setError,
+  [GET_PREFERENCES_SUCCESS]: (state, action) => ({
+    ...state,
+    preferences: action.payload,
+    preference: '',
+  }),
+  [GET_PREFERENCES_FAILURE]: setError,
   [SELECT_LOCATION_SUCCESS]: (state, action) => ({
     ...state,
     searchedLocations: [], // initializing
