@@ -6,8 +6,6 @@ import {
   GetCategoriesRes,
   GetSituationsReq,
   GetSituationsRes,
-  GetRestaurantReq,
-  GetRestaurantRes,
   GetNearbyLocationsReq,
   GetNearbyLocationsRes,
   SearchLocationsReq,
@@ -18,6 +16,8 @@ import {
   GetLocationDetailsAPIRes,
   GetAddressReq,
   GetAddressRes,
+  GetPreferencesReq,
+  GetPreferencesRes,
 } from './case.type';
 
 const {GOOGLE_PLACE_KEY} = consts;
@@ -39,8 +39,8 @@ export const getSituations = (params: GetSituationsReq) =>
     params,
   });
 
-export const getRestarant = (params: GetRestaurantReq) =>
-  axios.get<GetRestaurantReq, GetRestaurantRes>(`${BASE_URL}/restaurant`, {
+export const getPreferences = (params: GetPreferencesReq) =>
+  axios.get<GetPreferencesReq, GetPreferencesRes>(`${BASE_URL}/preferences`, {
     params,
   });
 

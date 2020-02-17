@@ -1,9 +1,10 @@
 import 'react-native-gesture-handler';
+import '@react-native-firebase/analytics';
 import React, {Component} from 'react';
 import {Provider} from 'react-redux';
 import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/analytics';
 import {ThemeProvider} from 'styled-components';
+import DeviceInfo from 'react-native-device-info';
 
 import axios from '@services/axios.base';
 import theme from '@styles/theme';
@@ -12,12 +13,17 @@ import {configStore} from './store';
 
 const store = configStore();
 
-function configAnalytics() {
+async function configAnalytics() {
+  // SET USER ID
+  const uuid = DeviceInfo.getUniqueId();
+  firebase.analytics().setUserId(uuid);
+
   if (__DEV__) {
     firebase.analytics().resetAnalyticsData();
-    firebase.analytics().setUserId('DEVELOP');
+    firebase.analytics().setAnalyticsCollectionEnabled(false);
+  } else {
+    firebase.analytics().logAppOpen();
   }
-  firebase.analytics().logAppOpen();
 }
 
 class App extends Component {

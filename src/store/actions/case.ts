@@ -5,6 +5,7 @@ import {AxiosError} from 'axios';
 import {
   GetCategoriesRes,
   GetSituationsRes,
+  GetPreferencesRes,
   GetNearbyLocationsReq,
   GetNearbyLocationsRes,
   SearchLocationsReq,
@@ -97,6 +98,18 @@ export const searchLocations = createAsyncAction(
 )<SearchLocationsReq, SearchLocationsRes, AxiosError>();
 // END SEARCH_LOCATIONS
 
+// GET_PREFERENCES
+export const GET_PREFERENCES = '@case/GET_PREFERENCES_REQUEST';
+export const GET_PREFERENCES_SUCCESS = '@case/GET_PREFERENCES_SUCCESS';
+export const GET_PREFERENCES_FAILURE = '@case/GET_PREFERENCES_FAILURE';
+
+export const getPreferences = createAsyncAction(
+  GET_PREFERENCES,
+  GET_PREFERENCES_SUCCESS,
+  GET_PREFERENCES_FAILURE,
+)<undefined, GetPreferencesRes, AxiosError>();
+// END GET_PREFERENCES
+
 // SELECT_CATEGORY
 interface SelectCategory extends ButtonInterface {
   category: string;
@@ -177,6 +190,7 @@ const actions = {
   getUserCoords,
   getNearbyLocations,
   searchLocations,
+  getPreferences,
   selectCategory,
   selectLocation,
   selectSituation,

@@ -160,7 +160,9 @@ export interface GetLocationDetailsAPIRes {
 // END GET_LOCATION_DETAILS
 
 // GET_SITUATIONS
-export interface GetSituationsReq extends DateInterface {}
+export interface GetSituationsReq {
+  category: string;
+}
 
 export type GetSituationsRes = NameInterface[];
 // END GET_SITUATIONS
@@ -178,3 +180,11 @@ export interface GetRestaurantRes {
   location: CoordsInterface;
 }
 // END GET_RESTAURANT
+
+// GET_PREFERENCES
+export interface GetPreferencesReq {
+  situation: string;
+}
+
+export type GetPreferencesRes = NameInterface[];
+// END GET_PREFERENCES

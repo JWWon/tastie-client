@@ -17,6 +17,7 @@ import {
   clearCase,
   clearCasePartly,
   searchLocations,
+  getPreferences,
 } from '@store/actions/case';
 import {CaseIndex} from '@store/reducers/case';
 import {HomeParamList} from '@navigations/Home';
@@ -48,7 +49,7 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const searchRecommend = () => dispatch(getRecommend.request(navigation));
 
-  const handlePressMore = () => dispatch(selectPreference({preference: ''}));
+  const handlePressMore = () => dispatch(getPreferences.request());
 
   const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
@@ -99,7 +100,7 @@ const Case: React.FC<Props> = ({navigation}) => {
       )}
       {location.name !== '' && (
         <Sentence
-          maxSize={10}
+          maxSize={11}
           message="이야."
           autocomplete={{
             data: situations,
