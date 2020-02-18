@@ -1,7 +1,7 @@
 export default {
   BASE_URL: {
     DEVELOPMENT: 'https://staging.tastie.me/api',
-    PRODUCTION: 'https://staging.tastie.me/api',
+    PRODUCTION: 'https://production.tastie.me/api',
   },
   SCREEN: {
     CASE: 'Case' as const,
