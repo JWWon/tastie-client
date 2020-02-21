@@ -41,14 +41,12 @@ import {
   SearchLocationsAPIRes,
   SearchLocationsRes,
   GetLocationDetailsAPIRes,
-  GetAddressRes,
   GetPreferencesRes,
 } from '@services/case';
 import * as api from '@services/case';
-import consts from '@utils/consts';
+import {getAddress, GetAddressRes} from '@services/coordinate';
+import {MY_LOCATION} from '@utils/consts';
 import {checkPermission} from '@utils/helper';
-
-const {MY_LOCATION} = consts;
 
 function* clearCaseSaga() {
   yield all([put(getUserCoords.request()), put(getCategories.request())]);
@@ -109,7 +107,7 @@ function* getUserCoordsSaga() {
     if (coords) {
       yield put(getUserCoords.success(coords));
       yield put(getNearbyLocations.request({...coords, count: 10}));
-      yield firebase.analytics().logEvent('user_location', coords);
+      yield firebase.analytics().logEvent('user_coordinate', coords);
     }
     if (error) {
       yield put(getUserCoords.failure(error));
@@ -163,7 +161,6 @@ function* searchLocationsSaga(
     }));
     yield put(updateContent({content: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
-    yield firebase.analytics().logEvent('search_location_name', action.payload);
   } catch (e) {
     yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));
     yield put(searchLocations.failure(e));
@@ -195,7 +192,7 @@ function* selectLocationSaga(
       // * current user location
       const {userCoords}: RootState['case'] = yield select(state => state.case);
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
-        api.getAddress,
+        getAddress,
         userCoords,
       );
       yield put(selectLocation.success({name, address, ...userCoords}));
@@ -205,7 +202,7 @@ function* selectLocationSaga(
     if (location !== undefined) {
       // * select from 'nearbyLocations'
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
-        api.getAddress,
+        getAddress,
         location,
       );
       yield put(selectLocation.success({name, address, ...location}));

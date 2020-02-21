@@ -1,14 +1,16 @@
-export default {
-  BASE_URL: {
-    DEVELOPMENT: 'https://staging.tastie.me/api',
-    PRODUCTION: 'https://production.tastie.me/api',
-  },
-  SCREEN: {
-    CASE: 'Case' as const,
-    RECOMMEND: 'Recommend' as const,
-  },
-  MY_LOCATION: '내 위치',
-  GOOGLE_PLACE_KEY: 'AIzaSyCSGHrkS2azFA9oY6nGE_MnzvrQLuaLoq0',
-  APP_IDENTIFIER: 'me.tastie.client',
-  CHARACTER_NAME: '고양이',
+// Object
+export const BASE_URL = {
+  DEVELOPMENT: 'https://staging.tastie.me/api',
+  PRODUCTION: 'https://production.tastie.me/api',
 };
+
+export const SCREEN = {
+  CASE: 'Case' as const,
+  RECOMMENDATION: 'Recommendation' as const,
+};
+
+// String
+export const MY_LOCATION = '내 위치';
+export const GOOGLE_PLACE_KEY = 'AIzaSyCSGHrkS2azFA9oY6nGE_MnzvrQLuaLoq0';
+export const APP_IDENTIFIER = 'me.tastie.client';
+export const CHARACTER_NAME = '고양이';

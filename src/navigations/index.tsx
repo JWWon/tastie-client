@@ -4,10 +4,8 @@ import firebase from '@react-native-firebase/app';
 import {useDispatch} from 'react-redux';
 
 import {clearCase} from '@store/actions/case';
-import consts from '@utils/consts';
+import {SCREEN} from '@utils/consts';
 import HomeNavigator from './Home';
-
-const {SCREEN} = consts;
 
 export default () => {
   const routeNameRef = useRef<string>();
@@ -34,7 +32,7 @@ export default () => {
   }
 
   useEffect(() => {
-    // SEND SCREEN NAME TO ANALYTICS
+    // SEND FIRST SCREEN NAME TO ANALYTICS
     firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
   }, []);
 
