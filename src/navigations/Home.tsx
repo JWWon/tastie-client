@@ -4,15 +4,13 @@ import {useSelector} from 'react-redux';
 
 import Navbar from '@components/organisms/Navbar';
 import CaseScreen from '@screens/Case';
-import RecommendScreen from '@screens/Recommend';
+import RecommendationScreen from '@screens/Recommendation';
 import {RootState} from '@store/reducers';
-import consts from '@utils/consts';
-
-const {SCREEN} = consts;
+import {SCREEN} from '@utils/consts';
 
 export type HomeParamList = {
   [SCREEN.CASE]: undefined;
-  [SCREEN.RECOMMEND]: undefined;
+  [SCREEN.RECOMMENDATION]: undefined;
 };
 
 const Home = createBottomTabNavigator<HomeParamList>();
@@ -26,7 +24,10 @@ export default () => {
       tabBar={() => (!keyboardVisible ? <Navbar /> : null)}
       backBehavior="initialRoute">
       <Home.Screen name={SCREEN.CASE} component={CaseScreen} />
-      <Home.Screen name={SCREEN.RECOMMEND} component={RecommendScreen} />
+      <Home.Screen
+        name={SCREEN.RECOMMENDATION}
+        component={RecommendationScreen}
+      />
     </Home.Navigator>
   );
 };

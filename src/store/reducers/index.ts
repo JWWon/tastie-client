@@ -4,13 +4,13 @@ import {StateType} from 'typesafe-actions';
 import caseReducer from './case';
 import device from './device';
 import message from './message';
-import recommend from './recommend';
+import recommendation from './recommendation';
 
 const rootReducer = combineReducers({
   case: caseReducer,
   device,
   message,
-  recommend,
+  recommendation,
 });
 
 export default rootReducer;

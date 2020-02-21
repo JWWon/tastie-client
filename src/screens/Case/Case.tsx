@@ -8,7 +8,7 @@ import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
 import {SelectAutocomplete} from '@components/atoms/HelperRow';
 import {RootState} from '@store/reducers';
-import {getRecommend} from '@store/actions/recommend';
+import {getRecommendation} from '@store/actions/recommendation';
 import {
   selectCategory,
   selectSituation,
@@ -21,10 +21,8 @@ import {
 } from '@store/actions/case';
 import {CaseIndex} from '@store/reducers/case';
 import {HomeParamList} from '@navigations/Home';
-import consts from '@utils/consts';
+import {MY_LOCATION} from '@utils/consts';
 import * as s from './Case.style';
-
-const {MY_LOCATION} = consts;
 
 interface Props {
   navigation: BottomTabNavigationProp<HomeParamList, 'Case'>;
@@ -47,7 +45,7 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const preferenceExist = preference !== undefined;
 
-  const searchRecommend = () => dispatch(getRecommend.request(navigation));
+  const searchRecommend = () => dispatch(getRecommendation.request(navigation));
 
   const handlePressMore = () => dispatch(getPreferences.request());
 

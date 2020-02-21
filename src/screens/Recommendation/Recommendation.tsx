@@ -8,25 +8,26 @@ import PlaceCard from '@components/organisms/PlaceCard';
 import Sentence from '@components/molcules/Sentence';
 import {RootState} from '@store/reducers';
 import {updateContent, hideMessage} from '@store/actions/message';
-import {clearRecommend} from '@store/actions/recommend';
+import {clearRecommendation} from '@store/actions/recommendation';
 import {HomeParamList} from '@navigations/Home';
-import consts from '@utils/consts';
+import {CHARACTER_NAME, SCREEN} from '@utils/consts';
 
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
 interface Props {
-  navigation: BottomTabNavigationProp<HomeParamList, 'Recommend'>;
+  navigation: BottomTabNavigationProp<
+    HomeParamList,
+    typeof SCREEN.RECOMMENDATION
+  >;
 }
 
-const {CHARACTER_NAME} = consts;
-
-const Recommend: React.FC<Props> = ({navigation}) => {
+const Recommendation: React.FC<Props> = ({navigation}) => {
   // useDispatch
   const dispatch = useDispatch();
   // useSelector
   const {category} = useSelector((state: RootState) => state.case);
-  const {recommend, device} = useSelector((state: RootState) => state);
-  const {loading, ...data} = recommend;
+  const {recommendation, device} = useSelector((state: RootState) => state);
+  const {loading, ...data} = recommendation;
   const startPosition = device.homeHeight / 2 - 48;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
@@ -34,7 +35,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
     new Animated.Value(startPosition),
   );
 
-  const handleDismiss = () => dispatch(clearRecommend(navigation));
+  const handleDismiss = () => dispatch(clearRecommendation(navigation));
 
   function getTitle() {
     switch (status) {
@@ -58,7 +59,7 @@ const Recommend: React.FC<Props> = ({navigation}) => {
     } else {
       if (status === 'LOADING') {
         // * Loading finished
-        if (recommend.error) {
+        if (recommendation.error) {
           // Failure
           setStatus('ERROR');
           return;
@@ -92,4 +93,4 @@ const Recommend: React.FC<Props> = ({navigation}) => {
   );
 };
 
-export default Recommend;
+export default Recommendation;
