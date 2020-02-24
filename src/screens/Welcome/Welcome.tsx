@@ -1,9 +1,19 @@
 import React from 'react';
+import {useDispatch} from 'react-redux';
 
+import {loginWithFacebook} from '@store/actions/auth';
 import BaseView from '@components/templates/BaseView';
 import * as s from './Welcome.style';
 
 const Welcome: React.FC = () => {
+  const dispatch = useDispatch();
+
+  function handleLoginWithFB() {
+    dispatch(loginWithFacebook.request());
+  }
+
+  function handleLoginWithGoogle() {}
+
   return (
     <BaseView>
       <s.Container>
@@ -19,13 +29,13 @@ const Welcome: React.FC = () => {
         />
         <s.Provider
           message="구글로 시작하기"
-          onPress={() => {}}
-          icon={require('@assets/images/logo-facebook/logo-facebook.png')}
+          onPress={handleLoginWithGoogle}
+          icon={require('@assets/images/logo-google/logo-google.png')}
         />
         <s.Provider
           message="페이스북으로 시작하기"
-          onPress={() => {}}
-          icon={require('@assets/images/logo-google/logo-google.png')}
+          onPress={handleLoginWithFB}
+          icon={require('@assets/images/logo-facebook/logo-facebook.png')}
         />
       </s.Container>
     </BaseView>

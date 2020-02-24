@@ -42,15 +42,17 @@ export const getPreferences = (params: GetPreferencesReq) =>
   });
 
 // Google Place API
-const GOOGLE_URL = 'https://maps.googleapis.com/maps/api/place';
+const googleInstance = axios.create({
+  baseURL: 'https://maps.googleapis.com/maps/api/place',
+});
 export const searchLocations = (params: SearchLocationsReq) =>
-  axios.get<SearchLocationsAPIReq, SearchLocationsAPIRes>(
-    `${GOOGLE_URL}/autocomplete/json`,
+  googleInstance.get<SearchLocationsAPIReq, SearchLocationsAPIRes>(
+    '/autocomplete/json',
     {params: {...params, key: GOOGLE_PLACE_KEY}},
   );
 
 export const getLocationDetails = (params: GetLocationDetailsReq) =>
-  axios.get<GetLocationDetailsAPIReq, GetLocationDetailsAPIRes>(
-    `${GOOGLE_URL}/details/json`,
+  googleInstance.get<GetLocationDetailsAPIReq, GetLocationDetailsAPIRes>(
+    '/details/json',
     {params: {...params, key: GOOGLE_PLACE_KEY}},
   );

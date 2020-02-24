@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Tastie</string>
+    <string name="facebook_app_id">853569668423778</string>
+    <string name="fb_login_protocol_scheme">fb853569668423778</string>
 </resources>
