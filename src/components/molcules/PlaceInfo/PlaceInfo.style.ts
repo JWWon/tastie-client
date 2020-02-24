@@ -1,7 +1,5 @@
 import styled from 'styled-components/native';
 
-import * as mixin from '@styles/mixins';
-
 // View
 const space = 16;
 
@@ -35,7 +33,8 @@ const GrayFont = styled.Text`
 `;
 
 export const Name = styled.Text`
-  ${mixin.keyword}
+  ${({theme}) => theme.font.size24}
+  color: ${({theme}) => theme.color.black};
 `;
 
 export const Types = styled(GrayFont).attrs({

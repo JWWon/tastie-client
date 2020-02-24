@@ -3,9 +3,9 @@ import styled from 'styled-components/native';
 import {shadow} from '@styles/mixins';
 
 export const Button = styled.TouchableOpacity`
-  width: ${({theme}) => theme.size.navButton}px;
-  height: ${({theme}) => theme.size.navButton}px;
-  border-radius: ${({theme}) => theme.size.navButton / 2}px;
+  width: ${({theme}) => theme.size.button.cat}px;
+  height: ${({theme}) => theme.size.button.cat}px;
+  border-radius: ${({theme}) => theme.size.button.cat / 2}px;
   background: #ffffff;
   ${shadow}
 `;
@@ -18,7 +18,7 @@ export const ButtonBorder = styled.View<BorderProps>`
   width: 100%;
   height: 100%;
   border-width: 1px;
-  border-radius: ${({theme}) => theme.size.navButton / 2}px;
+  border-radius: ${({theme}) => theme.size.button.cat / 2}px;
   background: transparent;
   border-color: ${({alert, theme}) => (alert ? theme.color.blue : '#bcbcbc')};
   opacity: 0.25;
@@ -43,9 +43,9 @@ export const IconCat = styled.Image.attrs(() => ({
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: -${({theme}) => theme.size.navButton * (catSize / 2)}px 0 0 -${({
+  margin: -${({theme}) => theme.size.button.cat * (catSize / 2)}px 0 0 -${({
       theme,
-    }) => theme.size.navButton * (catSize / 2)}px;
-  width: ${({theme}) => theme.size.navButton * catSize}px;
-  height: ${({theme}) => theme.size.navButton * catSize}px;
+    }) => theme.size.button.cat * (catSize / 2)}px;
+  width: ${({theme}) => theme.size.button.cat * catSize}px;
+  height: ${({theme}) => theme.size.button.cat * catSize}px;
 `;

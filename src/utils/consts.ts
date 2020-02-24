@@ -7,6 +7,7 @@ export const BASE_URL = {
 export const SCREEN = {
   CASE: 'Case' as const,
   RECOMMENDATION: 'Recommendation' as const,
+  WELCOME: 'Welcome' as const,
 };
 
 // String

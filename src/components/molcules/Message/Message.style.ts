@@ -5,7 +5,7 @@ interface MessageProps {
 }
 
 export const Container = styled.View`
-  margin-bottom: 6px;
+  padding-bottom: 6px;
   align-items: center;
 `;
 
@@ -16,7 +16,7 @@ const borderWidth = 1;
 export const Bubble = styled.View<MessageProps>`
   background: ${selectBgColor};
   border: ${borderWidth}px solid ${({theme}) => theme.color.blackBorder};
-  border-radius: ${({theme}) => theme.size.roundBorder}px;
+  border-radius: ${({theme}) => theme.size.border.basic}px;
   width: 100%;
   padding: 12px 16px;
 `;

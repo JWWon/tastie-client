@@ -2,11 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
-import * as s from './NavButton.style';
+import * as s from './CatButton.style';
 import {RootState} from '@store/reducers';
 import {resetPressAction} from '@store/actions/message';
 
-const NavButton: React.FC = () => {
+const CatButton: React.FC = () => {
   const {onPress, loading} = useSelector((state: RootState) => state.message);
   const dispatch = useDispatch();
   const [opacity] = useState(new Animated.Value(0.25));
@@ -56,4 +56,4 @@ const NavButton: React.FC = () => {
   );
 };
 
-export default NavButton;
+export default CatButton;

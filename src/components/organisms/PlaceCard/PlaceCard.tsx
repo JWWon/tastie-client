@@ -6,11 +6,11 @@ import ImageSwiper from '@components/atoms/ImageSwiper';
 import PlaceInfo from '@components/molcules/PlaceInfo';
 import * as s from './PlaceCard.style';
 import {Props} from './PlaceCard.type';
-import sizes from '@styles/sizes';
 
 const PlaceCard: React.FC<Props> = ({onDismiss, photoUrls, ...infos}) => {
-  const {messageHeight} = useSelector((state: RootState) => state.device);
-  const marginBottom = messageHeight - sizes.templatePadding + 16;
+  const {messageHeight: marginBottom} = useSelector(
+    (state: RootState) => state.device,
+  );
 
   return (
     <s.Container style={{marginBottom}}>

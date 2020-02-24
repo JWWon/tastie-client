@@ -62,11 +62,10 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   useEffect(() => {
     dispatch(clearCase());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <s.Home>
+    <s.Container>
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
@@ -139,7 +138,7 @@ const Case: React.FC<Props> = ({navigation}) => {
           />
         </s.MoreSentenceWrapper>
       )}
-    </s.Home>
+    </s.Container>
   );
 };
 
