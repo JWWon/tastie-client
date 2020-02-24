@@ -7,16 +7,16 @@ import * as s from './TextRow.style';
  * If you put <b>, </b> tag inside string,
  * it automatical converts into Keyword component.
  */
-const TextRow: React.FC<Props> = ({message}) => {
+const TextRow: React.FC<Props> = ({message, style}) => {
   const list = message.match(/(.*)<b>(.*)<\/b>(.*)/i);
   if (list === null) {
-    return <s.Content>{message}</s.Content>;
+    return <s.Content style={style}>{message}</s.Content>;
   }
   // remove message itself on list
   list.splice(0, 1);
 
   return (
-    <s.Content>
+    <s.Content style={style}>
       {list[0]}
       <s.Keyword>{list[1]}</s.Keyword>
       {list[2]}

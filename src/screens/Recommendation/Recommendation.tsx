@@ -3,7 +3,7 @@ import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
-import Home from '@components/templates/Home';
+import KeyboardSafeView from '@components/templates/KeyboardSafeView';
 import PlaceCard from '@components/organisms/PlaceCard';
 import Sentence from '@components/molcules/Sentence';
 import {RootState} from '@store/reducers';
@@ -11,6 +11,7 @@ import {updateContent, hideMessage} from '@store/actions/message';
 import {clearRecommendation} from '@store/actions/recommendation';
 import {HomeParamList} from '@navigations/Home';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
+import size from '@styles/sizes';
 
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
@@ -28,7 +29,7 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
   const {category} = useSelector((state: RootState) => state.case);
   const {recommendation, device} = useSelector((state: RootState) => state);
   const {loading, ...data} = recommendation;
-  const startPosition = device.homeHeight / 2 - 48;
+  const startPosition = (size.view.rootHeight - device.messageHeight) / 2;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
   const [translateY] = useState<Animated.Value>(
@@ -78,18 +79,17 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
         return;
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return (
-    <Home>
+    <KeyboardSafeView>
       <Animated.View style={{transform: [{translateY}]}}>
         <Sentence message={getTitle()} />
       </Animated.View>
       {status === 'SUCCESS' && (
         <PlaceCard onDismiss={handleDismiss} {...data} />
       )}
-    </Home>
+    </KeyboardSafeView>
   );
 };
 

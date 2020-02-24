@@ -2,17 +2,16 @@ import styled from 'styled-components/native';
 import {Dimensions} from 'react-native';
 
 export const Placeholder = styled.Text`
+  ${({theme}) => theme.font.size14}
   margin-top: 4px;
-  font-family: NanumSquareR;
-  font-size: 14px;
-  color: ${props => props.theme.color.grayLight};
+  color: ${({theme}) => theme.color.grayLight};
 `;
 
 export const AutoCompleteWrapper = styled.View`
   width: ${Dimensions.get('screen').width}px;
   height: 32px;
-  margin: 8px -${props => props.theme.size.templatePadding}px 0;
-  padding: 0 ${props => props.theme.size.templatePadding}px;
+  margin: 8px -${({theme}) => theme.space.rootHorizontal}px 0;
+  padding: 0 ${({theme}) => theme.space.rootHorizontal}px;
 `;
 
 export const AutoCompleteItem = styled.TouchableOpacity`

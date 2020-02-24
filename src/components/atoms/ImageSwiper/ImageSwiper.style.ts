@@ -15,7 +15,7 @@ export const Container = styled.View`
 export const Pager = styled(RawPager)`
   flex: 1;
   overflow: hidden;
-  border-radius: ${({theme}) => theme.size.roundBorder}px;
+  border-radius: ${({theme}) => theme.size.border.basic}px;
 `;
 
 export const Card = styled.View`

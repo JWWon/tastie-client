@@ -1,12 +1,22 @@
-export default {
-  // Padding
-  templatePadding: 24,
-  verticalPadding: 16,
-  textPadding: 12,
-  // Border Radius
-  roundBorder: 12,
-  // Button Size
-  navButton: 52,
+import {Dimensions} from 'react-native';
+import space from './spaces';
+
+const {height} = Dimensions.get('screen');
+
+const sizes = {
+  button: {
+    cat: 52,
+  },
+  border: {
+    basic: 12,
+  },
   // View Position
   placeCardHover: 24,
+};
+
+export default {
+  ...sizes,
+  view: {
+    rootHeight: height - (space.rootTop + space.rootBottom + sizes.button.cat), // without message height
+  },
 };

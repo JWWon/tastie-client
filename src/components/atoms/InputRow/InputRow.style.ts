@@ -1,7 +1,5 @@
 import styled from 'styled-components/native';
 
-import * as mixin from '@styles/mixins';
-
 // Wrapper
 export const Wrapper = styled.View`
   flex-direction: row;
@@ -10,7 +8,7 @@ export const Wrapper = styled.View`
 
 // Text Content
 export const Content = styled.Text`
-  ${mixin.content}
+  ${({theme}) => theme.font.content}
 `;
 // END Text Content
 
@@ -36,9 +34,10 @@ export const TextInput = styled.TextInput.attrs({
   returnKeyType: 'search',
   underlineColorAndroid: 'transparent',
 })`
+  ${({theme}) => theme.font.size24}
+  color: ${({theme}) => theme.color.black};
   width: 100%;
   margin: 0;
   text-align: center;
-  ${mixin.keyword}
 `;
 // END Text Input

@@ -13,7 +13,7 @@ export const Container = styled.View`
 export const InfoWrapper = styled.View`
   margin-top: -${({theme}) => theme.size.placeCardHover}px;
   background: ${({theme}) => theme.color.white};
-  border-radius: ${({theme}) => theme.size.roundBorder}px;
+  border-radius: ${({theme}) => theme.size.border.basic}px;
   padding: 16px;
   ${shadow}
 `;
