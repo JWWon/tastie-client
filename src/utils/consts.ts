@@ -12,6 +12,5 @@ export const SCREEN = {
 
 // String
 export const MY_LOCATION = '내 위치';
-export const GOOGLE_PLACE_KEY = 'AIzaSyCSGHrkS2azFA9oY6nGE_MnzvrQLuaLoq0';
 export const APP_IDENTIFIER = 'me.tastie.client';
 export const CHARACTER_NAME = '고양이';

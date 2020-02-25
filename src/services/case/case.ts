@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import {GOOGLE_PLACE_KEY} from '@utils/consts';
+import {GOOGLE_PLACE_KEY} from '@utils/env';
 import {
   GetCategoriesReq,
   GetCategoriesRes,

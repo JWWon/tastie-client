@@ -12,6 +12,7 @@ import {
 import {GoogleSignin, User} from '@react-native-community/google-signin';
 
 import {SCREEN} from '@utils/consts';
+import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import {AuthInterface} from '@store/reducers/auth';
 import {
   checkKeychain,
@@ -124,11 +125,11 @@ function* loginWithFacebookSaga() {
 
 function* loginWithGoogleSaga() {
   try {
-    yield call(GoogleSignin.configure);
-    yield call(GoogleSignin.hasPlayServices, {
-      showPlayServicesUpdateDialog: true,
-    });
+    yield call(GoogleSignin.configure, {webClientId: GOOGLE_WEB_CLIENT});
+    yield call(GoogleSignin.hasPlayServices);
     const {user, idToken}: User = yield call(GoogleSignin.signIn);
+    // TODO: Check if user data exists on db
+
     const name = user.name || '';
     const payload: AuthInterface = {
       provider: 'google',

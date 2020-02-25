@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "297158642366-m7bm5ar854bciit82fuaq5srgsuvdj5f.apps.googleusercontent.com",
+          "client_id": "297158642366-1v4cpp6nloq6dnk2q7l7eopjs3nmqgtu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "me.tastie.client",
-            "certificate_hash": "6e7f41dbac1ef1c9233045d56184f1cbc2493d66"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "297158642366-dt4c857lfuedb9mb9jc7fdpo52f722ud.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.tastie.client",
+            "certificate_hash": "0f0f6fc642dd5ecfb6c6711345619216aa1d58e6"
           }
         },
         {
@@ -38,6 +46,14 @@
             {
               "client_id": "297158642366-a2t4cv987m1bclcp9bd6s28mqu7vv8po.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "297158642366-9dhfsih7kfcuuitieela4f06jkv84ul7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "me.tastie.client",
+                "app_store_id": "1499347694"
+              }
             }
           ]
         }

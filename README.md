@@ -1,6 +1,6 @@
 # Mobile Application of 'Tastie'
 
-> last update : 2020.02.15
+> last update : 2020.02.25
 
 ## How to start
 
@@ -11,31 +11,28 @@
 $ git clone git@gitlab.com:tastie/tastie-client.git
 ```
 
-3. Download packages
+3. Import `env.ts` and save on `src/utils` (Ask `@Jiwoon Won`)
+4. Download packages
 
 ```bash
 $ cd tastie-client
-
-# if you use npm
-$ npm install
-# else if you use yarn
 $ yarn install
-
+# for xcode
 $ cd ios
 $ pod install
 $ cd ..
 ```
 
-4. Start emulator
+5. Start emulator
 
 ```bash
-$ npm start
+$ yarn start
 # open another bash shell
 
 # if you want to run ios
-$ npm run ios
+$ yarn ios
 # if you want to run android
-$ npm run android
+$ yarn android
 ```
 
 ## How to deploy
