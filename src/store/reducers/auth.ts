@@ -1,3 +1,8 @@
+import {
+  LOGIN_WITH_GOOGLE,
+  LOGIN_WITH_GOOGLE_SUCCESS,
+  LOGIN_WITH_GOOGLE_FAILURE,
+} from './../actions/auth';
 import {createReducer} from 'typesafe-actions';
 
 import {
@@ -10,7 +15,7 @@ import {
   LOGIN_WITH_FACEBOOK_FAILURE,
 } from '../actions/auth';
 
-export interface UserInterface {
+export interface AuthInterface {
   provider: 'facebook' | 'google' | 'email';
   accessToken: string | null;
   name: string;
@@ -18,7 +23,7 @@ export interface UserInterface {
   birthYear?: string;
 }
 
-interface AuthState extends UserInterface {
+interface AuthState extends AuthInterface {
   status: 'PENDING' | 'SUCCESS' | 'FAILURE';
   error?: any;
 }
@@ -32,33 +37,34 @@ const initState: AuthState = {
   email: '',
 };
 
+// HELPERS
+const pending = <S>(state: S) => ({
+  ...state,
+  status: 'PENDING',
+  error: undefined,
+});
+const success = <S, A extends {payload: any}>(state: S, action: A) => ({
+  ...state,
+  ...action.payload,
+  status: 'SUCCESS',
+});
+const failure = <S, A extends {payload: any}>(state: S, action: A) => ({
+  ...state,
+  error: action.payload,
+  status: 'FAILURE',
+});
+
+// REDUCER
 const authReducer = createReducer<AuthState, AuthAction>(initState, {
-  [CHECK_KEYCHAIN]: state => ({...state, status: 'PENDING', error: undefined}),
-  [CHECK_KEYCHAIN_SUCCESS]: (state, action) => ({
-    ...state,
-    ...action.payload,
-    status: 'SUCCESS',
-  }),
-  [CHECK_KEYCHAIN_FAILURE]: (state, action) => ({
-    ...state,
-    error: action.payload,
-    status: 'FAILURE',
-  }),
-  [LOGIN_WITH_FACEBOOK]: state => ({
-    ...state,
-    status: 'PENDING',
-    error: undefined,
-  }),
-  [LOGIN_WITH_FACEBOOK_SUCCESS]: (state, action) => ({
-    ...state,
-    ...action.payload,
-    status: 'SUCCESS',
-  }),
-  [LOGIN_WITH_FACEBOOK_FAILURE]: (state, action) => ({
-    ...state,
-    error: action.payload,
-    status: 'FAILURE',
-  }),
+  [CHECK_KEYCHAIN]: pending,
+  [CHECK_KEYCHAIN_SUCCESS]: success,
+  [CHECK_KEYCHAIN_FAILURE]: failure,
+  [LOGIN_WITH_FACEBOOK]: pending,
+  [LOGIN_WITH_FACEBOOK_SUCCESS]: success,
+  [LOGIN_WITH_FACEBOOK_FAILURE]: failure,
+  [LOGIN_WITH_GOOGLE]: pending,
+  [LOGIN_WITH_GOOGLE_SUCCESS]: success,
+  [LOGIN_WITH_GOOGLE_FAILURE]: failure,
 });
 
 export default authReducer;

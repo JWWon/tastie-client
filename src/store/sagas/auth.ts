@@ -9,10 +9,15 @@ import {
   GraphRequest,
   GraphRequestManager,
 } from 'react-native-fbsdk';
+import {GoogleSignin, User} from '@react-native-community/google-signin';
 
 import {SCREEN} from '@utils/consts';
-import {UserInterface} from '@store/reducers/auth';
-import {checkKeychain, loginWithFacebook} from '../actions/auth';
+import {AuthInterface} from '@store/reducers/auth';
+import {
+  checkKeychain,
+  loginWithFacebook,
+  loginWithGoogle,
+} from '../actions/auth';
 
 type KeychainInterface =
   | false
@@ -31,15 +36,21 @@ function* checkKeychainSaga() {
       yield call(Keychain.resetGenericPassword);
       throw new Error('No credentials stored.');
     }
+
+    const auth: AuthInterface = JSON.parse(credentials.password);
     // TODO: Check if token is valid
-    yield put(
-      checkKeychain.success({
-        provider: 'email',
-        accessToken: 'sampletoken',
-        name: '나야나',
-        email: 'example@mail.com',
-      }),
-    );
+    switch (auth.provider) {
+      case 'email':
+        yield put(checkKeychain.success(auth));
+        break;
+      case 'facebook':
+        yield put(checkKeychain.success(auth));
+        break;
+      case 'google':
+        yield put(checkKeychain.success(auth));
+        break;
+    }
+
     yield firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
   } catch (e) {
     yield put(checkKeychain.failure(e));
@@ -50,6 +61,7 @@ function* checkKeychainSaga() {
 interface SuccessChannel {
   error?: object;
   response?: {
+    id: string;
     name: string;
     email: string;
     birthday?: string;
@@ -62,9 +74,8 @@ function* loginWithFacebookSaga() {
       LoginManager.logInWithPermissions,
       ['public_profile', 'email', 'user_birthday'],
     );
-    if (loginRes.isCancelled) {
-      throw new Error('Login cancelled by user');
-    }
+    if (loginRes.isCancelled) throw new Error('Login cancelled by user');
+
     const {accessToken}: AccessToken = yield call(
       AccessToken.getCurrentAccessToken,
     );
@@ -86,18 +97,15 @@ function* loginWithFacebookSaga() {
 
     yield fork(function*() {
       const {error, response}: SuccessChannel = yield take(successChannel);
-      if (error) {
-        throw new Error(JSON.stringify(error));
-      }
-      if (!response) {
-        return;
-      }
+      if (error) throw new Error(JSON.stringify(error));
+      if (!response) return;
 
-      const {birthday, ...res} = response;
-      const payload: UserInterface = {
+      const {birthday, name, email} = response;
+      const payload: AuthInterface = {
         provider: 'facebook',
         accessToken,
-        ...res,
+        email,
+        name,
       };
       if (birthday) {
         const birthYear = birthday.match(/\d{4}/i);
@@ -106,11 +114,33 @@ function* loginWithFacebookSaga() {
         }
       }
 
-      // TODO: save access info to keychain
-      yield put(checkKeychain.success(payload));
+      yield call(Keychain.setGenericPassword, name, JSON.stringify(payload));
+      yield put(loginWithFacebook.success(payload));
     });
   } catch (e) {
     yield put(loginWithFacebook.failure(e));
+  }
+}
+
+function* loginWithGoogleSaga() {
+  try {
+    yield call(GoogleSignin.configure);
+    yield call(GoogleSignin.hasPlayServices, {
+      showPlayServicesUpdateDialog: true,
+    });
+    const {user, idToken}: User = yield call(GoogleSignin.signIn);
+    const name = user.name || '';
+    const payload: AuthInterface = {
+      provider: 'google',
+      accessToken: idToken,
+      email: user.email,
+      name,
+    };
+
+    yield call(Keychain.setGenericPassword, name, JSON.stringify(payload));
+    yield put(loginWithGoogle.success(payload));
+  } catch (e) {
+    yield put(loginWithGoogle.failure(e));
   }
 }
 
@@ -118,5 +148,6 @@ export default function* root() {
   // acync
   yield takeEvery(checkKeychain.request, checkKeychainSaga);
   yield takeEvery(loginWithFacebook.request, loginWithFacebookSaga);
+  yield takeEvery(loginWithGoogle.request, loginWithGoogleSaga);
   // sync
 }

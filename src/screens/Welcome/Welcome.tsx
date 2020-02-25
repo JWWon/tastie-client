@@ -1,18 +1,20 @@
 import React from 'react';
 import {useDispatch} from 'react-redux';
 
-import {loginWithFacebook} from '@store/actions/auth';
+import {loginWithFacebook, loginWithGoogle} from '@store/actions/auth';
 import BaseView from '@components/templates/BaseView';
 import * as s from './Welcome.style';
 
 const Welcome: React.FC = () => {
   const dispatch = useDispatch();
 
+  function handleLoginWithGoogle() {
+    dispatch(loginWithGoogle.request());
+  }
+
   function handleLoginWithFB() {
     dispatch(loginWithFacebook.request());
   }
-
-  function handleLoginWithGoogle() {}
 
   return (
     <BaseView>
