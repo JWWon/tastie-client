@@ -99,8 +99,8 @@ function* getUserCoordsSaga() {
   );
 
   yield fork(function*() {
-    const [coords, error]: [CoordsInterface, any] = yield race([
-      take(successChannel),
+    const [coords, error] = yield race([
+      take(successChannel), // CoordsInterface
       take(failureChannel),
     ]);
 

@@ -14,6 +14,8 @@
 #import <Firebase.h>
 // facebook sdk
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+// google signin
+#import <RNGoogleSignin/RNGoogleSignin.h>
 
 @implementation AppDelegate
 
@@ -23,9 +25,6 @@
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"Tastie"
                                             initialProperties:nil];
-  // Facebook
-  // [[FBSDKApplicationDelegate sharedInstance] application:application
-  //                          didFinishLaunchingWithOptions:launchOptions];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
@@ -48,7 +47,9 @@
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
-  BOOL handled =  [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
+  BOOL handled =
+  [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]
+  || [RNGoogleSignin application:application openURL:url options:options];
   // Add any custom logic here.
   return handled;
 }
