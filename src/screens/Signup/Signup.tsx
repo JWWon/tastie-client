@@ -45,7 +45,7 @@ const Signup: React.FC<Props> = ({navigation}) => {
     validateOnMount: true,
     onSubmit: values => {
       if (!hadSubmit) setHadSubmit(true);
-      console.log(values);
+      navigation.navigate('SignupMeta', {type: 'email', ...values});
     },
   });
 
@@ -71,9 +71,7 @@ const Signup: React.FC<Props> = ({navigation}) => {
 
   useEffect(() => {
     // use setTimeout because of bug on iOS
-    setTimeout(() => {
-      emailRef.current?.focus();
-    }, 0);
+    setTimeout(emailRef.current?.focus, 0);
   }, []);
 
   return (

@@ -1,15 +1,10 @@
 import axios from 'axios';
 
-import {GetGraphFromFBReq, GetGraphFromFBRes} from './auth.type';
+import {GetTokenReq, GetTokenRes, SignupReq, SignupRes} from './auth.type';
+const BASE_URL = '/auth';
 
-const facebookInstace = axios.create({
-  baseURL: 'https://graph.facebook.com',
-});
-export const loginWithFacebook = ({
-  userID,
-  accessToken,
-  fields,
-}: GetGraphFromFBReq) =>
-  facebookInstace.get<GetGraphFromFBReq, GetGraphFromFBRes>(`/${userID}`, {
-    params: {access_token: accessToken, fields},
-  });
+export const getToken = (params: GetTokenReq) =>
+  axios.post<GetTokenReq, GetTokenRes>(`${BASE_URL}/token`, params);
+
+export const signup = (params: SignupReq) =>
+  axios.post<SignupReq, SignupRes>(`${BASE_URL}/signup`, params);

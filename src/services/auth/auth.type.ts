@@ -1,14 +1,43 @@
 /**
- * @prop fields
- * separate field with comma(,)
- * detail: https://developers.facebook.com/docs/graph-api/reference/user
+ * token: AccessToken from social provider
+ * accessToken : AccessToken from backend(JWT format)
  */
-export interface GetGraphFromFBReq {
-  userID: string;
-  accessToken: string;
-  fields: string;
+
+export type TypeInterface = 'email' | 'google' | 'facebook';
+
+// GET_TOKEN
+export interface GetTokenReq {
+  type: TypeInterface;
+  // for social login
+  token?: string;
+  // for email login
+  email?: string;
+  password?: string;
 }
 
-export interface GetGraphFromFBRes {
-  [key: string]: string;
+export interface GetTokenRes {
+  type: TypeInterface;
+  accessToken: string;
+  expiresIn: number;
+}
+// END GET_TOKEN
+
+// SIGNUP
+export interface SignupReq {
+  type: TypeInterface;
+  username?: string;
+  birthYear?: number;
+  // for social
+  token?: string;
+  // for email
+  email?: string;
+  password?: string;
+}
+
+export type SignupRes = undefined;
+// END SIGNUP
+
+export interface AuthError {
+  statusCode: number;
+  message: string;
 }

@@ -2,6 +2,7 @@ import '@react-native-firebase/analytics';
 import React, {useRef, useEffect} from 'react';
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
 import firebase from '@react-native-firebase/app';
+import {GoogleSignin} from '@react-native-community/google-signin';
 import DeviceInfo from 'react-native-device-info';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -10,6 +11,7 @@ import {clearCase} from '@store/actions/case';
 import {checkKeychain} from '@store/actions/auth';
 import {SCREEN} from '@utils/consts';
 import {RootState} from '@store/reducers';
+import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import HomeNavigator from './Home';
 import SessionNavigator from './Session';
 
@@ -23,6 +25,17 @@ export default () => {
   const routeNameRef = useRef<string>();
   const dispatch = useDispatch();
   const {status} = useSelector((state: RootState) => state.auth);
+
+  function __init__() {
+    // Axios
+    axios.config();
+    // Firebase
+    configFirebase();
+    // Social Login
+    GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
+    // Check Keychain
+    dispatch(checkKeychain.request());
+  }
 
   function handleStateChange(state?: NavigationState) {
     if (!state) return;
@@ -54,14 +67,7 @@ export default () => {
     }
   }
 
-  // INITIALIZER
-  useEffect(() => {
-    // Config
-    axios.config();
-    configFirebase();
-    // Check Keychain
-    dispatch(checkKeychain.request());
-  }, []);
+  useEffect(__init__, []);
 
   return (
     <NavigationContainer onStateChange={handleStateChange}>

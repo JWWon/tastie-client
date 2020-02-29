@@ -11,7 +11,7 @@ export const checkKeychain = createAsyncAction(
   CHECK_KEYCHAIN,
   CHECK_KEYCHAIN_SUCCESS,
   CHECK_KEYCHAIN_FAILURE,
-)<undefined, AuthInterface, Error>();
+)<undefined, AuthInterface, any>();
 // END CHECK_KEYCHAIN
 
 // LOGIN_WITH_FACEBOOK
