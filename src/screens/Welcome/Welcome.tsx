@@ -1,23 +1,22 @@
 import React from 'react';
 import {useDispatch} from 'react-redux';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 import {loginWithFacebook, loginWithGoogle} from '@store/actions/auth';
+import {SessionParamList} from '@navigations/Session';
 import BaseView from '@components/templates/BaseView';
+import {SCREEN} from '@utils/consts';
 import * as s from './Welcome.style';
 
-const Welcome: React.FC = () => {
+interface Props {
+  navigation: StackNavigationProp<SessionParamList, 'Welcome'>;
+}
+
+const Welcome: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
 
-  function handleLoginWithGoogle() {
-    dispatch(loginWithGoogle.request());
-  }
-
-  function handleLoginWithFB() {
-    dispatch(loginWithFacebook.request());
-  }
-
   return (
-    <BaseView>
+    <BaseView noScroll>
       <s.Container>
         <s.LogoWithBI>
           <s.BI message="내가 뭘 <b>먹고싶은지</b>" />
@@ -26,17 +25,17 @@ const Welcome: React.FC = () => {
         </s.LogoWithBI>
         <s.Provider
           message="이메일로 시작하기"
-          onPress={() => {}}
+          onPress={() => navigation.navigate(SCREEN.SIGNUP)}
           buttonColor="blue"
         />
         <s.Provider
           message="구글로 시작하기"
-          onPress={handleLoginWithGoogle}
+          onPress={() => dispatch(loginWithGoogle.request())}
           icon={require('@assets/images/logo-google/logo-google.png')}
         />
         <s.Provider
           message="페이스북으로 시작하기"
-          onPress={handleLoginWithFB}
+          onPress={() => dispatch(loginWithFacebook.request())}
           icon={require('@assets/images/logo-facebook/logo-facebook.png')}
         />
       </s.Container>

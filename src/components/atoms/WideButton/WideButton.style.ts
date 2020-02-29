@@ -10,7 +10,7 @@ interface ButtonProps extends StyleProps {
 }
 
 export const Button = styled.TouchableOpacity.attrs({
-  activeOpacity: 0.8,
+  activeOpacity: 0.7,
 })<ButtonProps>`
   width: 100%;
   height: ${({height}) => height}px;

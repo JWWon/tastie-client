@@ -1,13 +1,13 @@
 import React from 'react';
 
-import {Props} from './TextRow.type';
-import * as s from './TextRow.style';
+import {Props} from './TextHighlight.type';
+import * as s from './TextHighlight.style';
 
 /**
  * If you put <b>, </b> tag inside string,
- * it automatical converts into Keyword component.
+ * it automatically converts into Keyword component.
  */
-const TextRow: React.FC<Props> = ({message, style}) => {
+const TextHighlight: React.FC<Props> = ({message, style}) => {
   const list = message.match(/(.*)<b>(.*)<\/b>(.*)/i);
   if (list === null) {
     return <s.Content style={style}>{message}</s.Content>;
@@ -24,4 +24,4 @@ const TextRow: React.FC<Props> = ({message, style}) => {
   );
 };
 
-export default TextRow;
+export default TextHighlight;

@@ -6,7 +6,7 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
-import {SelectAutocomplete} from '@components/atoms/HelperRow';
+import {SelectAutocomplete} from '@components/atoms/InputHelper';
 import {RootState} from '@store/reducers';
 import {getRecommendation} from '@store/actions/recommendation';
 import {

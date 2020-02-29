@@ -4,19 +4,17 @@ import * as s from './BaseView.style';
 
 interface Props {
   // for @components/templates/KeyboardSafeView
-  noPaddingVertical?: boolean;
+  noWrapper?: boolean;
 }
 
-const BaseView: React.FC<Props> = ({noPaddingVertical, children}) => (
-  <s.FullScreen>
-    <s.Container>
-      {noPaddingVertical ? (
-        children
-      ) : (
-        <s.VerticalSpace>{children}</s.VerticalSpace>
-      )}
-    </s.Container>
-  </s.FullScreen>
-);
+const BaseView: React.FC<Props> = ({noWrapper, children}) => {
+  const renderView = <s.ViewWrapper>{children}</s.ViewWrapper>;
+
+  return (
+    <s.FullScreen>
+      <s.Container>{noWrapper ? children : renderView}</s.Container>
+    </s.FullScreen>
+  );
+};
 
 export default BaseView;

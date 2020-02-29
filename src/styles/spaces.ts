@@ -30,6 +30,7 @@ export default {
   rootHorizontal: 24,
   rootTop: rootVertical,
   rootBottom: model.isIphoneWithNotch() ? 0 : rootVertical,
+  notchBottom: model.isIphoneWithNotch() ? 34 : 0,
   wide: 24,
   basic: 16,
   narrow: 12,

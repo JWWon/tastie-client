@@ -20,7 +20,7 @@ const PlaceCard: React.FC<Props> = ({onDismiss, photoUrls, ...infos}) => {
       </s.InfoWrapper>
       <s.Dismiss
         onPress={onDismiss}
-        source={require('@assets/images/icon-close/icon-close.png')}
+        source={require('@assets/images/icon-close/icon-close-white.png')}
       />
     </s.Container>
   );

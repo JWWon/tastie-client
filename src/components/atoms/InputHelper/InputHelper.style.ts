@@ -14,7 +14,9 @@ export const AutoCompleteWrapper = styled.View`
   padding: 0 ${({theme}) => theme.space.rootHorizontal}px;
 `;
 
-export const AutoCompleteItem = styled.TouchableOpacity`
+export const AutoCompleteItem = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.7,
+})`
   height: 100%;
   padding: 0 8px;
   align-items: center;

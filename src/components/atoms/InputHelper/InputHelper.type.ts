@@ -1,3 +1,5 @@
+import {ViewStyle} from 'react-native';
+
 export interface AutoCompleteInterface {
   name: string;
   isDefault?: boolean;
@@ -13,4 +15,5 @@ export interface Props {
   };
   placeholder?: string;
   value?: string;
+  style?: ViewStyle;
 }

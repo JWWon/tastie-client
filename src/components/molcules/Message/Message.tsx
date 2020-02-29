@@ -3,10 +3,13 @@ import {LayoutChangeEvent} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
 import {RootState} from '@store/reducers';
+import Triangle from '@components/atoms/Triangle';
 import Loading from '@components/atoms/Loading';
 import Fading from '@components/atoms/Fading';
 import {updateMessageHeight} from '@store/actions/device';
 import * as s from './Message.style';
+
+const triangleHeight = 16;
 
 const Message: React.FC = () => {
   const dispatch = useDispatch();
@@ -35,10 +38,14 @@ const Message: React.FC = () => {
             <s.Content alert={alert}>{content}</s.Content>
           )}
         </s.Bubble>
-        <s.TriangleBorder>
-          <s.TriangleBackground alert={alert} />
-        </s.TriangleBorder>
+        <Triangle
+          point="down"
+          active={alert}
+          width={12}
+          height={triangleHeight}
+        />
       </s.Container>
+      <s.Space height={triangleHeight} />
     </Fading>
   );
 };

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import * as s from './InputRow.style';
-import {Props} from './InputRow.type';
+import * as s from './InputWithText.style';
+import {Props} from './InputWithText.type';
 
-const MainText: React.FC<Props> = ({
+const InputWithText: React.FC<Props> = ({
   // required
   message,
   editable,
@@ -26,4 +26,4 @@ const MainText: React.FC<Props> = ({
   </s.Wrapper>
 );
 
-export default MainText;
+export default InputWithText;

@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 import WideButton from '@components/atoms/WideButton';
-import TextRow from '@components/atoms/TextRow';
+import TextHighlight from '@components/atoms/TextHighlight';
 
 export const Container = styled.View`
   flex: 1;
@@ -13,7 +13,7 @@ export const LogoWithBI = styled.View`
   align-items: center;
 `;
 
-export const BI = styled(TextRow)`
+export const BI = styled(TextHighlight)`
   margin-bottom: ${({theme}) => theme.space.narrow}px;
 `;
 
