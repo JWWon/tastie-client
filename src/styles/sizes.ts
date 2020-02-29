@@ -6,6 +6,7 @@ const {height} = Dimensions.get('screen');
 const sizes = {
   button: {
     cat: 52,
+    dismiss: 36,
   },
   border: {
     basic: 12,

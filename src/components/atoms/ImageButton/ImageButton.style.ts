@@ -5,7 +5,9 @@ interface ButtonProps {
 }
 
 const buttonSize = 24;
-export const Button = styled.TouchableOpacity<ButtonProps>`
+export const Button = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.7,
+})<ButtonProps>`
   width: ${({size}) => size || buttonSize}px;
   height: ${({size}) => size || buttonSize}px;
   margin-right: 16px;

@@ -5,9 +5,12 @@ export const BASE_URL = {
 };
 
 export const SCREEN = {
+  // Home
   CASE: 'Case' as const,
   RECOMMENDATION: 'Recommendation' as const,
+  // Session
   WELCOME: 'Welcome' as const,
+  SIGNUP: 'Signup' as const,
 };
 
 // String

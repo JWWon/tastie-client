@@ -1,0 +1,109 @@
+import React, {useState} from 'react';
+import * as yup from 'yup';
+import {useFormik} from 'formik';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+import TextInput from '@components/molcules/TextInput';
+import StackView from '@components/templates/StackView';
+import {SessionParamList} from '@navigations/Session';
+import {passwordValidator} from '@utils/validator';
+import * as s from './Signup.style';
+
+interface Props {
+  navigation: StackNavigationProp<SessionParamList, 'Signup'>;
+}
+
+const Signup: React.FC<Props> = ({navigation}) => {
+  const [hadSubmit, setHadSubmit] = useState<boolean>(false);
+
+  const formik = useFormik({
+    initialValues: {email: '', password: '', confirmPwd: ''},
+    validationSchema: yup.object().shape({
+      email: yup
+        .string()
+        .email('올바른 이메일을 입력해주세요.')
+        .required('이메일을 꼭 입력해주세요.'),
+      password: yup
+        .string()
+        .matches(
+          passwordValidator,
+          '영문, 숫자, 특수문자 조합 8자 이상 입력해주세요.',
+        )
+        .required('비밀번호를 꼭 입력해주세요.'),
+      confirmPwd: yup
+        .string()
+        .oneOf(
+          [yup.ref('password'), null],
+          '입력하신 비밀번호와 동일하게 입력해주세요.',
+        )
+        .required('비밀번호를 다시 한 번 입력해주세요.'),
+    }),
+    validateOnMount: true,
+    onSubmit: values => {
+      if (!hadSubmit) setHadSubmit(true);
+      console.log(values);
+    },
+  });
+
+  const inputProps = {
+    hadSubmit,
+    onChangeText: formik.handleChange,
+    onBlur: formik.handleBlur,
+  };
+
+  const handleDismiss = () => navigation.goBack();
+
+  const renderAgreement = (
+    <s.Agreement>
+      {"'다음' 버튼을 터치함므로써 "}
+      <s.Link onPress={() => console.log('서비스 약관')}>서비스 약관</s.Link>
+      {' 및 '}
+      <s.Link onPress={() => console.log('개인정보 처리방침')}>
+        개인정보 처리방침
+      </s.Link>
+      {'에 동의합니다.'}
+    </s.Agreement>
+  );
+
+  return (
+    <StackView
+      title="<b>이메일로</b> 시작하기"
+      description={{
+        message: '이미 계정이 있으신가요? <a>로그인하기</a>',
+        onPress: () => console.log('로그인'),
+      }}
+      dismiss={{icon: 'arrow', onPress: handleDismiss}}
+      pageButton={{
+        message: '다음!',
+        onPress: formik.handleSubmit,
+        renderLeft: renderAgreement,
+        disabled: !formik.isValid,
+      }}>
+      <TextInput
+        name="email"
+        value={formik.values.email}
+        placeholder="이메일을 입력해주세요."
+        error={formik.errors.email}
+        {...inputProps}
+      />
+      <TextInput
+        secureTextEntry
+        name="password"
+        value={formik.values.password}
+        placeholder="비밀번호를 입력해주세요."
+        error={formik.errors.password}
+        {...inputProps}
+      />
+      <TextInput
+        secureTextEntry
+        name="confirmPwd"
+        value={formik.values.confirmPwd}
+        placeholder="비밀번호를 다시 한 번 입력해주세요."
+        error={formik.errors.confirmPwd}
+        {...inputProps}
+      />
+    </StackView>
+  );
+};
+
+export default Signup;

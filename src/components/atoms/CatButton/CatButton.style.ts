@@ -2,11 +2,13 @@ import styled from 'styled-components/native';
 
 import {shadow} from '@styles/mixins';
 
-export const Button = styled.TouchableOpacity`
+export const Button = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.7,
+})`
   width: ${({theme}) => theme.size.button.cat}px;
   height: ${({theme}) => theme.size.button.cat}px;
   border-radius: ${({theme}) => theme.size.button.cat / 2}px;
-  background: #ffffff;
+  background: ${({theme}) => theme.color.white};
   ${shadow}
 `;
 

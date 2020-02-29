@@ -1,6 +1,9 @@
 import styled from 'styled-components/native';
+import {Keyboard} from 'react-native';
 
-export const HideContainer = styled.TouchableWithoutFeedback`
+export const HideKeyboard = styled.TouchableWithoutFeedback.attrs({
+  onPress: Keyboard.dismiss,
+})`
   flex: 1;
 `;
 

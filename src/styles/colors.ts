@@ -9,6 +9,7 @@ export default {
   // color
   blue: '#1972F8' as const,
   blueMild: '#5C97F1' as const,
+  pink: '#F66363' as const,
   // transparent
   blackDim: 'rgba(188,188,188,.1)' as const,
   blackBorder: 'rgba(0,0,0,.25)' as const,

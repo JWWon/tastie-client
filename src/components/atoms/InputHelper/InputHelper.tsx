@@ -1,17 +1,19 @@
 import React from 'react';
 import {FlatList} from 'react-native';
 
-import * as s from './Helper.style';
-import {Props, AutoCompleteInterface} from './Helper.type';
+import * as s from './InputHelper.style';
+import {Props, AutoCompleteInterface} from './InputHelper.type';
 
-const Helper: React.FC<Props> = ({autocomplete, placeholder, value}) => {
-  if (placeholder) {
-    return <s.Placeholder>{placeholder}</s.Placeholder>;
-  }
+const InputHelper: React.FC<Props> = ({
+  autocomplete,
+  placeholder,
+  value,
+  style,
+}) => {
+  if (placeholder)
+    return <s.Placeholder style={style}>{placeholder}</s.Placeholder>;
 
-  if (value) {
-    return null;
-  }
+  if (value) return null;
 
   if (autocomplete !== undefined) {
     const {data, onSelect} = autocomplete;
@@ -21,7 +23,9 @@ const Helper: React.FC<Props> = ({autocomplete, placeholder, value}) => {
           data={data}
           renderItem={({item}) => (
             <s.AutoCompleteItem onPress={() => onSelect(item)}>
-              <s.AutoCompleteText isDefault={item.isDefault === true}>
+              <s.AutoCompleteText
+                isDefault={item.isDefault === true}
+                style={style}>
                 {item.name}
               </s.AutoCompleteText>
             </s.AutoCompleteItem>
@@ -37,4 +41,4 @@ const Helper: React.FC<Props> = ({autocomplete, placeholder, value}) => {
   return null;
 };
 
-export default Helper;
+export default InputHelper;
