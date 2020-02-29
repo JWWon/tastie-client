@@ -11,6 +11,7 @@ export const SCREEN = {
   // Session
   WELCOME: 'Welcome' as const,
   SIGNUP: 'Signup' as const,
+  SIGNUP_META: 'SignupMeta' as const,
 };
 
 // String

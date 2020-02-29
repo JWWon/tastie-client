@@ -1,19 +1,15 @@
-import {take, takeEvery, put, fork, call} from 'redux-saga/effects';
-import {channel} from 'redux-saga';
+import {AxiosResponse, AxiosError} from 'axios';
+import {takeEvery, put, call} from 'redux-saga/effects';
+import decode from 'jwt-decode';
 import firebase from '@react-native-firebase/app';
 import * as Keychain from 'react-native-keychain';
-import {
-  AccessToken,
-  LoginManager,
-  LoginResult,
-  GraphRequest,
-  GraphRequestManager,
-} from 'react-native-fbsdk';
-import {GoogleSignin, User} from '@react-native-community/google-signin';
+import {AccessToken, LoginManager, LoginResult} from 'react-native-fbsdk';
+import {GoogleSignin} from '@react-native-community/google-signin';
 
+import * as api from '@services/auth';
 import {SCREEN} from '@utils/consts';
-import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import {AuthInterface} from '@store/reducers/auth';
+import {navigate} from '@utils/navSession';
 import {
   checkKeychain,
   loginWithFacebook,
@@ -28,7 +24,41 @@ type KeychainInterface =
       password: string;
     };
 
+interface GetGoogleToken {
+  idToken: string;
+  accessToken: string;
+}
+
+// HELPERS
+function isAxiosError(error: any) {
+  return typeof error === 'object' && error.isAxiosError;
+}
+
+function* getAuthFromJWT(data: api.GetTokenRes) {
+  const auth: AuthInterface = decode(data.accessToken);
+  yield call(Keychain.setGenericPassword, auth.username, JSON.stringify(data));
+  return auth;
+}
+
+function* handleGetTokenError(e: any) {
+  if (isAxiosError(e)) {
+    const {response}: AxiosError<api.AuthError> = e;
+    switch (response?.status) {
+      case 401:
+        // Invalid user credential
+        break;
+      case 404:
+        // User isn't registered
+        const data: api.GetTokenReq = JSON.parse(response?.config.data);
+        yield call(navigate, SCREEN.SIGNUP_META, data);
+        break;
+    }
+  }
+}
+
+// SAGAS
 function* checkKeychainSaga() {
+  yield call(Keychain.resetGenericPassword);
   try {
     const credentials: KeychainInterface = yield call(
       Keychain.getGenericPassword,
@@ -38,20 +68,10 @@ function* checkKeychainSaga() {
       throw new Error('No credentials stored.');
     }
 
-    const auth: AuthInterface = JSON.parse(credentials.password);
+    const data: api.GetTokenRes = JSON.parse(credentials.password);
     // TODO: Check if token is valid
-    switch (auth.provider) {
-      case 'email':
-        yield put(checkKeychain.success(auth));
-        break;
-      case 'facebook':
-        yield put(checkKeychain.success(auth));
-        break;
-      case 'google':
-        yield put(checkKeychain.success(auth));
-        break;
-    }
-
+    const auth: AuthInterface = decode(data.accessToken);
+    yield put(checkKeychain.success(auth));
     yield firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
   } catch (e) {
     yield put(checkKeychain.failure(e));
@@ -59,18 +79,9 @@ function* checkKeychainSaga() {
   }
 }
 
-interface SuccessChannel {
-  error?: object;
-  response?: {
-    id: string;
-    name: string;
-    email: string;
-    birthday?: string;
-  };
-}
-
 function* loginWithFacebookSaga() {
   try {
+    // Get accessToken from Facebook
     const loginRes: LoginResult = yield call(
       LoginManager.logInWithPermissions,
       ['public_profile', 'email', 'user_birthday'],
@@ -80,67 +91,34 @@ function* loginWithFacebookSaga() {
     const {accessToken}: AccessToken = yield call(
       AccessToken.getCurrentAccessToken,
     );
-    // TODO: Check if user data exists on db
-
-    const successChannel = yield call(channel);
-    const graph = new GraphRequest(
-      '/me',
-      {
-        accessToken,
-        httpMethod: 'GET',
-        parameters: {
-          fields: {string: 'name,email,birthday'},
-        },
-      },
-      (error, response) => successChannel.put({error, response}),
-    );
-    new GraphRequestManager().addRequest(graph).start();
-
-    yield fork(function*() {
-      const {error, response}: SuccessChannel = yield take(successChannel);
-      if (error) throw new Error(JSON.stringify(error));
-      if (!response) return;
-
-      const {birthday, name, email} = response;
-      const payload: AuthInterface = {
-        provider: 'facebook',
-        accessToken,
-        email,
-        name,
-      };
-      if (birthday) {
-        const birthYear = birthday.match(/\d{4}/i);
-        if (birthYear) {
-          payload.birthYear = birthYear[0];
-        }
-      }
-
-      yield call(Keychain.setGenericPassword, name, JSON.stringify(payload));
-      yield put(loginWithFacebook.success(payload));
+    // Send request to backend
+    const response: AxiosResponse<api.GetTokenRes> = yield call(api.getToken, {
+      type: 'facebook',
+      token: accessToken,
     });
+    const auth = yield call(getAuthFromJWT, response.data);
+    yield put(loginWithFacebook.success(auth));
   } catch (e) {
+    yield call(handleGetTokenError, e);
     yield put(loginWithFacebook.failure(e));
   }
 }
 
 function* loginWithGoogleSaga() {
   try {
-    yield call(GoogleSignin.configure, {webClientId: GOOGLE_WEB_CLIENT});
+    // Get accessToken from Google
     yield call(GoogleSignin.hasPlayServices);
-    const {user, idToken}: User = yield call(GoogleSignin.signIn);
-    // TODO: Check if user data exists on db
-
-    const name = user.name || '';
-    const payload: AuthInterface = {
-      provider: 'google',
-      accessToken: idToken,
-      email: user.email,
-      name,
-    };
-
-    yield call(Keychain.setGenericPassword, name, JSON.stringify(payload));
-    yield put(loginWithGoogle.success(payload));
+    yield call(GoogleSignin.signIn);
+    const {accessToken}: GetGoogleToken = yield call(GoogleSignin.getTokens);
+    // Send request to backend
+    const response: AxiosResponse<api.GetTokenRes> = yield call(api.getToken, {
+      type: 'google',
+      token: accessToken,
+    });
+    const auth = yield call(getAuthFromJWT, response.data);
+    yield put(loginWithFacebook.success(auth));
   } catch (e) {
+    yield call(handleGetTokenError, e);
     yield put(loginWithGoogle.failure(e));
   }
 }

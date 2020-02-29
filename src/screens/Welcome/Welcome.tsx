@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {StackNavigationProp} from '@react-navigation/stack';
 
 import {loginWithFacebook, loginWithGoogle} from '@store/actions/auth';
 import {SessionParamList} from '@navigations/Session';
 import BaseView from '@components/templates/BaseView';
+import {setNavigation} from '@utils/navSession';
 import {SCREEN} from '@utils/consts';
 import * as s from './Welcome.style';
 
@@ -15,8 +16,12 @@ interface Props {
 const Welcome: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setNavigation(navigation);
+  }, []);
+
   return (
-    <BaseView noScroll>
+    <BaseView>
       <s.Container>
         <s.LogoWithBI>
           <s.BI message="내가 뭘 <b>먹고싶은지</b>" />

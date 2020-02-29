@@ -5,6 +5,7 @@ import {
 } from './../actions/auth';
 import {createReducer} from 'typesafe-actions';
 
+import {TypeInterface} from '@services/auth/auth.type';
 import {
   AuthAction,
   CHECK_KEYCHAIN,
@@ -16,9 +17,9 @@ import {
 } from '../actions/auth';
 
 export interface AuthInterface {
-  provider: 'facebook' | 'google' | 'email';
+  type: TypeInterface;
   accessToken: string | null;
-  name: string;
+  username: string;
   email: string;
   birthYear?: string;
 }
@@ -31,9 +32,9 @@ interface AuthState extends AuthInterface {
 const initState: AuthState = {
   status: 'PENDING',
   // USER INTERFACE
-  provider: 'email',
+  type: 'email',
   accessToken: null,
-  name: '',
+  username: '',
   email: '',
 };
 
