@@ -29,7 +29,7 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
   const {category} = useSelector((state: RootState) => state.case);
   const {recommendation, device} = useSelector((state: RootState) => state);
   const {loading, ...data} = recommendation;
-  const startPosition = (size.view.rootHeight - device.messageHeight) / 2;
+  const startPosition = (size.view.rootHeight - device.messageHeight) * 0.46;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
   const [translateY] = useState<Animated.Value>(
