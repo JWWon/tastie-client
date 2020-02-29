@@ -7,7 +7,7 @@ import {shadow} from '@styles/mixins';
 const paddingTop = 24;
 export const Container = styled.View`
   flex: 1;
-  padding: ${paddingTop}px 0 16px;
+  padding: ${paddingTop}px 0 ${({theme}) => theme.space.basic}px;
 `;
 
 export const InfoWrapper = styled.View`
@@ -20,6 +20,6 @@ export const InfoWrapper = styled.View`
 
 export const Dismiss = styled(ImageButton)`
   position: absolute;
-  top: ${paddingTop + 16}px;
+  top: ${({theme}) => paddingTop + theme.space.basic}px;
   right: 0;
 `;

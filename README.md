@@ -35,6 +35,27 @@ $ yarn ios
 $ yarn android
 ```
 
+### Optional
+
+#### How to debug Firebase Analytics
+
+- For iOS
+
+```bash
+$ open ios/Tastie.xcworkspace
+
+# Press Run (Make sure schema is in debug mode)
+```
+
+- For android
+
+```bash
+$ yarn android
+$ yarn firebase-debug
+# if you want to stop debug
+$ yarn firebase-stop
+```
+
 ## How to deploy
 
 ### Android

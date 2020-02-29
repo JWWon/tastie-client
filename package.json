@@ -3,6 +3,8 @@
   "version": "0.1.3",
   "private": true,
   "scripts": {
+    "firebase-debug": "adb shell setprop debug.firebase.analytics.app me.tastie.client",
+    "firebase-stop": "adb shell setprop debug.firebase.analytics.app .none.",
     "android": "react-native run-android",
     "android:prod": "react-native run-android --variant=release",
     "ios": "react-native run-ios --configuration Debug",

@@ -22,15 +22,15 @@ const Message: React.FC = () => {
   }
 
   function layoutDidMount(e: LayoutChangeEvent) {
-    const {height} = e.nativeEvent.layout;
-    dispatch(updateMessageHeight({messageHeight: height}));
+    const {height: messageHeight} = e.nativeEvent.layout;
+    dispatch(updateMessageHeight({messageHeight}));
   }
 
   const alert = onPress !== undefined && !loading;
 
   return (
-    <Fading>
-      <s.Container onLayout={layoutDidMount}>
+    <Fading onLayout={layoutDidMount}>
+      <s.Container>
         <s.Bubble alert={alert}>
           {loading ? (
             <Loading />
