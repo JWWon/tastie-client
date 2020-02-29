@@ -27,8 +27,8 @@ export const Wrapper = styled.View`
 export const Input = styled.TextInput.attrs({
   autoCapitalize: 'none',
   autoCorrect: false,
-  returnKeyType: 'search',
   underlineColorAndroid: 'transparent',
+  blurOnSubmit: false,
 })<InputProps>`
   ${({theme}) => theme.font.size24}
   color: ${({theme}) => theme.color.black};

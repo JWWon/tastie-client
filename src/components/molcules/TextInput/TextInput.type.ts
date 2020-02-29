@@ -2,6 +2,7 @@ import {
   NativeSyntheticEvent,
   TextInputFocusEventData,
   ViewStyle,
+  TextInputProps,
 } from 'react-native';
 import {FormikHandlers} from 'formik';
 
@@ -12,7 +13,16 @@ export interface ChangeTextParams {
   value: string;
 }
 
-export interface Props {
+type PartialTextInputProps = Pick<
+  TextInputProps,
+  | 'secureTextEntry'
+  | 'autoFocus'
+  | 'onSubmitEditing'
+  | 'keyboardType'
+  | 'returnKeyType'
+>;
+
+export interface Props extends PartialTextInputProps {
   name: string;
   value: string;
   placeholder: string;
@@ -23,5 +33,4 @@ export interface Props {
   onFocus?: (e: NativeSyntheticEvent<TextInputFocusEventData> | string) => void;
   onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData> | string) => void;
   style?: ViewStyle;
-  [key: string]: any;
 }

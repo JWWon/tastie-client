@@ -18,7 +18,9 @@ interface ScreenInterface {
   hasDismiss?: boolean;
 }
 
-export const ScreenWrapper = styled.ScrollView<ScreenInterface>`
+export const ScreenWrapper = styled.ScrollView.attrs({
+  keyboardShouldPersistTaps: 'never',
+})<ScreenInterface>`
   flex: 1;
   ${({theme, hasDismiss}) =>
     hasDismiss &&

@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {TextInput as InputType} from 'react-native';
 
 import TextInput from '@components/molcules/TextInput';
 import StackView from '@components/templates/StackView';
@@ -15,6 +16,9 @@ interface Props {
 
 const Signup: React.FC<Props> = ({navigation}) => {
   const [hadSubmit, setHadSubmit] = useState<boolean>(false);
+  const emailRef = useRef<InputType>(null);
+  const passwordRef = useRef<InputType>(null);
+  const confirmPwdRef = useRef<InputType>(null);
 
   const formik = useFormik({
     initialValues: {email: '', password: '', confirmPwd: ''},
@@ -65,6 +69,13 @@ const Signup: React.FC<Props> = ({navigation}) => {
     </s.Agreement>
   );
 
+  useEffect(() => {
+    // use setTimeout because of bug on iOS
+    setTimeout(() => {
+      emailRef.current?.focus();
+    }, 0);
+  }, []);
+
   return (
     <StackView
       title="<b>이메일로</b> 시작하기"
@@ -84,22 +95,30 @@ const Signup: React.FC<Props> = ({navigation}) => {
         value={formik.values.email}
         placeholder="이메일을 입력해주세요."
         error={formik.errors.email}
+        ref={emailRef}
+        keyboardType="email-address"
+        onSubmitEditing={() => passwordRef.current?.focus()}
         {...inputProps}
       />
       <TextInput
-        secureTextEntry
         name="password"
         value={formik.values.password}
         placeholder="비밀번호를 입력해주세요."
         error={formik.errors.password}
+        secureTextEntry
+        ref={passwordRef}
+        onSubmitEditing={() => confirmPwdRef.current?.focus()}
         {...inputProps}
       />
       <TextInput
-        secureTextEntry
         name="confirmPwd"
         value={formik.values.confirmPwd}
         placeholder="비밀번호를 다시 한 번 입력해주세요."
         error={formik.errors.confirmPwd}
+        secureTextEntry
+        ref={confirmPwdRef}
+        returnKeyType="done"
+        onSubmitEditing={formik.handleSubmit}
         {...inputProps}
       />
     </StackView>

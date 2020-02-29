@@ -1,67 +1,66 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, forwardRef} from 'react';
+import _ from 'lodash';
 
 import {Props, Status} from './TextInput.type';
 import * as s from './TextInput.style';
+import {TextInput as InputType} from 'react-native';
 
-const TextInput: React.FC<Props> = ({
-  name,
-  value,
-  placeholder,
-  error,
-  hadSubmit,
-  onChangeText,
-  onFocus,
-  onBlur,
-  ...props
-}) => {
+export default forwardRef<InputType, Props>((props, ref) => {
   const [status, setStatus] = useState<Status>('NONE');
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [hadFocus, setHadFocus] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>(placeholder);
+  const [message, setMessage] = useState<string>(props.placeholder);
+  const options = _.pick(props, [
+    'secureTextEntry',
+    'autoFocus',
+    'onSubmitEditing',
+    'keyboardType',
+    'returnKeyType',
+  ]);
 
   function handleFocus() {
-    if (onFocus) onFocus(name);
+    if (props.onFocus) props.onFocus(props.name);
     setIsFocus(true);
   }
 
   function handleBlur() {
-    if (onBlur) onBlur(name);
+    if (props.onBlur) props.onBlur(props.name);
     if (!hadFocus) setHadFocus(true);
     setIsFocus(false);
   }
 
   function handleChange(text: string) {
-    onChangeText(name)(text);
-    if (status === 'ERROR' && !error) {
+    props.onChangeText(props.name)(text);
+    if (status === 'ERROR' && !props.error) {
       setStatus('FOCUS');
     }
   }
 
   useEffect(() => {
-    if ((hadFocus || hadSubmit) && error) {
+    if ((hadFocus || props.hadSubmit) && props.error) {
       setStatus('ERROR');
-      setMessage(error);
+      setMessage(props.error);
     } else if (isFocus) {
       setStatus('FOCUS');
-      setMessage(placeholder);
+      setMessage(props.placeholder);
     } else {
       setStatus('NONE');
-      setMessage(value ? '' : placeholder);
+      setMessage(props.value ? '' : props.placeholder);
     }
-  }, [error, isFocus]);
+  }, [props.error, isFocus]);
 
   return (
     <s.Wrapper>
       <s.Input
+        ref={ref}
         status={status}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onChangeText={handleChange}
-        {...props}
+        returnKeyType={'next'}
+        {...options}
       />
       <s.InputHelper status={status} placeholder={message} />
     </s.Wrapper>
   );
-};
-
-export default TextInput;
+});

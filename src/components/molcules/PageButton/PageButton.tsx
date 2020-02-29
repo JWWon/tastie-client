@@ -17,7 +17,7 @@ const PageButton: React.FC<Props> = ({
   disabled,
   renderLeft,
 }) => {
-  const [marginBottom] = useState(new Animated.Value(0));
+  const [bottom] = useState(new Animated.Value(0));
 
   useEffect(() => {
     // Only for iOS
@@ -26,7 +26,7 @@ const PageButton: React.FC<Props> = ({
         'keyboardWillShow',
         e => {
           const {height} = e.endCoordinates;
-          Animated.timing(marginBottom, {
+          Animated.timing(bottom, {
             toValue: height + space.basic - space.notchBottom,
             ...animateOptions,
           }).start();
@@ -36,7 +36,7 @@ const PageButton: React.FC<Props> = ({
       const keyboardHideListener = Keyboard.addListener(
         'keyboardWillHide',
         () => {
-          Animated.timing(marginBottom, {
+          Animated.timing(bottom, {
             toValue: 0,
             ...animateOptions,
           }).start();
@@ -51,7 +51,7 @@ const PageButton: React.FC<Props> = ({
   }, []);
 
   return (
-    <s.Wrapper as={Animated.View} style={{marginBottom}}>
+    <s.Wrapper as={Animated.View} style={{bottom}}>
       <s.LeftWrapper>{renderLeft}</s.LeftWrapper>
       <s.MessageBubble onPress={onPress} disabled={disabled}>
         <s.TextBox disabled={disabled}>
