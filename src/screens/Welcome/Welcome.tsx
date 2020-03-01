@@ -5,7 +5,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {loginWithFacebook, loginWithGoogle} from '@store/actions/auth';
 import {SessionParamList} from '@navigations/Session';
 import BaseView from '@components/templates/BaseView';
-import {setNavigation} from '@utils/navSession';
+import {setNavigation} from '@utils/SessionService';
 import {SCREEN} from '@utils/consts';
 import * as s from './Welcome.style';
 

@@ -1,12 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
 import * as yup from 'yup';
-import {useFormik} from 'formik';
+import {useFormik, FormikProps} from 'formik';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {TextInput as InputType} from 'react-native';
 
 import TextInput from '@components/molcules/TextInput';
 import StackView from '@components/templates/StackView';
 import {SessionParamList} from '@navigations/Session';
+import {setSignupScreen, removeSignupScreen} from '@utils/SessionService';
 import {passwordValidator} from '@utils/validator';
 import * as s from './Signup.style';
 
@@ -20,7 +21,11 @@ const Signup: React.FC<Props> = ({navigation}) => {
   const passwordRef = useRef<InputType>(null);
   const confirmPwdRef = useRef<InputType>(null);
 
-  const formik = useFormik({
+  const formik: FormikProps<{
+    email: string;
+    password: string;
+    confirmPwd: string;
+  }> = useFormik({
     initialValues: {email: '', password: '', confirmPwd: ''},
     validationSchema: yup.object().shape({
       email: yup
@@ -43,9 +48,12 @@ const Signup: React.FC<Props> = ({navigation}) => {
         .required('비밀번호를 다시 한 번 입력해주세요.'),
     }),
     validateOnMount: true,
-    onSubmit: values => {
+    onSubmit: ({confirmPwd, ...values}) => {
       if (!hadSubmit) setHadSubmit(true);
-      navigation.navigate('SignupMeta', {type: 'email', ...values});
+      navigation.navigate('SignupMeta', {
+        type: 'email',
+        ...values,
+      });
     },
   });
 
@@ -54,8 +62,6 @@ const Signup: React.FC<Props> = ({navigation}) => {
     onChangeText: formik.handleChange,
     onBlur: formik.handleBlur,
   };
-
-  const handleDismiss = () => navigation.goBack();
 
   const renderAgreement = (
     <s.Agreement>
@@ -70,8 +76,12 @@ const Signup: React.FC<Props> = ({navigation}) => {
   );
 
   useEffect(() => {
+    setSignupScreen({formik});
     // use setTimeout because of bug on iOS
     setTimeout(emailRef.current?.focus, 0);
+    return () => {
+      removeSignupScreen();
+    };
   }, []);
 
   return (
@@ -79,9 +89,9 @@ const Signup: React.FC<Props> = ({navigation}) => {
       title="<b>이메일로</b> 시작하기"
       description={{
         message: '이미 계정이 있으신가요? <a>로그인하기</a>',
-        onPress: () => console.log('로그인'),
+        onPress: () => navigation.navigate('Login'),
       }}
-      dismiss={{icon: 'arrow', onPress: handleDismiss}}
+      dismiss={{icon: 'arrow', onPress: navigation.goBack}}
       pageButton={{
         message: '다음!',
         onPress: formik.handleSubmit,

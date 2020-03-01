@@ -30,15 +30,9 @@ const SignupMeta: React.FC<Props> = ({navigation, route}) => {
       birthYear: yup.string().notRequired(),
     }),
     validateOnMount: true,
-    onSubmit: ({name, birthYear}) => {
+    onSubmit: values => {
       if (!hadSubmit) setHadSubmit(true);
-      dispatch(
-        signup.request({
-          ...route.params,
-          birthYear: birthYear ? parseInt(birthYear, 10) : undefined,
-          name,
-        }),
-      );
+      dispatch(signup.request({...route.params, ...values}));
     },
   });
 
@@ -47,8 +41,6 @@ const SignupMeta: React.FC<Props> = ({navigation, route}) => {
     onChangeText: formik.handleChange,
     onBlur: formik.handleBlur,
   };
-
-  const handleDismiss = () => navigation.goBack();
 
   useEffect(() => {
     // Use setTimeout because of bug on iOS
@@ -59,7 +51,7 @@ const SignupMeta: React.FC<Props> = ({navigation, route}) => {
     <StackView
       title="거의 <b>다</b> 왔어요!"
       description={{message: '고양이에게 누구인지 알려주세요.'}}
-      dismiss={{icon: 'arrow', onPress: handleDismiss}}
+      dismiss={{icon: 'arrow', onPress: navigation.goBack}}
       pageButton={{
         message: '시작!',
         onPress: formik.handleSubmit,

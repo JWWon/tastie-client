@@ -12,7 +12,12 @@ import * as api from '@services/auth';
 import axios from '@services/axios.base';
 import {SCREEN} from '@utils/consts';
 import {isAxiosError} from '@utils/helper';
-import {navigate} from '@utils/navSession';
+import {
+  navigate,
+  useLoginFormik,
+  useSignupFormik,
+  goBack,
+} from '@utils/SessionService';
 import {AuthInterface} from '@store/reducers/auth';
 import {
   checkKeychain,
@@ -20,6 +25,7 @@ import {
   loginWithGoogle,
   signup,
   logout,
+  loginWithEmail,
 } from '@store/actions/auth';
 
 type KeychainInterface =
@@ -54,9 +60,19 @@ function* handleBackendError(e: any) {
   if (isAxiosError(e)) {
     const {response}: AxiosError<api.AuthError> = e;
     switch (response?.status) {
+      case 400:
+        // Bad Request
+        console.error(response?.data);
+        break;
       case 401:
         // Invalid user credential
-        Alert.alert(response?.data.message);
+        const loginFormik = useLoginFormik();
+        if (loginFormik) {
+          yield call(loginFormik.setErrors, {
+            email: response?.data.message,
+            password: '',
+          });
+        }
         break;
       case 404:
         // User isn't registered
@@ -65,7 +81,16 @@ function* handleBackendError(e: any) {
         break;
       case 409:
         // User already exist
-        Alert.alert(response?.data.message);
+        const signupFormik = useSignupFormik();
+        if (signupFormik) {
+          // TODO: Remove 'goBack' when check existUser by email api implemented
+          yield call(goBack);
+          yield call(signupFormik.setErrors, {
+            email: response?.data.message,
+            password: '',
+            confirmPwd: '',
+          });
+        }
         break;
     }
   }
@@ -139,12 +164,28 @@ function* loginWithGoogleSaga() {
   }
 }
 
+function* loginWithEmailSaga(
+  action: ReturnType<typeof loginWithEmail.request>,
+) {
+  try {
+    const response: AxiosResponse<api.GetTokenRes> = yield call(api.getToken, {
+      type: 'email',
+      ...action.payload,
+    });
+    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    yield put(loginWithEmail.success(auth));
+  } catch (e) {
+    yield call(handleBackendError, e);
+    yield put(loginWithEmail.failure(e));
+  }
+}
+
 function* signupSaga(action: ReturnType<typeof signup.request>) {
   try {
     yield call(api.signup, action.payload);
     const response: AxiosResponse<api.GetTokenRes> = yield call(
       api.getToken,
-      action.payload,
+      _.omit(action.payload, ['name', 'birthYear']),
     );
     const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
     yield put(signup.success(auth));
@@ -164,6 +205,7 @@ export default function* root() {
   yield takeEvery(checkKeychain.request, checkKeychainSaga);
   yield takeEvery(loginWithFacebook.request, loginWithFacebookSaga);
   yield takeEvery(loginWithGoogle.request, loginWithGoogleSaga);
+  yield takeEvery(loginWithEmail.request, loginWithEmailSaga);
   yield takeEvery(signup.request, signupSaga);
   // sync
   yield takeEvery(logout, logoutSaga);
