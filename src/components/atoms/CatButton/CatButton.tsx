@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
-import * as s from './CatButton.style';
 import {RootState} from '@store/reducers';
 import {resetPressAction} from '@store/actions/message';
+import {logout} from '@store/actions/auth';
+import * as s from './CatButton.style';
 
 const CatButton: React.FC = () => {
   const {onPress, loading} = useSelector((state: RootState) => state.message);
@@ -34,6 +35,9 @@ const CatButton: React.FC = () => {
     if (onPress) {
       onPress();
       dispatch(resetPressAction());
+    } else {
+      // TODO: Implement logout screen & button
+      dispatch(logout());
     }
   };
 

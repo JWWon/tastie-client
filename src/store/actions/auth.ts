@@ -1,5 +1,7 @@
-import {createAsyncAction, ActionType} from 'typesafe-actions';
+import {createAsyncAction, ActionType, createAction} from 'typesafe-actions';
+import {AxiosError} from 'axios';
 
+import {SignupReq, AuthError} from '@services/auth';
 import {AuthInterface} from '@store/reducers/auth';
 
 // CHECK_KEYCHAIN
@@ -38,9 +40,29 @@ export const loginWithGoogle = createAsyncAction(
 )<undefined, AuthInterface, any>();
 // END LOGIN_WITH_GOOGLE
 
+// SIGNUP
+export const SIGNUP = '@auth/SIGNUP_REUQEST';
+export const SIGNUP_SUCCESS = '@auth/SIGNUP_SUCCESS';
+export const SIGNUP_FAILURE = '@auth/SIGNUP_FAILURE';
+
+export const signup = createAsyncAction(SIGNUP, SIGNUP_SUCCESS, SIGNUP_FAILURE)<
+  SignupReq,
+  AuthInterface,
+  AxiosError<AuthError>
+>();
+// END SIGNUP
+
+// LOGOUT
+export const LOGOUT = '@auth/LOGOUT';
+
+export const logout = createAction(LOGOUT)();
+// END LOGOUT
+
 const actions = {
   checkKeychain,
   loginWithFacebook,
   loginWithGoogle,
+  signup,
+  logout,
 };
 export type AuthAction = ActionType<typeof actions>;

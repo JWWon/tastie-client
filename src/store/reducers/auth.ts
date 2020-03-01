@@ -1,10 +1,6 @@
-import {
-  LOGIN_WITH_GOOGLE,
-  LOGIN_WITH_GOOGLE_SUCCESS,
-  LOGIN_WITH_GOOGLE_FAILURE,
-} from './../actions/auth';
 import {createReducer} from 'typesafe-actions';
 
+import {setPendingWithLoading} from '@utils/helper';
 import {TypeInterface} from '@services/auth/auth.type';
 import {
   AuthAction,
@@ -14,58 +10,73 @@ import {
   LOGIN_WITH_FACEBOOK,
   LOGIN_WITH_FACEBOOK_SUCCESS,
   LOGIN_WITH_FACEBOOK_FAILURE,
-} from '../actions/auth';
+  LOGIN_WITH_GOOGLE,
+  LOGIN_WITH_GOOGLE_SUCCESS,
+  LOGIN_WITH_GOOGLE_FAILURE,
+  SIGNUP,
+  SIGNUP_SUCCESS,
+  SIGNUP_FAILURE,
+  LOGOUT,
+} from '@store/actions/auth';
 
 export interface AuthInterface {
   type: TypeInterface;
-  accessToken: string | null;
-  username: string;
+  name: string;
   email: string;
   birthYear?: string;
 }
 
 interface AuthState extends AuthInterface {
-  status: 'PENDING' | 'SUCCESS' | 'FAILURE';
+  loading: boolean;
+  status: 'PENDING' | 'NO_USER' | 'USER_EXIST';
   error?: any;
 }
 
 const initState: AuthState = {
+  loading: false,
   status: 'PENDING',
   // USER INTERFACE
   type: 'email',
-  accessToken: null,
-  username: '',
+  name: '',
   email: '',
 };
 
 // HELPERS
-const pending = <S>(state: S) => ({
-  ...state,
-  status: 'PENDING',
-  error: undefined,
-});
-const success = <S, A extends {payload: any}>(state: S, action: A) => ({
+const setSuccessWithUser = <A extends {payload: any}>(
+  state: AuthState,
+  action: A,
+): AuthState => ({
   ...state,
   ...action.payload,
-  status: 'SUCCESS',
+  loading: false,
+  status: 'USER_EXIST',
 });
-const failure = <S, A extends {payload: any}>(state: S, action: A) => ({
+
+const setFailureWithoutUser = <A extends {payload: any}>(
+  state: AuthState,
+  action: A,
+): AuthState => ({
   ...state,
-  error: action.payload,
-  status: 'FAILURE',
+  ...action.payload,
+  loading: false,
+  status: 'NO_USER',
 });
 
 // REDUCER
 const authReducer = createReducer<AuthState, AuthAction>(initState, {
-  [CHECK_KEYCHAIN]: pending,
-  [CHECK_KEYCHAIN_SUCCESS]: success,
-  [CHECK_KEYCHAIN_FAILURE]: failure,
-  [LOGIN_WITH_FACEBOOK]: pending,
-  [LOGIN_WITH_FACEBOOK_SUCCESS]: success,
-  [LOGIN_WITH_FACEBOOK_FAILURE]: failure,
-  [LOGIN_WITH_GOOGLE]: pending,
-  [LOGIN_WITH_GOOGLE_SUCCESS]: success,
-  [LOGIN_WITH_GOOGLE_FAILURE]: failure,
+  [CHECK_KEYCHAIN]: setPendingWithLoading,
+  [CHECK_KEYCHAIN_SUCCESS]: setSuccessWithUser,
+  [CHECK_KEYCHAIN_FAILURE]: setFailureWithoutUser,
+  [LOGIN_WITH_FACEBOOK]: setPendingWithLoading,
+  [LOGIN_WITH_FACEBOOK_SUCCESS]: setSuccessWithUser,
+  [LOGIN_WITH_FACEBOOK_FAILURE]: setFailureWithoutUser,
+  [LOGIN_WITH_GOOGLE]: setPendingWithLoading,
+  [LOGIN_WITH_GOOGLE_SUCCESS]: setSuccessWithUser,
+  [LOGIN_WITH_GOOGLE_FAILURE]: setFailureWithoutUser,
+  [SIGNUP]: setPendingWithLoading,
+  [SIGNUP_SUCCESS]: setSuccessWithUser,
+  [SIGNUP_FAILURE]: setFailureWithoutUser,
+  [LOGOUT]: () => ({...initState, status: 'NO_USER'}),
 });
 
 export default authReducer;

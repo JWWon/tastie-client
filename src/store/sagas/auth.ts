@@ -1,5 +1,7 @@
 import {AxiosResponse, AxiosError} from 'axios';
 import {takeEvery, put, call} from 'redux-saga/effects';
+import _ from 'lodash';
+import {Alert} from 'react-native';
 import decode from 'jwt-decode';
 import firebase from '@react-native-firebase/app';
 import * as Keychain from 'react-native-keychain';
@@ -7,14 +9,18 @@ import {AccessToken, LoginManager, LoginResult} from 'react-native-fbsdk';
 import {GoogleSignin} from '@react-native-community/google-signin';
 
 import * as api from '@services/auth';
+import axios from '@services/axios.base';
 import {SCREEN} from '@utils/consts';
-import {AuthInterface} from '@store/reducers/auth';
+import {isAxiosError} from '@utils/helper';
 import {navigate} from '@utils/navSession';
+import {AuthInterface} from '@store/reducers/auth';
 import {
   checkKeychain,
   loginWithFacebook,
   loginWithGoogle,
-} from '../actions/auth';
+  signup,
+  logout,
+} from '@store/actions/auth';
 
 type KeychainInterface =
   | false
@@ -24,33 +30,42 @@ type KeychainInterface =
       password: string;
     };
 
+interface DecodeAccessToken extends AuthInterface {
+  exp: number;
+  iat: number;
+  sub: number;
+}
+
 interface GetGoogleToken {
   idToken: string;
   accessToken: string;
 }
 
 // HELPERS
-function isAxiosError(error: any) {
-  return typeof error === 'object' && error.isAxiosError;
-}
-
 function* getAuthFromJWT(data: api.GetTokenRes) {
-  const auth: AuthInterface = decode(data.accessToken);
-  yield call(Keychain.setGenericPassword, auth.username, JSON.stringify(data));
-  return auth;
+  const auth: DecodeAccessToken = decode(data.accessToken);
+  // Save data to Keychain
+  yield call(Keychain.setGenericPassword, auth.name, JSON.stringify(data));
+  axios.setToken(data.accessToken);
+  return _.omit(auth, ['exp', 'iat', 'sub']);
 }
 
-function* handleGetTokenError(e: any) {
+function* handleBackendError(e: any) {
   if (isAxiosError(e)) {
     const {response}: AxiosError<api.AuthError> = e;
     switch (response?.status) {
       case 401:
         // Invalid user credential
+        Alert.alert(response?.data.message);
         break;
       case 404:
         // User isn't registered
         const data: api.GetTokenReq = JSON.parse(response?.config.data);
         yield call(navigate, SCREEN.SIGNUP_META, data);
+        break;
+      case 409:
+        // User already exist
+        Alert.alert(response?.data.message);
         break;
     }
   }
@@ -58,23 +73,24 @@ function* handleGetTokenError(e: any) {
 
 // SAGAS
 function* checkKeychainSaga() {
-  yield call(Keychain.resetGenericPassword);
   try {
     const credentials: KeychainInterface = yield call(
       Keychain.getGenericPassword,
     );
     if (!credentials || !credentials.username) {
-      yield call(Keychain.resetGenericPassword);
+      yield call(logoutSaga);
       throw new Error('No credentials stored.');
     }
 
     const data: api.GetTokenRes = JSON.parse(credentials.password);
     // TODO: Check if token is valid
-    const auth: AuthInterface = decode(data.accessToken);
+    const auth: AuthInterface = yield call(getAuthFromJWT, data);
     yield put(checkKeychain.success(auth));
+    // Manually call before 'handleStateChange' active
     yield firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
   } catch (e) {
     yield put(checkKeychain.failure(e));
+    // Manually call before 'handleStateChange' active
     yield firebase.analytics().setCurrentScreen(SCREEN.WELCOME, SCREEN.WELCOME);
   }
 }
@@ -96,10 +112,10 @@ function* loginWithFacebookSaga() {
       type: 'facebook',
       token: accessToken,
     });
-    const auth = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
     yield put(loginWithFacebook.success(auth));
   } catch (e) {
-    yield call(handleGetTokenError, e);
+    yield call(handleBackendError, e);
     yield put(loginWithFacebook.failure(e));
   }
 }
@@ -115,12 +131,32 @@ function* loginWithGoogleSaga() {
       type: 'google',
       token: accessToken,
     });
-    const auth = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
     yield put(loginWithFacebook.success(auth));
   } catch (e) {
-    yield call(handleGetTokenError, e);
+    yield call(handleBackendError, e);
     yield put(loginWithGoogle.failure(e));
   }
+}
+
+function* signupSaga(action: ReturnType<typeof signup.request>) {
+  try {
+    yield call(api.signup, action.payload);
+    const response: AxiosResponse<api.GetTokenRes> = yield call(
+      api.getToken,
+      action.payload,
+    );
+    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    yield put(signup.success(auth));
+  } catch (e) {
+    yield call(handleBackendError, e);
+    yield put(signup.failure(e));
+  }
+}
+
+function* logoutSaga() {
+  yield call(Keychain.resetGenericPassword);
+  yield call(axios.removeToken);
 }
 
 export default function* root() {
@@ -128,5 +164,7 @@ export default function* root() {
   yield takeEvery(checkKeychain.request, checkKeychainSaga);
   yield takeEvery(loginWithFacebook.request, loginWithFacebookSaga);
   yield takeEvery(loginWithGoogle.request, loginWithGoogleSaga);
+  yield takeEvery(signup.request, signupSaga);
   // sync
+  yield takeEvery(logout, logoutSaga);
 }
