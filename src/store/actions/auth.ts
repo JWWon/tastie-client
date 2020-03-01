@@ -1,6 +1,7 @@
 import {createAsyncAction, ActionType, createAction} from 'typesafe-actions';
 import {AxiosError} from 'axios';
 
+import {GetTokenReq} from '@services/auth';
 import {SignupReq, AuthError} from '@services/auth';
 import {AuthInterface} from '@store/reducers/auth';
 
@@ -40,6 +41,18 @@ export const loginWithGoogle = createAsyncAction(
 )<undefined, AuthInterface, any>();
 // END LOGIN_WITH_GOOGLE
 
+// LOGIN_WITH_EMAIL
+export const LOGIN_WITH_EMAIL = '@auth/LOGIN_WITH_EMAIL_REQUEST';
+export const LOGIN_WITH_EMAIL_SUCCESS = '@auth/LOGIN_WITH_EMAIL_SUCCESS';
+export const LOGIN_WITH_EMAIL_FAILURE = '@auth/LOGIN_WITH_EMAIL_FAILURE';
+
+export const loginWithEmail = createAsyncAction(
+  LOGIN_WITH_EMAIL,
+  LOGIN_WITH_EMAIL_SUCCESS,
+  LOGIN_WITH_EMAIL_FAILURE,
+)<Omit<GetTokenReq, 'type'>, AuthInterface, AxiosError<AuthError>>();
+// END LOGIN_WITH_EMAIL
+
 // SIGNUP
 export const SIGNUP = '@auth/SIGNUP_REUQEST';
 export const SIGNUP_SUCCESS = '@auth/SIGNUP_SUCCESS';
@@ -62,6 +75,7 @@ const actions = {
   checkKeychain,
   loginWithFacebook,
   loginWithGoogle,
+  loginWithEmail,
   signup,
   logout,
 };

@@ -1,7 +1,12 @@
+import {
+  LOGIN_WITH_EMAIL,
+  LOGIN_WITH_EMAIL_SUCCESS,
+  LOGIN_WITH_EMAIL_FAILURE,
+} from './../actions/auth';
 import {createReducer} from 'typesafe-actions';
 
 import {setPendingWithLoading} from '@utils/helper';
-import {TypeInterface} from '@services/auth/auth.type';
+import {TypeInterface} from '@services/auth';
 import {
   AuthAction,
   CHECK_KEYCHAIN,
@@ -73,6 +78,9 @@ const authReducer = createReducer<AuthState, AuthAction>(initState, {
   [LOGIN_WITH_GOOGLE]: setPendingWithLoading,
   [LOGIN_WITH_GOOGLE_SUCCESS]: setSuccessWithUser,
   [LOGIN_WITH_GOOGLE_FAILURE]: setFailureWithoutUser,
+  [LOGIN_WITH_EMAIL]: setPendingWithLoading,
+  [LOGIN_WITH_EMAIL_SUCCESS]: setSuccessWithUser,
+  [LOGIN_WITH_EMAIL_FAILURE]: setFailureWithoutUser,
   [SIGNUP]: setPendingWithLoading,
   [SIGNUP_SUCCESS]: setSuccessWithUser,
   [SIGNUP_FAILURE]: setFailureWithoutUser,
