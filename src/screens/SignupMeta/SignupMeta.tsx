@@ -1,13 +1,15 @@
 import React, {useEffect, useState, useRef} from 'react';
+import {TextInput as InputType} from 'react-native';
+import {useDispatch} from 'react-redux';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import {TextInput as InputType} from 'react-native';
 
 import {SessionParamList} from '@navigations/Session';
 import StackView from '@components/templates/StackView';
 import TextInput from '@components/molcules/TextInput';
+import {signup} from '@store/actions/auth';
 
 interface Props {
   navigation: StackNavigationProp<SessionParamList, 'SignupMeta'>;
@@ -16,19 +18,27 @@ interface Props {
 
 const SignupMeta: React.FC<Props> = ({navigation, route}) => {
   const [hadSubmit, setHadSubmit] = useState<boolean>(false);
-  const usernameRef = useRef<InputType>(null);
+  const nameRef = useRef<InputType>(null);
   const birthYearRef = useRef<InputType>(null);
 
+  const dispatch = useDispatch();
+
   const formik = useFormik({
-    initialValues: {username: '', birthYear: ''},
+    initialValues: {name: '', birthYear: ''},
     validationSchema: yup.object().shape({
-      username: yup.string().required('이름을 입력해주세요.'),
+      name: yup.string().required('이름을 입력해주세요.'),
       birthYear: yup.string().notRequired(),
     }),
     validateOnMount: true,
-    onSubmit: values => {
+    onSubmit: ({name, birthYear}) => {
       if (!hadSubmit) setHadSubmit(true);
-      console.log({...route.params, ...values});
+      dispatch(
+        signup.request({
+          ...route.params,
+          birthYear: birthYear ? parseInt(birthYear, 10) : undefined,
+          name,
+        }),
+      );
     },
   });
 
@@ -42,7 +52,7 @@ const SignupMeta: React.FC<Props> = ({navigation, route}) => {
 
   useEffect(() => {
     // Use setTimeout because of bug on iOS
-    setTimeout(usernameRef.current?.focus, 0);
+    setTimeout(nameRef.current?.focus, 0);
   }, []);
 
   return (
@@ -56,11 +66,11 @@ const SignupMeta: React.FC<Props> = ({navigation, route}) => {
         disabled: !formik.isValid,
       }}>
       <TextInput
-        name="username"
-        value={formik.values.username}
+        name="name"
+        value={formik.values.name}
         placeholder="이름을 입력해주세요."
-        error={formik.errors.username}
-        ref={usernameRef}
+        error={formik.errors.name}
+        ref={nameRef}
         onSubmitEditing={() => birthYearRef.current?.focus()}
         {...inputProps}
       />

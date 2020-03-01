@@ -60,9 +60,9 @@ export default () => {
       case 'PENDING':
         // TODO: Apply Splash Image when pending
         return null;
-      case 'SUCCESS':
+      case 'USER_EXIST':
         return <HomeNavigator />;
-      case 'FAILURE':
+      case 'NO_USER':
         return <SessionNavigator />;
     }
   }

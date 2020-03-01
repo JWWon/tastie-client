@@ -25,7 +25,7 @@ export interface GetTokenRes {
 // SIGNUP
 export interface SignupReq {
   type: TypeInterface;
-  username?: string;
+  name?: string;
   birthYear?: number;
   // for social
   token?: string;

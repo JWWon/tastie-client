@@ -38,6 +38,11 @@ export const setErrorWithLoading = <S, A extends {payload: any}>(
   error: action.payload,
 });
 
+export function isAxiosError(error: any) {
+  return typeof error === 'object' && error.isAxiosError;
+}
+// END REDUX HELPER
+
 // PERMISSION HELPER
 const LOCATION_PERMISSON =
   Platform.OS === 'ios'
@@ -101,6 +106,7 @@ export const getDistance = (
 };
 // END CALCULATE_DISTANCE
 
+// OPEN_LINK HELPER
 const openLink = async (path: string, backupPath?: string) => {
   try {
     const url = encodeURI(path);
@@ -118,16 +124,13 @@ const openLink = async (path: string, backupPath?: string) => {
   }
 };
 
-// PHONE_CALL
 export const makePhoneCall = (phoneNumber: string) => {
   // only works on real iOS device!
   const filteredNumber = phoneNumber.replace(/-/g, '');
   const baseURL = Platform.select({ios: 'telprompt', android: 'tel'});
   openLink(`${baseURL}:${filteredNumber}`);
 };
-// END PHONE_CALL
 
-// OPEN_NAVER_MAP
 interface OpenNaverMap extends CoordsInterface {
   name: string;
 }
@@ -147,4 +150,4 @@ export const openNaverMap = (params: OpenNaverMap) => {
 
   openLink(`${baseURL}://place?${mapParams.join('&')}`, backupURL);
 };
-// END OPEN_NAVER_MAP
+// END OPEN_LINK HELPER
