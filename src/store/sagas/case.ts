@@ -33,7 +33,7 @@ import {
 } from '@store/actions/case';
 import {RootState} from '@store/reducers';
 import {CoordsInterface, CaseIndex} from '@store/reducers/case';
-import {updateContent, updateLoading} from '@store/actions/message';
+import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
 import {
   GetCategoriesRes,
   GetSituationsRes,
@@ -54,7 +54,9 @@ function* clearCaseSaga() {
 
 function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {
   if (action.payload !== CaseIndex.PREFERENCE) {
-    yield put(updateContent({content: '다시 고르겠나옹?', onPress: undefined}));
+    yield put(
+      updateMessage({message: '다시 고르겠나옹?', customAction: undefined}),
+    );
   }
 }
 
@@ -71,7 +73,7 @@ function* getCategoriesSaga() {
 }
 
 function* getSituationsSaga() {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const {category}: RootState['case'] = yield select(state => state.case);
     const response: AxiosResponse<GetSituationsRes> = yield call(
@@ -82,7 +84,7 @@ function* getSituationsSaga() {
   } catch (e) {
     yield put(getSituations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* getUserCoordsSaga() {
@@ -118,7 +120,7 @@ function* getUserCoordsSaga() {
 function* getNearbyLocationSaga(
   action: ReturnType<typeof getNearbyLocations.request>,
 ) {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const response: AxiosResponse<GetNearbyLocationsRes> = yield call(
       api.getNearbyLocations,
@@ -128,17 +130,17 @@ function* getNearbyLocationSaga(
   } catch (e) {
     yield put(getNearbyLocations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* searchLocationsSaga(
   action: ReturnType<typeof searchLocations.request>,
 ) {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   if (action.payload.input === '') {
     // skip searching if input is empty
     yield put(searchLocations.success([]));
-    yield put(updateLoading({loading: false}));
+    yield put(hideLoading());
     return;
   }
 
@@ -159,17 +161,17 @@ function* searchLocationsSaga(
       name: item.structured_formatting.main_text,
       place_id: item.place_id,
     }));
-    yield put(updateContent({content: '장소를 선택하라옹'}));
+    yield put(updateMessage({message: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
   } catch (e) {
-    yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));
+    yield put(updateMessage({message: '검색결과를 찾지 못했어옹...'}));
     yield put(searchLocations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* getPreferencesSaga() {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const {situation}: RootState['case'] = yield select(state => state.case);
     const response: AxiosResponse<GetPreferencesRes> = yield call(
@@ -180,7 +182,7 @@ function* getPreferencesSaga() {
   } catch (e) {
     yield put(getPreferences.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* selectLocationSaga(
@@ -239,16 +241,16 @@ function* selectLocationSaga(
 }
 
 function* selectCategorySaga(action: ReturnType<typeof selectCategory>) {
-  yield call(checkRequiredInfo, action.payload.onPress, '어디서 먹나옹?');
+  yield call(validateInfo, action.payload.onPress, '어디서 먹나옹?');
   yield put(getSituations.request());
 }
 
 function* selectSituationSaga(action: ReturnType<typeof selectSituation>) {
-  yield call(checkRequiredInfo, action.payload.onPress);
+  yield call(validateInfo, action.payload.onPress);
 }
 
 // MIDDLEWARE OF MIDDLEWARE
-function* checkRequiredInfo(onPress: () => void, content?: string) {
+function* validateInfo(customAction: () => void, message?: string) {
   const {category, situation, location}: RootState['case'] = yield select(
     state => state.case,
   );
@@ -256,9 +258,9 @@ function* checkRequiredInfo(onPress: () => void, content?: string) {
     category !== '' && situation !== '' && location.name !== '';
 
   if (hasRequired) {
-    yield put(updateContent({content: '뭐 먹을지 정해줄까옹?', onPress}));
-  } else if (content) {
-    yield put(updateContent({content}));
+    yield put(updateMessage({message: '뭐 먹을지 정해줄까옹?', customAction}));
+  } else if (message) {
+    yield put(updateMessage({message}));
   }
 
   yield put(updateHasRequired({hasRequired}));

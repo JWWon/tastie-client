@@ -51,7 +51,7 @@ const recommendationReducer = createReducer<
   [GET_RECOMMENDATION_SUCCESS]: copyPayloadWithLoading,
   [GET_RECOMMENDATION_FAILURE]: setErrorWithLoading,
   // SYNC
-  [CLEAR_RECOMMENDATION]: () => initState,
+  [CLEAR_RECOMMENDATION]: state => ({...state, ...initState}),
 });
 
 export default recommendationReducer;

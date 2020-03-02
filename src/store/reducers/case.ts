@@ -128,7 +128,7 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
   }),
   [SELECT_LOCATION_FAILURE]: setError,
   // WITHOUT MIDDLEWARE
-  [CLEAR_CASE]: () => initState,
+  [CLEAR_CASE]: state => ({...state, ...initState}),
   [CLEAR_CASE_PARTLY]: (state, action) =>
     produce(state, draft => {
       switch (action.payload) {

@@ -7,7 +7,7 @@ import KeyboardSafeView from '@components/templates/KeyboardSafeView';
 import PlaceCard from '@components/organisms/PlaceCard';
 import Sentence from '@components/molcules/Sentence';
 import {RootState} from '@store/reducers';
-import {updateContent, hideMessage} from '@store/actions/message';
+import {updateMessage, hideMessage} from '@store/actions/navbar';
 import {clearRecommendation} from '@store/actions/recommendation';
 import {HomeParamList} from '@navigations/Home';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
@@ -43,7 +43,7 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
       case 'LOADING':
         return `<b>${CHARACTER_NAME}</b>가 정하는 중이에요...`;
       case 'SUCCESS':
-        return `오늘 <b>${category}</b>은 이거애옹!`;
+        return `오늘 <b>${category}</b>은(는) 이거애옹!`;
       default:
         return `<b>${CHARACTER_NAME}</b>가 정하지 못했어요 :(`;
     }
@@ -73,7 +73,7 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }).start(() => {
-          dispatch(updateContent({content: '맘에 들었다면 츄르를 달라옹!'}));
+          dispatch(updateMessage({message: '맘에 들었다면 츄르를 달라옹!'}));
           setStatus('SUCCESS');
         });
         return;

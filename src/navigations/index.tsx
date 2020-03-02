@@ -1,5 +1,5 @@
 import '@react-native-firebase/analytics';
-import React, {useRef, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
 import firebase from '@react-native-firebase/app';
 import {GoogleSignin} from '@react-native-community/google-signin';
@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from '@services/axios.base';
 import {clearCase} from '@store/actions/case';
 import {checkKeychain} from '@store/actions/auth';
+import {updateScreenName} from '@store/actions/navbar';
 import {SCREEN} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
@@ -22,8 +23,8 @@ function configFirebase() {
 }
 
 export default () => {
-  const routeNameRef = useRef<string>();
   const dispatch = useDispatch();
+  const {screenName} = useSelector((state: RootState) => state.navbar);
   const {status} = useSelector((state: RootState) => state.auth);
 
   function __init__() {
@@ -40,10 +41,9 @@ export default () => {
   function handleStateChange(state?: NavigationState) {
     if (!state) return;
 
-    const prevName = routeNameRef.current;
     const {name} = state.routes[state.index];
-    if (prevName !== name) {
-      routeNameRef.current = name;
+    if (!screenName || screenName !== name) {
+      dispatch(updateScreenName(name));
       // SEND SCREEN NAME TO ANALYTICS
       firebase.analytics().setCurrentScreen(name, name);
       // MIDDLEWARE

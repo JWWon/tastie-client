@@ -8,11 +8,11 @@ import {
   clearRecommendation,
   CLEAR_RECOMMENDATION,
 } from '@store/actions/recommendation';
-import {updateLoading, updateContent} from '@store/actions/message';
 import {
   GetRecommendationReq,
   GetRecommendationRes,
 } from '@services/recommendation/recommendation.type';
+import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
 import * as api from '@services/recommendation';
 import {RootState} from '@store/reducers';
 import {getDistance} from '@utils/helper';
@@ -22,7 +22,7 @@ function* getRecommendSaga(
   action: ReturnType<typeof getRecommendation.request>,
 ) {
   const {navigate} = action.payload;
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   yield navigate(SCREEN.RECOMMENDATION);
 
   try {
@@ -58,21 +58,21 @@ function* getRecommendSaga(
     yield firebase.analytics().logEvent('search_recommend', params);
   } catch (e) {
     yield put(
-      updateContent({
-        content: '미안해옹... 다시 알려줄래옹..?',
-        onPress: () => navigate('Case'),
+      updateMessage({
+        message: '미안해옹... 다시 알려줄래옹..?',
+        customAction: () => navigate('Case'),
       }),
     );
     yield put(getRecommendation.failure(e));
     yield firebase.analytics().logEvent('search_recommend_failure');
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* clearRecommendSaga(action: ReturnType<typeof clearRecommendation>) {
   const {navigate} = action.payload;
 
-  yield put(updateContent({content: '다른 음식이 먹고싶나옹?'}));
+  yield put(updateMessage({message: '다른 음식이 먹고싶나옹?'}));
   yield navigate('Case');
   yield firebase.analytics().logEvent('go_back_to_case_screen');
 }

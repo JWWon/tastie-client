@@ -24,7 +24,7 @@ interface ButtonInterface {
 // CLEAR_CASE
 export const CLEAR_CASE = '@case/CLEAR_CASE';
 
-export const clearCase = createAction(CLEAR_CASE, () => {})();
+export const clearCase = createAction(CLEAR_CASE)();
 // END CLEAR_CASE
 
 // CLEAR_CASE_PARTLY

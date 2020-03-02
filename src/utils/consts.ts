@@ -8,6 +8,8 @@ export const SCREEN = {
   // Home
   CASE: 'Case' as const,
   RECOMMENDATION: 'Recommendation' as const,
+  HISTORY: 'History' as const,
+  PROFILE: 'Profile' as const,
   // Session
   WELCOME: 'Welcome' as const,
   SIGNUP: 'Signup' as const,
