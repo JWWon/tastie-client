@@ -5,9 +5,7 @@ import Title from '@components/atoms/TextHighlight';
 import Description, {
   Props as DescriptionProps,
 } from '@components/atoms/Description';
-import DismissButton, {
-  Props as DismissProps,
-} from '@components/atoms/DismissButton';
+import Dismiss, {Props as DismissProps} from '@components/atoms/Dismiss';
 import PageButton, {
   Props as PageButtonProps,
 } from '@components/molcules/PageButton';
@@ -27,19 +25,24 @@ const StackView: React.FC<Props> = ({
   pageButton,
   children,
 }) => (
-  <BaseView>
-    {dismiss && (
-      <s.NavWrapper icon={dismiss.icon}>
-        <DismissButton {...dismiss} />
-      </s.NavWrapper>
-    )}
-    <s.ScreenWrapper hasDismiss={!!dismiss}>
-      <Title message={title} />
-      {description && <Description {...description} />}
-      <s.ChildrenWrapper>{children}</s.ChildrenWrapper>
-    </s.ScreenWrapper>
+  <BaseView noWrapper>
+    <s.Container>
+      <s.ScreenWrapper hasDismiss={!!dismiss}>
+        <s.HeaderWrapper>
+          <Title message={title} />
+          {description && <Description {...description} />}
+        </s.HeaderWrapper>
+        {children}
+      </s.ScreenWrapper>
 
-    {pageButton && <PageButton {...pageButton} />}
+      {dismiss && <Dismiss absolute {...dismiss} />}
+
+      {pageButton && (
+        <s.PageButtonWrapper>
+          <PageButton {...pageButton} />
+        </s.PageButtonWrapper>
+      )}
+    </s.Container>
   </BaseView>
 );
 

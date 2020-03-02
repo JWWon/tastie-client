@@ -1,7 +1,6 @@
 import {AxiosResponse, AxiosError} from 'axios';
-import {takeEvery, put, call} from 'redux-saga/effects';
+import {takeEvery, put, call, all} from 'redux-saga/effects';
 import _ from 'lodash';
-import {Alert} from 'react-native';
 import decode from 'jwt-decode';
 import firebase from '@react-native-firebase/app';
 import * as Keychain from 'react-native-keychain';
@@ -19,6 +18,7 @@ import {
   goBack,
 } from '@utils/SessionService';
 import {AuthInterface} from '@store/reducers/auth';
+import {clearNavbar} from '@store/actions/navbar';
 import {
   checkKeychain,
   loginWithFacebook,
@@ -111,12 +111,8 @@ function* checkKeychainSaga() {
     // TODO: Check if token is valid
     const auth: AuthInterface = yield call(getAuthFromJWT, data);
     yield put(checkKeychain.success(auth));
-    // Manually call before 'handleStateChange' active
-    yield firebase.analytics().setCurrentScreen(SCREEN.CASE, SCREEN.CASE);
   } catch (e) {
     yield put(checkKeychain.failure(e));
-    // Manually call before 'handleStateChange' active
-    yield firebase.analytics().setCurrentScreen(SCREEN.WELCOME, SCREEN.WELCOME);
   }
 }
 
@@ -198,6 +194,7 @@ function* signupSaga(action: ReturnType<typeof signup.request>) {
 function* logoutSaga() {
   yield call(Keychain.resetGenericPassword);
   yield call(axios.removeToken);
+  yield all([put(clearNavbar())]);
 }
 
 export default function* root() {

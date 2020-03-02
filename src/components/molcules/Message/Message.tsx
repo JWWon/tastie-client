@@ -13,41 +13,39 @@ const triangleHeight = 16;
 
 const Message: React.FC = () => {
   const dispatch = useDispatch();
-  const {content, loading, hide, onPress} = useSelector(
-    (state: RootState) => state.message,
+  const {message, loading, showMessage, customAction} = useSelector(
+    (state: RootState) => state.navbar,
   );
-
-  if (hide) {
-    return null;
-  }
 
   function layoutDidMount(e: LayoutChangeEvent) {
     const {height: messageHeight} = e.nativeEvent.layout;
     dispatch(updateMessageHeight({messageHeight}));
   }
 
-  const alert = onPress !== undefined && !loading;
+  const isAlert = !!customAction && !loading;
 
-  return (
-    <Fading onLayout={layoutDidMount}>
-      <s.Container>
-        <s.Bubble alert={alert}>
-          {loading ? (
-            <Loading />
-          ) : (
-            <s.Content alert={alert}>{content}</s.Content>
-          )}
+  return showMessage ? (
+    <Fading>
+      <s.Container onLayout={layoutDidMount}>
+        <s.Bubble>
+          <s.Square alertMode={isAlert}>
+            {loading ? (
+              <Loading />
+            ) : (
+              <s.Content alertMode={isAlert}>{message}</s.Content>
+            )}
+          </s.Square>
+          <Triangle
+            point="down"
+            active={isAlert}
+            width={12}
+            height={triangleHeight}
+          />
         </s.Bubble>
-        <Triangle
-          point="down"
-          active={alert}
-          width={12}
-          height={triangleHeight}
-        />
+        <s.BottomSpace height={triangleHeight} />
       </s.Container>
-      <s.Space height={triangleHeight} />
     </Fading>
-  );
+  ) : null;
 };
 
 export default Message;

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
@@ -14,7 +14,6 @@ import {
   selectSituation,
   selectPreference,
   selectLocation,
-  clearCase,
   clearCasePartly,
   searchLocations,
   getPreferences,
@@ -60,16 +59,12 @@ const Case: React.FC<Props> = ({navigation}) => {
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
 
-  useEffect(() => {
-    dispatch(clearCase());
-  }, []);
-
   return (
     <s.Container>
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
-        message="은"
+        message="은(는)"
         autocomplete={{
           data: categories,
           onSelect: handleSelectCategory,
