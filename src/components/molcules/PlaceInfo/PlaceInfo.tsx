@@ -2,7 +2,7 @@ import React from 'react';
 import {FlatList} from 'react-native';
 import moment from 'moment';
 
-import ImageButton from '@components/atoms/ImageButton';
+import ImageButton from '@components/atoms/IconButton';
 import {makePhoneCall, openNaverMap} from '@utils/helper';
 import {Props} from './PlaceInfo.type';
 import * as s from './PlaceInfo.style';
