@@ -21,7 +21,7 @@ export function setNavigation(nav: ConfigInterface['navigation']) {
   if (nav) config.navigation = nav;
 }
 
-export function navigate(name: string, params: object) {
+export function navigate(name: string, params?: object) {
   const action = CommonActions.navigate({name, params});
   config.navigation?.dispatch(action);
 }

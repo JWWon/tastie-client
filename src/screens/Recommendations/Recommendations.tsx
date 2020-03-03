@@ -3,40 +3,47 @@ import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
-import KeyboardSafeView from '@components/templates/KeyboardSafeView';
+import BaseView from '@components/templates/BaseView';
 import PlaceCard from '@components/organisms/PlaceCard';
-import Sentence from '@components/molcules/Sentence';
+import Dismiss from '@components/atoms/Dismiss';
+import TextHighlight from '@components/atoms/TextHighlight';
 import {RootState} from '@store/reducers';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
-import {clearRecommendation} from '@store/actions/recommendation';
+import {clearRecommendations} from '@store/actions/recommendations';
 import {HomeParamList} from '@navigations/Home';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
 import size from '@styles/sizes';
+import space from '@styles/spaces';
+import * as s from './Recommendations.style';
 
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
 interface Props {
   navigation: BottomTabNavigationProp<
     HomeParamList,
-    typeof SCREEN.RECOMMENDATION
+    typeof SCREEN.RECOMMENDATIONS
   >;
 }
 
-const Recommendation: React.FC<Props> = ({navigation}) => {
+const bodyHeight = size.view.rootHeight - (size.button.dismiss + space.basic);
+
+const Recommendations: React.FC<Props> = () => {
   // useDispatch
   const dispatch = useDispatch();
   // useSelector
   const {category} = useSelector((state: RootState) => state.case);
-  const {recommendation, device} = useSelector((state: RootState) => state);
-  const {loading, ...data} = recommendation;
-  const startPosition = (size.view.rootHeight - device.messageHeight) * 0.46;
+  const {loading, data, error} = useSelector(
+    (state: RootState) => state.recommendations,
+  );
+  const {messageHeight} = useSelector((state: RootState) => state.device);
+  const startPosition = (bodyHeight - messageHeight) * 0.4;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
   const [translateY] = useState<Animated.Value>(
     new Animated.Value(startPosition),
   );
 
-  const handleDismiss = () => dispatch(clearRecommendation(navigation));
+  const handleDismiss = () => dispatch(clearRecommendations());
 
   function getTitle() {
     switch (status) {
@@ -60,13 +67,14 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
     } else {
       if (status === 'LOADING') {
         // * Loading finished
-        if (recommendation.error) {
+        if (error) {
           // Failure
           setStatus('ERROR');
           return;
         }
         // Success
         dispatch(hideMessage());
+        // move text to top
         Animated.timing(translateY, {
           toValue: 0,
           duration: 560,
@@ -82,15 +90,20 @@ const Recommendation: React.FC<Props> = ({navigation}) => {
   }, [loading]);
 
   return (
-    <KeyboardSafeView>
+    <BaseView noWrapper>
+      <Dismiss icon="close" onPress={handleDismiss} />
       <Animated.View style={{transform: [{translateY}]}}>
-        <Sentence message={getTitle()} />
+        <TextHighlight message={getTitle()} />
       </Animated.View>
       {status === 'SUCCESS' && (
-        <PlaceCard onDismiss={handleDismiss} {...data} />
+        <s.Pager messageHeight={messageHeight}>
+          {data.map((item, idx) => (
+            <PlaceCard key={idx.toString()} {...item} />
+          ))}
+        </s.Pager>
       )}
-    </KeyboardSafeView>
+    </BaseView>
   );
 };
 
-export default Recommendation;
+export default Recommendations;

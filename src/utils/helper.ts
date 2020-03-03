@@ -100,7 +100,7 @@ export const getDistance = (
 
   const distKilometer = 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   if (distKilometer < 1) {
-    return (distKilometer * 1000).toString(10).slice(0, 3) + 'm';
+    return (distKilometer * 1000).toString(10).split('.')[0] + 'm';
   }
   return distKilometer.toString(10).slice(0, 3) + 'km';
 };

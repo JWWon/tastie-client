@@ -1,26 +1,12 @@
-import {
-  all,
-  call,
-  put,
-  select,
-  fork,
-  take,
-  takeEvery,
-  race,
-} from 'redux-saga/effects';
-import Geolocation from 'react-native-geolocation-service';
-import firebase from '@react-native-firebase/app';
+import {all, call, put, select, takeEvery} from 'redux-saga/effects';
 import {AxiosResponse} from 'axios';
-import {channel} from 'redux-saga';
 import * as moment from 'moment';
-import _ from 'lodash';
 
 import {
   clearCase,
   clearCasePartly,
   getCategories,
   getSituations,
-  getUserCoords,
   SELECT_CATEGORY,
   SELECT_SITUATION,
   selectCategory,
@@ -31,8 +17,9 @@ import {
   searchLocations,
   getPreferences,
 } from '@store/actions/case';
+import {getUserCoords} from '@store/actions/auth';
 import {RootState} from '@store/reducers';
-import {CoordsInterface, CaseIndex} from '@store/reducers/case';
+import {CaseIndex} from '@store/reducers/case';
 import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
 import {
   GetCategoriesRes,
@@ -46,7 +33,6 @@ import {
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
 import {MY_LOCATION} from '@utils/consts';
-import {checkPermission} from '@utils/helper';
 
 function* clearCaseSaga() {
   yield all([put(getUserCoords.request()), put(getCategories.request())]);
@@ -87,36 +73,6 @@ function* getSituationsSaga() {
   yield put(hideLoading());
 }
 
-function* getUserCoordsSaga() {
-  const successChannel = yield call(channel);
-  const failureChannel = yield call(channel);
-
-  yield call(checkPermission);
-  yield call(
-    Geolocation.getCurrentPosition,
-    ({coords}): CoordsInterface =>
-      successChannel.put(_.pick(coords, ['latitude', 'longitude'])),
-    e => failureChannel.put(e),
-    {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  );
-
-  yield fork(function*() {
-    const [coords, error] = yield race([
-      take(successChannel), // CoordsInterface
-      take(failureChannel),
-    ]);
-
-    if (coords) {
-      yield put(getUserCoords.success(coords));
-      yield put(getNearbyLocations.request({...coords, count: 10}));
-      yield firebase.analytics().logEvent('user_coordinate', coords);
-    }
-    if (error) {
-      yield put(getUserCoords.failure(error));
-    }
-  });
-}
-
 function* getNearbyLocationSaga(
   action: ReturnType<typeof getNearbyLocations.request>,
 ) {
@@ -145,7 +101,7 @@ function* searchLocationsSaga(
   }
 
   try {
-    const {userCoords} = yield select((state: RootState) => state.case);
+    const {userCoords}: RootState['auth'] = yield select(state => state.auth);
     const response: AxiosResponse<SearchLocationsAPIRes> = yield call(
       api.searchLocations,
       {
@@ -192,7 +148,7 @@ function* selectLocationSaga(
     const {name, location, place_id} = action.payload;
     if (name === MY_LOCATION) {
       // * current user location
-      const {userCoords}: RootState['case'] = yield select(state => state.case);
+      const {userCoords}: RootState['auth'] = yield select(state => state.auth);
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
         getAddress,
         userCoords,
@@ -270,7 +226,6 @@ export default function* root() {
   // async
   yield takeEvery(getCategories.request, getCategoriesSaga);
   yield takeEvery(getSituations.request, getSituationsSaga);
-  yield takeEvery(getUserCoords.request, getUserCoordsSaga);
   yield takeEvery(getNearbyLocations.request, getNearbyLocationSaga);
   yield takeEvery(searchLocations.request, searchLocationsSaga);
   yield takeEvery(getPreferences.request, getPreferencesSaga);

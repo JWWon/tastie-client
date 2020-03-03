@@ -27,11 +27,15 @@ const model = new Model();
 
 const rootVertical = 16;
 export default {
+  // root
   rootHorizontal: 24,
   rootTop: rootVertical,
   rootBottom: model.isIphoneWithNotch() ? 0 : rootVertical,
   notchBottom: model.isIphoneWithNotch() ? 34 : 0,
+  // general
   wide: 24,
   basic: 16,
   narrow: 12,
+  // component spceific
+  pager: 6,
 };

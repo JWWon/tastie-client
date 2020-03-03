@@ -7,7 +7,7 @@ export const BASE_URL = {
 export const SCREEN = {
   // Home
   CASE: 'Case' as const,
-  RECOMMENDATION: 'Recommendation' as const,
+  RECOMMENDATIONS: 'Recommendations' as const,
   HISTORY: 'History' as const,
   PROFILE: 'Profile' as const,
   // Session

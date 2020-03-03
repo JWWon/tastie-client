@@ -1,11 +1,11 @@
 import {CoordsInterface} from '@store/reducers/case';
 
-export interface GetRecommendationReq extends CoordsInterface {
+export interface GetRecommendationsReq extends CoordsInterface {
   category: string;
   situation: string;
 }
 
-export interface GetRecommendationRes {
+export interface Recommendation {
   id: string;
   name: string;
   rating: number;
@@ -22,3 +22,5 @@ export interface GetRecommendationRes {
     weekdayText?: string[];
   };
 }
+
+export type GetRecommendationsRes = Recommendation[];

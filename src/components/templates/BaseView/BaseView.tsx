@@ -3,7 +3,6 @@ import React from 'react';
 import * as s from './BaseView.style';
 
 interface Props {
-  // for @components/templates/KeyboardSafeView
   noWrapper?: boolean;
 }
 

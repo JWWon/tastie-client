@@ -4,14 +4,14 @@ import {StateType} from 'typesafe-actions';
 import auth from './auth';
 import caseReducer from './case';
 import device from './device';
-import recommendation from './recommendation';
+import recommendations from './recommendations';
 import navbar from './navbar';
 
 const rootReducer = combineReducers({
   auth,
   case: caseReducer,
   device,
-  recommendation,
+  recommendations,
   navbar,
 });
 

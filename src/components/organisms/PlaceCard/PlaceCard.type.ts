@@ -1,5 +1,3 @@
-import {RecommendationState} from '@store/reducers/recommendation';
+import {Recommendation} from '@services/recommendations';
 
-export interface Props extends Omit<RecommendationState, 'loading'> {
-  onDismiss: () => void;
-}
+export interface Props extends Recommendation {}

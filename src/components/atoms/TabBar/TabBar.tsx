@@ -24,7 +24,7 @@ const TabBar: React.FC = () => {
 
   const isCurrentHistory = screenName === SCREEN.HISTORY;
   const isCurrentHome =
-    screenName === SCREEN.CASE || screenName === SCREEN.RECOMMENDATION;
+    screenName === SCREEN.CASE || screenName === SCREEN.RECOMMENDATIONS;
   const isCurrentProfile = screenName === SCREEN.PROFILE;
 
   const glow = Animated.loop(

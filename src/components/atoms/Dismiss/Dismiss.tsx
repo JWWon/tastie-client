@@ -3,9 +3,9 @@ import React from 'react';
 import {Props} from './Dismiss.type';
 import * as s from './Dismiss.style';
 
-const Dismiss: React.FC<Props> = ({icon, onPress, absolute}) => {
+const Dismiss: React.FC<Props> = ({icon, onPress, absolute, style}) => {
   const DismissButton = (
-    <s.Button onPress={onPress}>
+    <s.Button onPress={onPress} style={style}>
       <s.Icon
         source={
           icon === 'arrow'

@@ -1,4 +1,3 @@
-import {RecommendationState} from '@store/reducers/recommendation';
+import {Recommendation} from '@services/recommendations';
 
-export interface Props
-  extends Omit<RecommendationState, 'photoUrls' | 'loading'> {}
+export interface Props extends Omit<Recommendation, 'photoUrls'> {}
