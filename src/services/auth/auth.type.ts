@@ -36,8 +36,3 @@ export interface SignupReq {
 
 export type SignupRes = undefined;
 // END SIGNUP
-
-export interface AuthError {
-  statusCode: number;
-  message: string;
-}

@@ -1,9 +1,12 @@
 import {createAsyncAction, ActionType, createAction} from 'typesafe-actions';
+import {GeoError} from 'react-native-geolocation-service';
 import {AxiosError} from 'axios';
 
+import {ResponseError} from '@services/axios.base';
 import {GetTokenReq} from '@services/auth';
-import {SignupReq, AuthError} from '@services/auth';
+import {SignupReq} from '@services/auth';
 import {AuthInterface} from '@store/reducers/auth';
+import {CoordsInterface} from '@store/reducers/case';
 
 // CHECK_KEYCHAIN
 export const CHECK_KEYCHAIN = '@auth/CHECK_KEYCHAIN_REQUEST';
@@ -50,7 +53,7 @@ export const loginWithEmail = createAsyncAction(
   LOGIN_WITH_EMAIL,
   LOGIN_WITH_EMAIL_SUCCESS,
   LOGIN_WITH_EMAIL_FAILURE,
-)<Omit<GetTokenReq, 'type'>, AuthInterface, AxiosError<AuthError>>();
+)<Omit<GetTokenReq, 'type'>, AuthInterface, AxiosError<ResponseError>>();
 // END LOGIN_WITH_EMAIL
 
 // SIGNUP
@@ -61,7 +64,7 @@ export const SIGNUP_FAILURE = '@auth/SIGNUP_FAILURE';
 export const signup = createAsyncAction(SIGNUP, SIGNUP_SUCCESS, SIGNUP_FAILURE)<
   SignupReq,
   AuthInterface,
-  AxiosError<AuthError>
+  AxiosError<ResponseError>
 >();
 // END SIGNUP
 
@@ -71,6 +74,18 @@ export const LOGOUT = '@auth/LOGOUT';
 export const logout = createAction(LOGOUT)();
 // END LOGOUT
 
+// GET_USER_COORDS
+export const GET_USER_COORDS = '@auth/GET_USER_COORDS_REQUEST';
+export const GET_USER_COORDS_SUCCESS = '@auth/GET_USER_COORDS_SUCCESS';
+export const GET_USER_COORDS_FAILURE = '@auth/GET_USER_COORDS_FAILURE';
+
+export const getUserCoords = createAsyncAction(
+  GET_USER_COORDS,
+  GET_USER_COORDS_SUCCESS,
+  GET_USER_COORDS_FAILURE,
+)<undefined, CoordsInterface, GeoError>();
+// END GET_USER_COORDS
+
 const actions = {
   checkKeychain,
   loginWithFacebook,
@@ -78,5 +93,6 @@ const actions = {
   loginWithEmail,
   signup,
   logout,
+  getUserCoords,
 };
 export type AuthAction = ActionType<typeof actions>;

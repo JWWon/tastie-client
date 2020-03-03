@@ -7,6 +7,7 @@ import {createReducer} from 'typesafe-actions';
 
 import {setPendingWithLoading} from '@utils/helper';
 import {TypeInterface} from '@services/auth';
+import {CoordsInterface} from '@store/reducers/case';
 import {
   AuthAction,
   CHECK_KEYCHAIN,
@@ -21,6 +22,8 @@ import {
   SIGNUP,
   SIGNUP_SUCCESS,
   SIGNUP_FAILURE,
+  GET_USER_COORDS_SUCCESS,
+  GET_USER_COORDS_FAILURE,
   LOGOUT,
 } from '@store/actions/auth';
 
@@ -34,6 +37,7 @@ export interface AuthInterface {
 interface AuthState extends AuthInterface {
   loading: boolean;
   status: 'PENDING' | 'NO_USER' | 'USER_EXIST';
+  userCoords: CoordsInterface;
   error?: any;
 }
 
@@ -44,6 +48,8 @@ const initState: AuthState = {
   type: 'email',
   name: '',
   email: '',
+  // USER INFO FROM SERVICE
+  userCoords: {latitude: 0, longitude: 0},
 };
 
 // HELPERS
@@ -69,6 +75,7 @@ const setFailureWithoutUser = <A extends {payload: any}>(
 
 // REDUCER
 const authReducer = createReducer<AuthState, AuthAction>(initState, {
+  // ASYNC
   [CHECK_KEYCHAIN]: setPendingWithLoading,
   [CHECK_KEYCHAIN_SUCCESS]: setSuccessWithUser,
   [CHECK_KEYCHAIN_FAILURE]: setFailureWithoutUser,
@@ -84,6 +91,15 @@ const authReducer = createReducer<AuthState, AuthAction>(initState, {
   [SIGNUP]: setPendingWithLoading,
   [SIGNUP_SUCCESS]: setSuccessWithUser,
   [SIGNUP_FAILURE]: setFailureWithoutUser,
+  [GET_USER_COORDS_SUCCESS]: (state, action) => ({
+    ...state,
+    userCoords: action.payload,
+  }),
+  [GET_USER_COORDS_FAILURE]: (state, action) => ({
+    ...state,
+    error: action.payload,
+  }),
+  // SYNC
   [LOGOUT]: () => ({...initState, status: 'NO_USER'}),
 });
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
@@ -8,7 +8,7 @@ import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
 import {SelectAutocomplete} from '@components/atoms/InputHelper';
 import {RootState} from '@store/reducers';
-import {getRecommendation} from '@store/actions/recommendation';
+import {getRecommendations} from '@store/actions/recommendations';
 import {
   selectCategory,
   selectSituation,
@@ -18,13 +18,14 @@ import {
   searchLocations,
   getPreferences,
 } from '@store/actions/case';
+import {setNavigation} from '@utils/HomeService';
 import {CaseIndex} from '@store/reducers/case';
 import {HomeParamList} from '@navigations/Home';
-import {MY_LOCATION} from '@utils/consts';
+import {MY_LOCATION, SCREEN} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
-  navigation: BottomTabNavigationProp<HomeParamList, 'Case'>;
+  navigation: BottomTabNavigationProp<HomeParamList, typeof SCREEN.CASE>;
 }
 
 const Case: React.FC<Props> = ({navigation}) => {
@@ -44,7 +45,7 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const preferenceExist = preference !== undefined;
 
-  const searchRecommend = () => dispatch(getRecommendation.request(navigation));
+  const searchRecommend = () => dispatch(getRecommendations.request());
 
   const handlePressMore = () => dispatch(getPreferences.request());
 
@@ -58,6 +59,8 @@ const Case: React.FC<Props> = ({navigation}) => {
     dispatch(selectSituation({situation: name, onPress: searchRecommend}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
+
+  useEffect(() => setNavigation(navigation), []);
 
   return (
     <s.Container>
@@ -93,7 +96,7 @@ const Case: React.FC<Props> = ({navigation}) => {
       {location.name !== '' && (
         <Sentence
           maxSize={11}
-          message="이야."
+          message="(이)야."
           autocomplete={{
             data: situations,
             onSelect: handleSelectSituation,

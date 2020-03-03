@@ -1,25 +1,55 @@
 import styled from 'styled-components/native';
+import LinearGradient from 'react-native-linear-gradient';
 
-import ImageButton from '@components/atoms/ImageButton';
-import {shadow} from '@styles/mixins';
+import {Family} from '@styles/fonts';
 
 // View
-const paddingTop = 24;
-export const Container = styled.View`
+export const ImageWrapper = styled.ImageBackground`
   flex: 1;
-  padding: ${paddingTop}px 0 ${({theme}) => theme.space.basic}px;
-`;
-
-export const InfoWrapper = styled.View`
-  margin-top: -${({theme}) => theme.size.placeCardHover}px;
-  background: ${({theme}) => theme.color.white};
+  margin: 0 ${({theme}) => theme.space.pager}px;
   border-radius: ${({theme}) => theme.size.border.basic}px;
-  padding: 16px;
-  ${shadow}
+  overflow: hidden;
 `;
 
-export const Dismiss = styled(ImageButton)`
-  position: absolute;
-  top: ${({theme}) => paddingTop + theme.space.basic}px;
-  right: 0;
+export const ImageFilter = styled(LinearGradient).attrs({
+  colors: ['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.15)', 'rgba(0, 0, 0, 0.5)'],
+})`
+  flex: 1;
+  padding: ${({theme}) => theme.space.basic}px;
+`;
+
+export const BottomContent = styled.View`
+  margin-top: auto;
+`;
+
+export const RowContent = styled.View`
+  flex-direction: row;
+  margin-top: 8px;
+`;
+
+// Text
+export const Address = styled.Text`
+  ${({theme}) => theme.font.size12}
+  color: ${({theme}) => theme.color.grayLight};
+`;
+
+export const Distance = styled.Text`
+  ${({theme}) => theme.font.size14}
+  margin-top: 4px;
+  color: ${({theme}) => theme.color.white};
+`;
+
+export const PlaceName = styled.Text`
+  ${({theme}) => theme.font.size24}
+  color: ${({theme}) => theme.color.white};
+`;
+
+export const Label = styled.Text`
+  ${({theme}) => theme.font.size12}
+  font-family: ${Family.NanumSquare.B};
+  color: ${({theme}) => theme.color.white};
+  padding: 4px ${({theme}) => theme.size.border.basic / 2}px;
+  border-radius: ${({theme}) => theme.size.border.basic}px;
+  border: 1px solid ${({theme}) => theme.color.white};
+  margin-right: 8px;
 `;

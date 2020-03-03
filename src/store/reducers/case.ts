@@ -19,8 +19,6 @@ import {
   GET_CATEGORIES_FAILURE,
   GET_SITUATIONS_SUCCESS,
   GET_SITUATIONS_FAILURE,
-  GET_USER_COORDS_SUCCESS,
-  GET_USER_COORDS_FAILURE,
   SELECT_LOCATION_SUCCESS,
   UPDATE_HAS_REQUIRED,
   SELECT_LOCATION_FAILURE,
@@ -99,11 +97,6 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
     situations: action.payload,
   }),
   [GET_SITUATIONS_FAILURE]: setError,
-  [GET_USER_COORDS_SUCCESS]: (state, action) => ({
-    ...state,
-    userCoords: action.payload,
-  }),
-  [GET_USER_COORDS_FAILURE]: setError,
   [GET_NEARBY_LOCATIONS_SUCCESS]: (state, action) => ({
     ...state,
     nearbyLocations: action.payload,
@@ -128,7 +121,7 @@ const caseReducer = createReducer<CaseState, CaseAction>(initState, {
   }),
   [SELECT_LOCATION_FAILURE]: setError,
   // WITHOUT MIDDLEWARE
-  [CLEAR_CASE]: state => ({...state, ...initState}),
+  [CLEAR_CASE]: () => initState,
   [CLEAR_CASE_PARTLY]: (state, action) =>
     produce(state, draft => {
       switch (action.payload) {

@@ -52,7 +52,7 @@ const navbarReducer = createReducer<NavbarState, NavbarAction>(initState, {
   [EXPAND_NAVBAR]: state => ({...state, expand: true, showMessage: false}),
   [CONTRACT_NAVBAR]: state => ({...state, expand: false, showMessage: true}),
   [CLEAR_ACTION]: state => ({...state, customAction: undefined}),
-  [CLEAR_NAVBAR]: state => ({...state, ...initState}),
+  [CLEAR_NAVBAR]: () => initState,
 });
 
 export default navbarReducer;

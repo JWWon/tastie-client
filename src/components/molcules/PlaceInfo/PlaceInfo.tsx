@@ -38,7 +38,6 @@ const getTodayOpeningHours = (hours?: string[]) => {
 
 const PlaceInfo: React.FC<Props> = ({
   name,
-  distance,
   location,
   formattedPhoneNumber,
   formattedAddress,
@@ -73,7 +72,6 @@ const PlaceInfo: React.FC<Props> = ({
       <s.Name>{name}</s.Name>
       <s.DynamicInfo>
         <s.Types>{formattedAddress}</s.Types>
-        <s.Distance>{distance}</s.Distance>
       </s.DynamicInfo>
       <s.ButtonWrapper>
         <ImageButton

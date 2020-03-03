@@ -1,5 +1,4 @@
 import {createAction, ActionType, createAsyncAction} from 'typesafe-actions';
-import {GeoError} from 'react-native-geolocation-service';
 import {AxiosError} from 'axios';
 
 import {
@@ -59,18 +58,6 @@ export const getSituations = createAsyncAction(
   GET_SITUATIONS_FAILURE,
 )<undefined, GetSituationsRes, AxiosError>();
 // END GET_SITUATIONS
-
-// GET_USER_COORDS
-export const GET_USER_COORDS = '@case/GET_USER_COORDS_REQUEST';
-export const GET_USER_COORDS_SUCCESS = '@case/GET_USER_COORDS_SUCCESS';
-export const GET_USER_COORDS_FAILURE = '@case/GET_USER_COORDS_FAILURE';
-
-export const getUserCoords = createAsyncAction(
-  GET_USER_COORDS,
-  GET_USER_COORDS_SUCCESS,
-  GET_USER_COORDS_FAILURE,
-)<undefined, CoordsInterface, GeoError>();
-// END GET_USER_COORDS
 
 // GET_NEARBY_LOCATIONS
 export const GET_NEARBY_LOCATIONS = '@case/GET_NEARBY_LOCATIONS_REQUEST';
@@ -187,7 +174,6 @@ const actions = {
   clearCasePartly,
   getCategories,
   getSituations,
-  getUserCoords,
   getNearbyLocations,
   searchLocations,
   getPreferences,

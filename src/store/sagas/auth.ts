@@ -1,16 +1,18 @@
 import {AxiosResponse, AxiosError} from 'axios';
-import {takeEvery, put, call, all} from 'redux-saga/effects';
+import {takeEvery, put, call, all, race, fork, take} from 'redux-saga/effects';
+import {channel} from 'redux-saga';
 import _ from 'lodash';
 import decode from 'jwt-decode';
-import firebase from '@react-native-firebase/app';
 import * as Keychain from 'react-native-keychain';
+import Geolocation from 'react-native-geolocation-service';
 import {AccessToken, LoginManager, LoginResult} from 'react-native-fbsdk';
 import {GoogleSignin} from '@react-native-community/google-signin';
+import firebase from '@react-native-firebase/app';
 
 import * as api from '@services/auth';
-import axios from '@services/axios.base';
+import axios, {ResponseError} from '@services/axios.base';
 import {SCREEN} from '@utils/consts';
-import {isAxiosError} from '@utils/helper';
+import {isAxiosError, checkPermission} from '@utils/helper';
 import {
   navigate,
   useLoginFormik,
@@ -26,7 +28,10 @@ import {
   signup,
   logout,
   loginWithEmail,
+  getUserCoords,
 } from '@store/actions/auth';
+import {CoordsInterface} from '@store/reducers/case';
+import {getNearbyLocations} from '@store/actions/case';
 
 type KeychainInterface =
   | false
@@ -58,7 +63,7 @@ function* getAuthFromJWT(data: api.GetTokenRes) {
 
 function* handleBackendError(e: any) {
   if (isAxiosError(e)) {
-    const {response}: AxiosError<api.AuthError> = e;
+    const {response}: AxiosError<ResponseError> = e;
     switch (response?.status) {
       case 400:
         // Bad Request
@@ -197,6 +202,36 @@ function* logoutSaga() {
   yield all([put(clearNavbar())]);
 }
 
+function* getUserCoordsSaga() {
+  const successChannel = yield call(channel);
+  const failureChannel = yield call(channel);
+
+  yield call(checkPermission);
+  yield call(
+    Geolocation.getCurrentPosition,
+    ({coords}): CoordsInterface =>
+      successChannel.put(_.pick(coords, ['latitude', 'longitude'])),
+    e => failureChannel.put(e),
+    {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  );
+
+  yield fork(function*() {
+    const [coords, error] = yield race([
+      take(successChannel), // CoordsInterface
+      take(failureChannel),
+    ]);
+
+    if (coords) {
+      yield put(getUserCoords.success(coords));
+      yield put(getNearbyLocations.request({...coords, count: 10}));
+      yield firebase.analytics().logEvent('user_coordinate', coords);
+    }
+    if (error) {
+      yield put(getUserCoords.failure(error));
+    }
+  });
+}
+
 export default function* root() {
   // acync
   yield takeEvery(checkKeychain.request, checkKeychainSaga);
@@ -204,6 +239,7 @@ export default function* root() {
   yield takeEvery(loginWithGoogle.request, loginWithGoogleSaga);
   yield takeEvery(loginWithEmail.request, loginWithEmailSaga);
   yield takeEvery(signup.request, signupSaga);
+  yield takeEvery(getUserCoords.request, getUserCoordsSaga);
   // sync
   yield takeEvery(logout, logoutSaga);
 }

@@ -2,6 +2,11 @@ import axios from 'axios';
 
 import {BASE_URL} from '@utils/consts';
 
+export interface ResponseError {
+  statusCode: number;
+  message: string;
+}
+
 function config() {
   axios.defaults.baseURL = BASE_URL[__DEV__ ? 'DEVELOPMENT' : 'PRODUCTION'];
 }
