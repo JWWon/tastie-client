@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import RawIconButton from '@components/atoms/IconButton';
 import {Family} from '@styles/fonts';
 
 // View
@@ -25,6 +26,7 @@ export const BottomContent = styled.View`
 export const RowContent = styled.View`
   flex-direction: row;
   margin-top: 8px;
+  align-items: center;
 `;
 
 // Text
@@ -42,6 +44,7 @@ export const Distance = styled.Text`
 export const PlaceName = styled.Text`
   ${({theme}) => theme.font.size24}
   color: ${({theme}) => theme.color.white};
+  flex: 1;
 `;
 
 export const Label = styled.Text`
@@ -52,4 +55,9 @@ export const Label = styled.Text`
   border-radius: ${({theme}) => theme.size.border.basic}px;
   border: 1px solid ${({theme}) => theme.color.white};
   margin-right: 8px;
+`;
+
+// Button
+export const IconButton = styled(RawIconButton)`
+  padding-left: ${({theme}) => theme.space.basic}px;
 `;
