@@ -1,11 +1,10 @@
 import {CommonActions} from '@react-navigation/native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
-import {HomeParamList} from '@navigations/Home';
+import {RootNavigationProp} from '@navigations/Root';
 import {SCREEN} from '@utils/consts';
 
 interface ConfigInterface {
-  navigation?: BottomTabNavigationProp<HomeParamList, typeof SCREEN.CASE>;
+  navigation?: RootNavigationProp<typeof SCREEN.CASE>;
 }
 
 const config: ConfigInterface = {};

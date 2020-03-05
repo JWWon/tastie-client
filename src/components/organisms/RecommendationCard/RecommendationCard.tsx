@@ -3,18 +3,14 @@ import {useSelector} from 'react-redux';
 
 import {RootState} from '@store/reducers';
 import {getDistance} from '@utils/helper';
-import * as s from './PlaceCard.style';
-import {Props} from './PlaceCard.type';
+import {SCREEN} from '@utils/consts';
+import * as s from './RecommendationCard.style';
+import {Props} from './RecommendationCard.type';
 
 const icon_like_empty = require('@assets/images/icon-like/icon-like-empty.png');
 const icon_like = require('@assets/images/icon-like/icon-like.png');
 
-const PlaceCard: React.FC<Props> = ({
-  photoUrls,
-  formattedAddress,
-  location,
-  name,
-}) => {
+const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
   const [distance, setDistance] = useState<string>('');
   const [isLike, setIsLike] = useState<boolean>(false);
   const userCoords = useSelector((state: RootState) => state.auth.userCoords);
@@ -22,12 +18,17 @@ const PlaceCard: React.FC<Props> = ({
 
   const labels = [situation];
 
-  useEffect(() => setDistance(getDistance(userCoords, location)), []);
+  function handlePress() {
+    navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, {distance, ...data});
+  }
+
+  useEffect(() => setDistance(getDistance(userCoords, data.location)), []);
 
   return (
-    <s.ImageWrapper source={{uri: photoUrls[0]}}>
+    <s.TouchableWrapper onPress={handlePress}>
+      <s.BackgroundImage source={{uri: data.photoUrls[0]}} />
       <s.ImageFilter>
-        <s.Address>{formattedAddress}</s.Address>
+        <s.Address>{data.formattedAddress}</s.Address>
         <s.Distance>{distance}</s.Distance>
 
         <s.BottomContent>
@@ -37,7 +38,7 @@ const PlaceCard: React.FC<Props> = ({
             ))}
           </s.RowContent>
           <s.RowContent>
-            <s.PlaceName>{name}</s.PlaceName>
+            <s.PlaceName>{data.name}</s.PlaceName>
             <s.IconButton
               onPress={() => setIsLike(!isLike)}
               source={isLike ? icon_like : icon_like_empty}
@@ -45,8 +46,8 @@ const PlaceCard: React.FC<Props> = ({
           </s.RowContent>
         </s.BottomContent>
       </s.ImageFilter>
-    </s.ImageWrapper>
+    </s.TouchableWrapper>
   );
 };
 
-export default PlaceCard;
+export default RecommendationCard;

@@ -1,6 +1,10 @@
 import '@react-native-firebase/analytics';
 import React, {useEffect} from 'react';
-import {NavigationContainer, NavigationState} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationState,
+  PartialState,
+} from '@react-navigation/native';
 import firebase from '@react-native-firebase/app';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import DeviceInfo from 'react-native-device-info';
@@ -13,13 +17,23 @@ import {updateScreenName} from '@store/actions/navbar';
 import {SCREEN} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
-import HomeNavigator from './Home';
+import RootNavigator from './Root';
 import SessionNavigator from './Session';
 
 function configFirebase() {
   const uuid = DeviceInfo.getUniqueId();
-  firebase.analytics().setAnalyticsCollectionEnabled(true);
+  firebase.analytics().setAnalyticsCollectionEnabled(!__DEV__);
   firebase.analytics().setUserId(uuid);
+}
+
+function getActiveRouteName(
+  state: NavigationState | PartialState<NavigationState>,
+): string {
+  if (state.routes === undefined || state.index === undefined) return '';
+
+  const route = state.routes[state.index];
+  if (route.state) return getActiveRouteName(route.state);
+  return route.name;
 }
 
 export default () => {
@@ -41,7 +55,7 @@ export default () => {
   function handleStateChange(state?: NavigationState) {
     if (!state) return;
 
-    const {name} = state.routes[state.index];
+    const name = getActiveRouteName(state);
     if (!screenName || screenName !== name) {
       dispatch(updateScreenName(name));
       // SEND SCREEN NAME TO ANALYTICS
@@ -61,7 +75,7 @@ export default () => {
         // TODO: Apply Splash Image when pending
         return null;
       case 'USER_EXIST':
-        return <HomeNavigator />;
+        return <RootNavigator />;
       case 'NO_USER':
         return <SessionNavigator />;
     }

@@ -1,10 +1,29 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import RawLabel from '@components/atoms/Label';
 import RawIconButton from '@components/atoms/IconButton';
-import {Family} from '@styles/fonts';
 
 // View
+export const TouchableWrapper = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.9,
+})`
+  flex: 1;
+  margin: 0 ${({theme}) => theme.space.pager}px;
+  border-radius: ${({theme}) => theme.size.border.basic}px;
+  overflow: hidden;
+`;
+
+export const BackgroundImage = styled.Image.attrs({
+  resizeMode: 'cover',
+})`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+`;
+
 export const ImageWrapper = styled.ImageBackground`
   flex: 1;
   margin: 0 ${({theme}) => theme.space.pager}px;
@@ -47,15 +66,9 @@ export const PlaceName = styled.Text`
   flex: 1;
 `;
 
-export const Label = styled.Text`
-  ${({theme}) => theme.font.size12}
-  font-family: ${Family.NanumSquare.B};
-  color: ${({theme}) => theme.color.white};
-  padding: 4px ${({theme}) => theme.size.border.basic / 2}px;
-  border-radius: ${({theme}) => theme.size.border.basic}px;
-  border: 1px solid ${({theme}) => theme.color.white};
-  margin-right: 8px;
-`;
+export const Label = styled(RawLabel).attrs(({theme}) => ({
+  color: theme.color.white,
+}))``;
 
 // Button
 export const IconButton = styled(RawIconButton)`

@@ -1,18 +1,18 @@
 import React, {useState, useRef, useEffect} from 'react';
 import * as yup from 'yup';
 import {useFormik, FormikProps} from 'formik';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {TextInput as InputType} from 'react-native';
 
 import TextInput from '@components/molcules/TextInput';
 import StackView from '@components/templates/StackView';
-import {SessionParamList} from '@navigations/Session';
+import {SessionNavigationProp} from '@navigations/Session';
 import {setSignupScreen, removeSignupScreen} from '@utils/SessionService';
 import {passwordValidator} from '@utils/validator';
+import {SCREEN} from '@utils/consts';
 import * as s from './Signup.style';
 
 interface Props {
-  navigation: StackNavigationProp<SessionParamList, 'Signup'>;
+  navigation: SessionNavigationProp<typeof SCREEN.SIGNUP>;
 }
 
 const Signup: React.FC<Props> = ({navigation}) => {

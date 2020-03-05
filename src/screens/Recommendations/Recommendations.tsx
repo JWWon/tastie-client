@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {PagerProvider} from '@crowdlinker/react-native-pager';
 
 import BaseView from '@components/templates/BaseView';
-import PlaceCard from '@components/organisms/PlaceCard';
+import RecommendationCard from '@components/organisms/RecommendationCard';
 import Dismiss from '@components/atoms/Dismiss';
 import TextHighlight from '@components/atoms/TextHighlight';
 import {RootState} from '@store/reducers';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
 import {clearRecommendations} from '@store/actions/recommendations';
-import {HomeParamList} from '@navigations/Home';
+import {RootNavigationProp} from '@navigations/Root';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
 import size from '@styles/sizes';
 import space from '@styles/spaces';
@@ -19,15 +19,12 @@ import * as s from './Recommendations.style';
 type Status = 'LOADING' | 'SUCCESS' | 'ERROR';
 
 interface Props {
-  navigation: BottomTabNavigationProp<
-    HomeParamList,
-    typeof SCREEN.RECOMMENDATIONS
-  >;
+  navigation: RootNavigationProp<typeof SCREEN.RECOMMENDATIONS>;
 }
 
 const bodyHeight = size.view.rootHeight - (size.button.dismiss + space.basic);
 
-const Recommendations: React.FC<Props> = () => {
+const Recommendations: React.FC<Props> = ({navigation}) => {
   // useDispatch
   const dispatch = useDispatch();
   // useSelector
@@ -96,11 +93,17 @@ const Recommendations: React.FC<Props> = () => {
         <TextHighlight message={getTitle()} />
       </Animated.View>
       {status === 'SUCCESS' && (
-        <s.Pager messageHeight={messageHeight}>
-          {data.map((item, idx) => (
-            <PlaceCard key={idx.toString()} {...item} />
-          ))}
-        </s.Pager>
+        <PagerProvider>
+          <s.Pager messageHeight={messageHeight}>
+            {data.map((item, idx) => (
+              <RecommendationCard
+                key={idx.toString()}
+                navigation={navigation}
+                {...item}
+              />
+            ))}
+          </s.Pager>
+        </PagerProvider>
       )}
     </BaseView>
   );

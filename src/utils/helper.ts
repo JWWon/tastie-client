@@ -1,4 +1,5 @@
 import firebase from '@react-native-firebase/app';
+import moment from 'moment';
 import {Platform, Alert, Linking} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
@@ -151,3 +152,29 @@ export const openNaverMap = (params: OpenNaverMap) => {
   openLink(`${baseURL}://place?${mapParams.join('&')}`, backupURL);
 };
 // END OPEN_LINK HELPER
+
+// RECOMMENDATION_DETAIL
+export function getPriceLevel(level: number) {
+  switch (level) {
+    case 0:
+      return '5000원 미만';
+    case 1:
+      return '5000원 - 1만원';
+    case 2:
+      return '1만원 - 2만원';
+    case 3:
+      return '2만원 - 5만원';
+    case 4:
+      return '5만원 이상';
+    default:
+      return '알 수 없음';
+  }
+}
+
+export function getTodayOpeningHours(hours?: string[]) {
+  const today = (moment().weekday() + 6) % 7;
+  return hours && typeof hours[today] === 'string'
+    ? hours[today].split(': ')[1]
+    : '';
+}
+// END RECOMMENDATION_DETAIL

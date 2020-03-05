@@ -11,7 +11,7 @@ import {
   GetRecommendationsReq,
   GetRecommendationsRes,
 } from '@services/recommendations';
-import {navigate} from '@utils/HomeService';
+import {navigate} from '@utils/RootService';
 import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
 import * as api from '@services/recommendations';
 import {RootState} from '@store/reducers';
@@ -42,6 +42,8 @@ function* getRecommendationsSaga() {
       api.getRecommendations,
       payload,
     );
+    if (response.data.length === 0) throw new Error('Recommendation is empty.');
+
     yield put(getRecommendations.success(response.data));
     yield firebase.analytics().logEvent('search_recommend', params);
   } catch (e) {

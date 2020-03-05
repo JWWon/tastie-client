@@ -3,17 +3,16 @@ import {TextInput as InputType} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
 
-import {SessionParamList} from '@navigations/Session';
+import {SessionNavigationProp, SessionRouteProp} from '@navigations/Session';
+import {SCREEN} from '@utils/consts';
 import StackView from '@components/templates/StackView';
 import TextInput from '@components/molcules/TextInput';
 import {signup} from '@store/actions/auth';
 
 interface Props {
-  navigation: StackNavigationProp<SessionParamList, 'SignupMeta'>;
-  route: RouteProp<SessionParamList, 'SignupMeta'>;
+  navigation: SessionNavigationProp<typeof SCREEN.SIGNUP_META>;
+  route: SessionRouteProp<typeof SCREEN.SIGNUP_META>;
 }
 
 const SignupMeta: React.FC<Props> = ({navigation, route}) => {

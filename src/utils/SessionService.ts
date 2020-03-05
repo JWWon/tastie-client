@@ -1,11 +1,11 @@
 import {CommonActions} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {FormikProps} from 'formik';
 
-import {SessionParamList} from '@navigations/Session';
+import {SCREEN} from '@utils/consts';
+import {SessionNavigationProp} from '@navigations/Session';
 
 interface ConfigInterface {
-  navigation?: StackNavigationProp<SessionParamList, 'Welcome'>;
+  navigation?: SessionNavigationProp<typeof SCREEN.WELCOME>;
   loginScreen?: {
     formik: FormikProps<{email: string; password: string}>;
   };

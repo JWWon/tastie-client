@@ -1,5 +1,9 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import {RouteProp} from '@react-navigation/native';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 
 import {SCREEN} from '@utils/consts';
 import Welcome from '@screens/Welcome';
@@ -8,12 +12,21 @@ import SignupMeta from '@screens/SignupMeta';
 import Login from '@screens/Login';
 import {SignupReq} from '@services/auth';
 
-export type SessionParamList = {
+type SessionParamList = {
   [SCREEN.WELCOME]: undefined;
   [SCREEN.SIGNUP]: undefined;
   [SCREEN.SIGNUP_META]: SignupReq;
   [SCREEN.LOGIN]: undefined;
 };
+
+export type SessionNavigationProp<
+  P extends keyof SessionParamList
+> = StackNavigationProp<SessionParamList, P>;
+
+export type SessionRouteProp<P extends keyof SessionParamList> = RouteProp<
+  SessionParamList,
+  P
+>;
 
 const Session = createStackNavigator<SessionParamList>();
 

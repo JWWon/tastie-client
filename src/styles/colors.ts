@@ -4,6 +4,7 @@ export default {
   blackMild: '#121212' as const,
   grayDark: '#545454' as const,
   grayLight: '#BCBCBC' as const,
+  grayLighter: '#EFEFEF' as const,
   white: '#FFFFFF' as const,
   whiteMild: '#FDFDFD' as const,
   // color

@@ -1,12 +1,28 @@
 import React from 'react';
+import {Image} from 'react-native';
 
 import * as s from './IconButton.style';
 import {Props} from './IconButton.type';
 
-const IconButton: React.FC<Props> = ({onPress, style, ...image}) => (
-  <s.Button style={style} onPress={onPress}>
-    <s.Icon resizeMode="contain" {...image} />
-  </s.Button>
-);
+const IconButton: React.FC<Props> = ({
+  onPress,
+  message,
+  messageColor,
+  ...image
+}) => {
+  const {width, height} = Image.resolveAssetSource(image.source);
+  const aspectRatio = width / height;
+
+  return (
+    <s.Button onPress={onPress}>
+      <s.Icon
+        {...image}
+        style={[image.style, {aspectRatio}]}
+        resizeMode="contain"
+      />
+      {message && <s.Message messageColor={messageColor}>{message}</s.Message>}
+    </s.Button>
+  );
+};
 
 export default IconButton;

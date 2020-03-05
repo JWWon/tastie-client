@@ -18,14 +18,14 @@ import {
   searchLocations,
   getPreferences,
 } from '@store/actions/case';
-import {setNavigation} from '@utils/HomeService';
+import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
-import {HomeParamList} from '@navigations/Home';
+import {ContentParamList} from '@navigations/Content';
 import {MY_LOCATION, SCREEN} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
-  navigation: BottomTabNavigationProp<HomeParamList, typeof SCREEN.CASE>;
+  navigation: BottomTabNavigationProp<ContentParamList, typeof SCREEN.CASE>;
 }
 
 const Case: React.FC<Props> = ({navigation}) => {
