@@ -11,7 +11,7 @@ interface Props {
   numColumns?: number; // Should greater than 2
 }
 
-const LabelGrid: React.FC<Props> = ({data, numColumns}) => {
+const LabelGrid: React.FC<Props> = ({data, numColumns, children}) => {
   const columns = numColumns || 2;
   return (
     <s.Container>
@@ -25,6 +25,8 @@ const LabelGrid: React.FC<Props> = ({data, numColumns}) => {
           )}
         </s.InfoColumnWrapper>
       ))}
+      {/* custom column */}
+      <s.InfoColumnWrapper>{children}</s.InfoColumnWrapper>
     </s.Container>
   );
 };
