@@ -17,7 +17,7 @@ const inlineCardsConfig: iPageInterpolation = {
 
 export const Pager = styled(RawPager).attrs({
   pageInterpolation: inlineCardsConfig,
-  adjacentChildOffset: 3,
+  adjacentChildOffset: 1,
 })<PagerCustomProps>`
   flex: 1;
   margin: 0 -${({theme}) => theme.space.pager}px;

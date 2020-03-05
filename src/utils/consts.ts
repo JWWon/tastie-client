@@ -4,12 +4,18 @@ export const BASE_URL = {
   PRODUCTION: 'https://production.tastie.me/api',
 };
 
+export const NAVIGATOR = {
+  CONTENT: 'Content' as const,
+};
+
 export const SCREEN = {
-  // Home
+  // CONTENT
   CASE: 'Case' as const,
   RECOMMENDATIONS: 'Recommendations' as const,
   HISTORY: 'History' as const,
   PROFILE: 'Profile' as const,
+  // OTHER
+  RECOMMENDATION_DETAIL: 'RecommendationDetail' as const,
   // Session
   WELCOME: 'Welcome' as const,
   SIGNUP: 'Signup' as const,

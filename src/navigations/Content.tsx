@@ -3,31 +3,33 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useSelector} from 'react-redux';
 
 import Navbar from '@components/organisms/Navbar';
+import Recommendations from '@screens/Recommendations';
 import CaseScreen from '@screens/Case';
-import RecommendationsScreen from '@screens/Recommendations';
 import {RootState} from '@store/reducers';
 import {SCREEN} from '@utils/consts';
 
-export type HomeParamList = {
+export type ContentParamList = {
   [SCREEN.CASE]: undefined;
   [SCREEN.RECOMMENDATIONS]: undefined;
 };
 
-const Home = createBottomTabNavigator<HomeParamList>();
+const Content = createBottomTabNavigator<ContentParamList>();
 
 export default () => {
-  const {keyboardVisible} = useSelector((state: RootState) => state.device);
+  const hideTabBar = useSelector(
+    (state: RootState) => state.device.keyboardVisible,
+  );
 
   return (
-    <Home.Navigator
+    <Content.Navigator
       initialRouteName={SCREEN.CASE}
-      tabBar={() => (!keyboardVisible ? <Navbar /> : null)}
+      tabBar={() => (hideTabBar ? null : <Navbar />)}
       backBehavior="initialRoute">
-      <Home.Screen name={SCREEN.CASE} component={CaseScreen} />
-      <Home.Screen
+      <Content.Screen name={SCREEN.CASE} component={CaseScreen} />
+      <Content.Screen
         name={SCREEN.RECOMMENDATIONS}
-        component={RecommendationsScreen}
+        component={Recommendations}
       />
-    </Home.Navigator>
+    </Content.Navigator>
   );
 };

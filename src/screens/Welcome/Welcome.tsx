@@ -1,16 +1,15 @@
 import React, {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
-import {StackNavigationProp} from '@react-navigation/stack';
 
 import {loginWithFacebook, loginWithGoogle} from '@store/actions/auth';
-import {SessionParamList} from '@navigations/Session';
+import {SessionNavigationProp} from '@navigations/Session';
 import BaseView from '@components/templates/BaseView';
 import {setNavigation} from '@utils/SessionService';
 import {SCREEN} from '@utils/consts';
 import * as s from './Welcome.style';
 
 interface Props {
-  navigation: StackNavigationProp<SessionParamList, 'Welcome'>;
+  navigation: SessionNavigationProp<typeof SCREEN.WELCOME>;
 }
 
 const Welcome: React.FC<Props> = ({navigation}) => {
