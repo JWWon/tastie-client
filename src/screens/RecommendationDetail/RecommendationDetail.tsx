@@ -4,12 +4,19 @@ import {useSelector} from 'react-redux';
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
 import {RootState} from '@store/reducers';
 import {SCREEN} from '@utils/consts';
-import {getPriceLevel, getTodayOpeningHours} from '@utils/helper';
+import {
+  getPriceLevel,
+  getTodayOpeningHours,
+  makePhoneCall,
+} from '@utils/helper';
 import RecommendationInfoGrid from '@components/molcules/RecommendationInfoGrid';
-import {Props as InfoProps} from '@components/atoms/RecommendationInfo';
+import RecommendationInfo, {
+  Props as InfoProps,
+} from '@components/atoms/RecommendationInfo';
 import Dismiss from '@components/atoms/Dismiss';
 import ImageSwiper from '@components/atoms/ImageSwiper';
 import IconButton from '@components/atoms/IconButton';
+import MapView from '@components/atoms/MapView';
 import * as s from './RecommendationDetail.style';
 
 export interface Props {
@@ -18,7 +25,16 @@ export interface Props {
 }
 
 const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
-  const {photoUrls, name, distance, priceLevel, openingHours} = route.params;
+  const {
+    photoUrls,
+    name,
+    distance,
+    priceLevel,
+    openingHours,
+    location,
+    formattedAddress,
+    formattedPhoneNumber,
+  } = route.params;
   const situation = useSelector((state: RootState) => state.case.situation);
 
   // TODO: Get multiple labels from backend
@@ -64,7 +80,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
             <s.Buttons>
               <s.ButtonBorder>
                 <IconButton
-                  onPress={() => {}}
+                  onPress={() => makePhoneCall(formattedPhoneNumber)}
                   source={require('@assets/images/icon-phone/icon-phone.png')}
                   message="전화주문"
                 />
@@ -80,7 +96,13 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
             </s.Buttons>
           </s.HeaderWrapper>
 
-          <RecommendationInfoGrid data={recommendationInfo} />
+          <RecommendationInfoGrid data={recommendationInfo}>
+            <RecommendationInfo
+              title="식당 위치"
+              icon={require('@assets/images/icon-location/icon-location.png')}>
+              <MapView location={location} address={formattedAddress} />
+            </RecommendationInfo>
+          </RecommendationInfoGrid>
         </s.ContentWrapper>
       </s.Scroll>
       {/* position: fixed */}
