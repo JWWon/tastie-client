@@ -1,13 +1,21 @@
 import React, {useState, useRef, useEffect} from 'react';
 import * as yup from 'yup';
 import {useFormik, FormikProps} from 'formik';
-import {TextInput as InputType} from 'react-native';
+import {AxiosError} from 'axios';
+import {
+  TextInput as InputType,
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from 'react-native';
 
+import {ResponseError} from '@services/axios.base';
+import * as api from '@services/auth';
 import TextInput from '@components/molcules/TextInput';
 import StackView from '@components/templates/StackView';
 import {SessionNavigationProp} from '@navigations/Session';
 import {setSignupScreen, removeSignupScreen} from '@utils/SessionService';
 import {passwordValidator} from '@utils/validator';
+import {isAxiosError} from '@utils/helper';
 import {SCREEN} from '@utils/consts';
 import * as s from './Signup.style';
 
@@ -63,6 +71,20 @@ const Signup: React.FC<Props> = ({navigation}) => {
     onBlur: formik.handleBlur,
   };
 
+  async function handleEmailBlur(
+    e: string | NativeSyntheticEvent<TextInputFocusEventData>,
+  ) {
+    formik.handleBlur(e);
+    try {
+      await api.checkAuthExist({email: formik.values.email});
+    } catch (e) {
+      if (isAxiosError(e)) {
+        const {response}: AxiosError<ResponseError> = e;
+        formik.setErrors({email: response?.data.message});
+      }
+    }
+  }
+
   const renderAgreement = (
     <s.Agreement>
       {"'다음' 버튼을 터치함므로써 "}
@@ -106,7 +128,9 @@ const Signup: React.FC<Props> = ({navigation}) => {
         ref={emailRef}
         keyboardType="email-address"
         onSubmitEditing={() => passwordRef.current?.focus()}
-        {...inputProps}
+        hadSubmit={hadSubmit}
+        onChangeText={formik.handleChange}
+        onBlur={handleEmailBlur}
       />
       <TextInput
         name="password"

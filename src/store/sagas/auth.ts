@@ -10,15 +10,11 @@ import {GoogleSignin} from '@react-native-community/google-signin';
 import firebase from '@react-native-firebase/app';
 
 import * as api from '@services/auth';
+import * as userApi from '@services/user';
 import axios, {ResponseError} from '@services/axios.base';
 import {SCREEN} from '@utils/consts';
 import {isAxiosError, checkPermission} from '@utils/helper';
-import {
-  navigate,
-  useLoginFormik,
-  useSignupFormik,
-  goBack,
-} from '@utils/SessionService';
+import {navigate, useLoginFormik, useSignupFormik} from '@utils/SessionService';
 import {AuthInterface} from '@store/reducers/auth';
 import {clearNavbar} from '@store/actions/navbar';
 import {
@@ -67,14 +63,14 @@ function* handleBackendError(e: any) {
     switch (response?.status) {
       case 400:
         // Bad Request
-        console.error(response?.data);
+        console.error(response.data);
         break;
       case 401:
         // Invalid user credential
         const loginFormik = useLoginFormik();
         if (loginFormik) {
           yield call(loginFormik.setErrors, {
-            email: response?.data.message,
+            email: response.data.message,
             password: '',
           });
         }
@@ -88,10 +84,8 @@ function* handleBackendError(e: any) {
         // User already exist
         const signupFormik = useSignupFormik();
         if (signupFormik) {
-          // TODO: Remove 'goBack' when check existUser by email api implemented
-          yield call(goBack);
           yield call(signupFormik.setErrors, {
-            email: response?.data.message,
+            email: response.data.message,
             password: '',
             confirmPwd: '',
           });
@@ -113,10 +107,12 @@ function* checkKeychainSaga() {
     }
 
     const data: api.GetTokenRes = JSON.parse(credentials.password);
-    // TODO: Check if token is valid
     const auth: AuthInterface = yield call(getAuthFromJWT, data);
+    // TODO: Check if token is valid
+    yield call(userApi.getUserInfo);
     yield put(checkKeychain.success(auth));
   } catch (e) {
+    yield call(logoutSaga);
     yield put(checkKeychain.failure(e));
   }
 }
