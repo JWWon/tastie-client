@@ -12,7 +12,7 @@ function config() {
 }
 
 function setToken(token: string) {
-  axios.defaults.headers.common['Authorization'] = token;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
 function removeToken() {

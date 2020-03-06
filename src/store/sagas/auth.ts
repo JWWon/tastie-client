@@ -108,9 +108,15 @@ function* checkKeychainSaga() {
 
     const data: api.GetTokenRes = JSON.parse(credentials.password);
     const auth: AuthInterface = yield call(getAuthFromJWT, data);
-    // TODO: Check if token is valid
-    yield call(userApi.getUserInfo);
-    yield put(checkKeychain.success(auth));
+    const response: AxiosResponse<userApi.UserInfo> = yield call(
+      userApi.getUserInfo,
+    );
+    yield put(
+      checkKeychain.success({
+        ...auth,
+        ..._.pick(response.data, ['name', 'email']),
+      }),
+    );
   } catch (e) {
     yield call(logoutSaga);
     yield put(checkKeychain.failure(e));
