@@ -36,3 +36,9 @@ export interface SignupReq {
 
 export type SignupRes = undefined;
 // END SIGNUP
+
+// CHECK_AUTH_EXIST
+export interface CheckAuthExistReq {
+  email: string;
+}
+// END CHECK_AUTH_EXIST

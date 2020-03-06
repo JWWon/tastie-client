@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-import {GetTokenReq, GetTokenRes, SignupReq, SignupRes} from './auth.type';
+import {
+  GetTokenReq,
+  GetTokenRes,
+  SignupReq,
+  SignupRes,
+  CheckAuthExistReq,
+} from './auth.type';
 
 const BASE_URL = '/auth';
 
@@ -24,3 +30,6 @@ export const signup = (params: SignupReq) =>
     `${BASE_URL}/signup`,
     filterBirthYear(params),
   );
+
+export const checkAuthExist = (params: CheckAuthExistReq) =>
+  axios.get<CheckAuthExistReq, undefined>(`${BASE_URL}/accounts`, {params});

@@ -12,11 +12,11 @@ function config() {
 }
 
 function setToken(token: string) {
-  axios.defaults.headers.common.Authorization = token;
+  axios.defaults.headers.common['Authorization'] = token;
 }
 
 function removeToken() {
-  delete axios.defaults.headers.common.Authroization;
+  delete axios.defaults.headers.common['Authorization'];
 }
 
 export default {config, setToken, removeToken};
