@@ -1,5 +1,3 @@
 import {Recommendation} from '@services/recommendations';
 
-export interface Params extends Recommendation {
-  distance: string;
-}
+export type Params = Pick<Recommendation, 'id'>;

@@ -1,35 +1,39 @@
-import React, {useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
+import React from 'react';
+import _ from 'lodash';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {RootState} from '@store/reducers';
-import {getDistance} from '@utils/helper';
+import {showLikesModal, deleteLike} from '@store/actions/recommendations';
+import {selectLikeIcon} from '@utils/helper';
 import {SCREEN} from '@utils/consts';
 import * as s from './RecommendationCard.style';
 import {Props} from './RecommendationCard.type';
 
-const icon_like_empty = require('@assets/images/icon-like/icon-like-empty.png');
-const icon_like = require('@assets/images/icon-like/icon-like.png');
-
 const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
-  const [distance, setDistance] = useState<string>('');
-  const [isLike, setIsLike] = useState<boolean>(false);
-  const userCoords = useSelector((state: RootState) => state.auth.userCoords);
   const situation = useSelector((state: RootState) => state.case.situation);
+  const dispatch = useDispatch();
 
   const labels = [situation];
 
-  function handlePress() {
-    navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, {distance, ...data});
+  function handleNavigate() {
+    navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, _.pick(data, ['id']));
   }
 
-  useEffect(() => setDistance(getDistance(userCoords, data.location)), []);
+  function handlePressLike() {
+    if (data.positive !== undefined) {
+      // delete current like
+      dispatch(deleteLike.request({placeID: data.id}));
+    } else {
+      dispatch(showLikesModal({selectedID: data.id}));
+    }
+  }
 
   return (
-    <s.TouchableWrapper onPress={handlePress}>
+    <s.TouchableWrapper onPress={handleNavigate}>
       <s.BackgroundImage source={{uri: data.photoUrls[0]}} />
       <s.ImageFilter>
         <s.Address>{data.formattedAddress}</s.Address>
-        <s.Distance>{distance}</s.Distance>
+        <s.Distance>{data.distance}</s.Distance>
 
         <s.BottomContent>
           <s.RowContent>
@@ -40,8 +44,8 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
           <s.RowContent>
             <s.PlaceName>{data.name}</s.PlaceName>
             <s.IconButton
-              onPress={() => setIsLike(!isLike)}
-              source={isLike ? icon_like : icon_like_empty}
+              source={selectLikeIcon({positive: data.positive})}
+              onPress={handlePressLike}
             />
           </s.RowContent>
         </s.BottomContent>

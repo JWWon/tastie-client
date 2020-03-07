@@ -1,5 +1,6 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import _ from 'lodash';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
 import {RootState} from '@store/reducers';
@@ -8,6 +9,7 @@ import {
   getPriceLevel,
   getTodayOpeningHours,
   makePhoneCall,
+  selectLikeIcon,
 } from '@utils/helper';
 import RecommendationInfoGrid from '@components/molcules/RecommendationInfoGrid';
 import RecommendationInfo, {
@@ -17,6 +19,7 @@ import Dismiss from '@components/atoms/Dismiss';
 import ImageSwiper from '@components/atoms/ImageSwiper';
 import IconButton from '@components/atoms/IconButton';
 import MapView from '@components/atoms/MapView';
+import {showLikesModal, deleteLike} from '@store/actions/recommendations';
 import * as s from './RecommendationDetail.style';
 
 export interface Props {
@@ -25,17 +28,15 @@ export interface Props {
 }
 
 const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
-  const {
-    photoUrls,
-    name,
-    distance,
-    priceLevel,
-    openingHours,
-    location,
-    formattedAddress,
-    formattedPhoneNumber,
-  } = route.params;
+  const {id} = route.params;
   const situation = useSelector((state: RootState) => state.case.situation);
+  const recommendations = useSelector(
+    (state: RootState) => state.recommendations.data,
+  );
+  const dispatch = useDispatch();
+
+  const idx = _.findIndex(recommendations, item => item.id === id);
+  const data = recommendations[idx];
 
   // TODO: Get multiple labels from backend
   const labels = [situation];
@@ -43,34 +44,43 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
     {
       title: '나와의 거리',
       icon: require('@assets/images/icon-distance/icon-distance.png'),
-      data: distance,
+      data: data.distance,
     },
     {
       title: '가격대',
       icon: require('@assets/images/icon-price/icon-price.png'),
-      data: getPriceLevel(priceLevel),
+      data: getPriceLevel(data.priceLevel),
     },
     {
       title: '영업 여부',
       icon: require('@assets/images/icon-open/icon-open.png'),
-      data: openingHours.openNow ? '영업중' : '영업 준비중',
+      data: data.openingHours.openNow ? '영업중' : '영업 준비중',
     },
     {
       title: '영업 시간',
       icon: require('@assets/images/icon-clock/icon-clock.png'),
-      data: getTodayOpeningHours(openingHours.weekdayText),
+      data: getTodayOpeningHours(data.openingHours.weekdayText),
     },
   ];
+
+  function handlePressLike() {
+    if (data.positive !== undefined) {
+      // delete current like
+      dispatch(deleteLike.request({placeID: data.id}));
+    } else {
+      dispatch(showLikesModal({selectedID: data.id}));
+    }
+  }
 
   return (
     <s.Container>
       <s.Scroll>
         <s.SwiperWrapper>
-          <ImageSwiper images={photoUrls} />
+          <ImageSwiper images={data.photoUrls} />
         </s.SwiperWrapper>
         <s.ContentWrapper>
           <s.HeaderWrapper>
-            <s.PlaceName>{name}</s.PlaceName>
+            <s.PlaceName>{data.name}</s.PlaceName>
             <s.LabelWrapper>
               {labels.map(item => (
                 <s.Label key={item}>{item}</s.Label>
@@ -80,7 +90,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
             <s.Buttons>
               <s.ButtonBorder>
                 <IconButton
-                  onPress={() => makePhoneCall(formattedPhoneNumber)}
+                  onPress={() => makePhoneCall(data.formattedPhoneNumber)}
                   source={require('@assets/images/icon-phone/icon-phone.png')}
                   message="전화주문"
                 />
@@ -88,8 +98,11 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
               <s.Divider />
               <s.ButtonBorder>
                 <IconButton
-                  onPress={() => {}}
-                  source={require('@assets/images/icon-like/icon-like-empty-black.png')}
+                  onPress={handlePressLike}
+                  source={selectLikeIcon({
+                    positive: data.positive,
+                    black: true,
+                  })}
                   message="평가하기"
                 />
               </s.ButtonBorder>
@@ -100,7 +113,10 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
             <RecommendationInfo
               title="식당 위치"
               icon={require('@assets/images/icon-location/icon-location.png')}>
-              <MapView location={location} address={formattedAddress} />
+              <MapView
+                location={data.location}
+                address={data.formattedAddress}
+              />
             </RecommendationInfo>
           </RecommendationInfoGrid>
         </s.ContentWrapper>

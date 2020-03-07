@@ -17,6 +17,7 @@ import {updateScreenName} from '@store/actions/navbar';
 import {SCREEN} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
+import LikesModal from '@components/organisms/LikesModal';
 import RootNavigator from './Root';
 import SessionNavigator from './Session';
 
@@ -86,6 +87,7 @@ export default () => {
   return (
     <NavigationContainer onStateChange={handleStateChange}>
       {renderNavigator()}
+      <LikesModal />
     </NavigationContainer>
   );
 };
