@@ -1,4 +1,5 @@
 import {all, call, put, select, takeEvery} from 'redux-saga/effects';
+import firebase from '@react-native-firebase/app';
 import {AxiosResponse} from 'axios';
 import * as moment from 'moment';
 
@@ -18,6 +19,7 @@ import {
   getPreferences,
 } from '@store/actions/case';
 import {getUserCoords} from '@store/actions/auth';
+import {clearRecommendations} from '@store/actions/recommendations';
 import {RootState} from '@store/reducers';
 import {CaseIndex} from '@store/reducers/case';
 import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
@@ -32,10 +34,23 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
-import {MY_LOCATION} from '@utils/consts';
+import {MY_LOCATION, EVENT} from '@utils/consts';
 
 function* clearCaseSaga() {
-  yield all([put(getUserCoords.request()), put(getCategories.request())]);
+  const {maxSwipedIndex}: RootState['recommendations'] = yield select(
+    (state: RootState) => state.recommendations,
+  );
+  if (maxSwipedIndex > 0) {
+    yield firebase.analytics().logEvent(EVENT.VISITED_RECOMMENDATIONS, {
+      count: maxSwipedIndex + 1,
+    });
+  }
+
+  yield all([
+    put(getUserCoords.request()),
+    put(getCategories.request()),
+    put(clearRecommendations()),
+  ]);
 }
 
 function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {

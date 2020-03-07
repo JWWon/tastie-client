@@ -23,6 +23,17 @@ export const SCREEN = {
   LOGIN: 'Login' as const,
 };
 
+export const EVENT = {
+  GO_BACK_TO_CASE_SCREEN: 'go_back_to_case_screen' as const,
+  USER_COORDINATE: 'user_coordinate' as const,
+  VISITED_RECOMMENDATIONS: 'visited_recommendations' as const,
+  SEARCH_RECOMMEND: 'search_recommend' as const,
+  SEARCH_RECOMMEND_FAILURE: 'search_recommend_failure' as const,
+  LOCATION_PERMISSION: 'location_permission' as const,
+  PRESS_LIKE: 'press_like' as const,
+  RECALL_LIKE: 'recall_like' as const,
+};
+
 // String
 export const MY_LOCATION = '내 위치';
 export const APP_IDENTIFIER = 'me.tastie.client';

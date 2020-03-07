@@ -12,7 +12,7 @@ import firebase from '@react-native-firebase/app';
 import * as api from '@services/auth';
 import * as userApi from '@services/user';
 import axios, {ResponseError} from '@services/axios.base';
-import {SCREEN} from '@utils/consts';
+import {SCREEN, EVENT} from '@utils/consts';
 import {isAxiosError, checkPermission} from '@utils/helper';
 import {navigate, useLoginFormik, useSignupFormik} from '@utils/SessionService';
 import {AuthInterface} from '@store/reducers/auth';
@@ -226,7 +226,7 @@ function* getUserCoordsSaga() {
     if (coords) {
       yield put(getUserCoords.success(coords));
       yield put(getNearbyLocations.request({...coords, count: 10}));
-      yield firebase.analytics().logEvent('user_coordinate', coords);
+      yield firebase.analytics().logEvent(EVENT.USER_COORDINATE, coords);
     }
     if (error) {
       yield put(getUserCoords.failure(error));

@@ -4,7 +4,7 @@ import {Platform, Alert, Linking} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 import {CoordsInterface} from '@store/reducers/case';
-import {APP_IDENTIFIER} from '@utils/consts';
+import {APP_IDENTIFIER, EVENT} from '@utils/consts';
 
 // REDUX HELPER
 export const setPending = <S>(state: S) => ({...state, error: undefined});
@@ -67,7 +67,7 @@ export const checkPermission = async () => {
         Alert.alert('지원하는 디바이스가 아닙니다.');
         break;
     }
-    firebase.analytics().logEvent('location_permission', {status});
+    firebase.analytics().logEvent(EVENT.LOCATION_PERMISSION, {status});
   } catch (e) {
     console.error(e);
   }

@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 
 import {SCREEN} from '@utils/consts';
 import {RootState} from '@store/reducers';
+import {navigate} from '@utils/RootService';
 import {logout} from '@store/actions/auth';
 import size from '@styles/sizes';
 import {clearAction, expandNavbar} from '@store/actions/navbar';
@@ -71,19 +72,23 @@ const TabBar: React.FC = () => {
       />
       {expand ? (
         <>
-          <s.Button onPress={() => {}}>
+          <s.Button disabled={isCurrentHistory} onPress={() => {}}>
             <s.Icon
               currentScreen={isCurrentHistory}
               source={require('@assets/images/icon-history/icon-history.png')}
             />
           </s.Button>
-          <s.Button onPress={() => {}}>
+          <s.Button
+            disabled={isCurrentHome}
+            onPress={() => navigate(SCREEN.CASE)}>
             <s.Icon
               currentScreen={isCurrentHome}
               source={require('@assets/images/icon-cat-no-mouth/icon-cat-no-mouth.png')}
             />
           </s.Button>
-          <s.Button onPress={() => dispatch(logout())}>
+          <s.Button
+            disabled={isCurrentProfile}
+            onPress={() => dispatch(logout())}>
             <s.Icon
               currentScreen={isCurrentProfile}
               source={require('@assets/images/icon-profile/icon-profile.png')}
