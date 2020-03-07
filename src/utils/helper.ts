@@ -178,3 +178,16 @@ export function getTodayOpeningHours(hours?: string[]) {
     : '';
 }
 // END RECOMMENDATION_DETAIL
+
+// SELECT_LIKE_ICON
+export function selectLikeIcon(params: {positive?: boolean; black?: boolean}) {
+  if (params.positive === undefined) {
+    if (params.black)
+      return require('@assets/images/icon-like/icon-like-empty-black.png');
+    return require('@assets/images/icon-like/icon-like-empty.png');
+  }
+
+  if (params.positive) return require('@assets/images/icon-like/icon-like.png');
+  return require('@assets/images/icon-dislike/icon-dislike.png');
+}
+// END SELECT_LIKE_ICON

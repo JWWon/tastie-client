@@ -21,6 +21,8 @@ export interface Recommendation {
     openNow: boolean;
     weekdayText?: string[];
   };
+  positive?: boolean;
+  distance?: string;
 }
 
 export type GetRecommendationsRes = Recommendation[];
