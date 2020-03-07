@@ -71,6 +71,16 @@ export const deleteLike = createAsyncAction(
 )<DeleteLike, DeleteLike, AxiosError<ResponseError>>();
 // END DELETE_LIKE
 
+// UPDATE_MAX_SWIPED_INDEX
+export const UPDATE_MAX_SWIPED_INDEX =
+  '@recommendations/UPDATE_MAX_SWIPED_INDEX';
+
+export const updateMaxSwipedIndex = createAction(
+  UPDATE_MAX_SWIPED_INDEX,
+  (payload: number) => payload,
+)();
+// END UPDATE_MAX_SWIPED_INDEX
+
 const actions = {
   getRecommendations,
   clearRecommendations,
@@ -78,5 +88,6 @@ const actions = {
   hideLikesModal,
   createLike,
   deleteLike,
+  updateMaxSwipedIndex,
 };
 export type RecommendationsAction = ActionType<typeof actions>;

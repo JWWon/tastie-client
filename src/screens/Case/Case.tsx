@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
@@ -20,12 +19,12 @@ import {
 } from '@store/actions/case';
 import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
-import {ContentParamList} from '@navigations/Content';
+import {RootNavigationProp} from '@navigations/Root';
 import {MY_LOCATION, SCREEN} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
-  navigation: BottomTabNavigationProp<ContentParamList, typeof SCREEN.CASE>;
+  navigation: RootNavigationProp<typeof SCREEN.CASE>;
 }
 
 const Case: React.FC<Props> = ({navigation}) => {

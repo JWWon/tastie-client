@@ -13,8 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from '@services/axios.base';
 import {clearCase} from '@store/actions/case';
 import {checkKeychain} from '@store/actions/auth';
-import {updateScreenName} from '@store/actions/navbar';
-import {SCREEN} from '@utils/consts';
+import {updateScreenName, updateMessage} from '@store/actions/navbar';
+import {SCREEN, EVENT} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import LikesModal from '@components/organisms/LikesModal';
@@ -62,9 +62,16 @@ export default () => {
       // SEND SCREEN NAME TO ANALYTICS
       firebase.analytics().setCurrentScreen(name, name);
       // MIDDLEWARE
-      switch (name) {
+      switch (
+        name // current screen name
+      ) {
         case SCREEN.CASE:
           dispatch(clearCase());
+          if (screenName === SCREEN.RECOMMENDATIONS) {
+            // navigate RECOMMENDATIONS -> CASE
+            dispatch(updateMessage({message: '다른 음식이 먹고싶나옹?'}));
+            firebase.analytics().logEvent(EVENT.GO_BACK_TO_CASE_SCREEN);
+          }
           break;
       }
     }

@@ -1,4 +1,3 @@
-import {DELETE_LIKE_FAILURE} from './../actions/recommendations';
 import produce from 'immer';
 import _ from 'lodash';
 
@@ -14,6 +13,8 @@ import {
   HIDE_LIKES_MODAL,
   CREATE_LIKE_FAILURE,
   DELETE_LIKE_SUCCESS,
+  DELETE_LIKE_FAILURE,
+  UPDATE_MAX_SWIPED_INDEX,
 } from '@store/actions/recommendations';
 import {
   setPendingWithLoading,
@@ -27,6 +28,7 @@ export interface RecommendationsState {
   data: GetRecommendationsRes;
   // OTHER
   loading: boolean;
+  maxSwipedIndex: number; // for firebase-analytics
   selectedID?: string;
   error?: AxiosError<any>;
 }
@@ -35,6 +37,7 @@ const initState: RecommendationsState = {
   data: [],
   // OTHER
   loading: false,
+  maxSwipedIndex: 0,
 };
 
 const recommendationReducer = createReducer<
@@ -69,6 +72,10 @@ const recommendationReducer = createReducer<
   [CLEAR_RECOMMENDATIONS]: () => initState,
   [SHOW_LIKES_MODAL]: (state, action) => ({...state, ...action.payload}),
   [HIDE_LIKES_MODAL]: state => ({...state, selectedID: undefined}),
+  [UPDATE_MAX_SWIPED_INDEX]: (state, action) => ({
+    ...state,
+    maxSwipedIndex: Math.max(action.payload, state.maxSwipedIndex),
+  }),
 });
 
 export default recommendationReducer;

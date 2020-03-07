@@ -9,7 +9,7 @@ import Dismiss from '@components/atoms/Dismiss';
 import TextHighlight from '@components/atoms/TextHighlight';
 import {RootState} from '@store/reducers';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
-import {clearRecommendations} from '@store/actions/recommendations';
+import {updateMaxSwipedIndex} from '@store/actions/recommendations';
 import {RootNavigationProp} from '@navigations/Root';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
 import size from '@styles/sizes';
@@ -33,14 +33,15 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     (state: RootState) => state.recommendations,
   );
   const {messageHeight} = useSelector((state: RootState) => state.device);
-  const startPosition = (bodyHeight - messageHeight) * 0.4;
+  const startPosition = (bodyHeight - messageHeight) * 0.46;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
+  const [activeIndex, onChange] = useState<number>(0);
   const [translateY] = useState<Animated.Value>(
     new Animated.Value(startPosition),
   );
 
-  const handleDismiss = () => dispatch(clearRecommendations());
+  const handleDismiss = () => navigation.navigate(SCREEN.CASE);
 
   function getTitle() {
     switch (status) {
@@ -51,6 +52,11 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
       default:
         return `<b>${CHARACTER_NAME}</b>가 정하지 못했어요 :(`;
     }
+  }
+
+  function handleSwipe(index: number) {
+    onChange(index);
+    dispatch(updateMaxSwipedIndex(index));
   }
 
   useEffect(() => {
@@ -94,7 +100,10 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
       </Animated.View>
       {status === 'SUCCESS' && (
         <PagerProvider>
-          <s.Pager messageHeight={messageHeight}>
+          <s.Pager
+            messageHeight={messageHeight}
+            activeIndex={activeIndex}
+            onChange={handleSwipe}>
             {data.map((item, idx) => (
               <RecommendationCard
                 key={idx.toString()}

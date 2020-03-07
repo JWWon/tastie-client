@@ -6,7 +6,6 @@ import {AxiosResponse} from 'axios';
 
 import {
   getRecommendations,
-  CLEAR_RECOMMENDATIONS,
   createLike,
   deleteLike,
 } from '@store/actions/recommendations';
@@ -19,7 +18,7 @@ import {
 import * as api from '@services/recommendations';
 import * as userApi from '@services/user';
 import {RootState} from '@store/reducers';
-import {SCREEN} from '@utils/consts';
+import {SCREEN, EVENT} from '@utils/consts';
 import {getDistance} from '@utils/helper';
 import {GetLikesRes} from '@services/user';
 
@@ -76,7 +75,7 @@ function* getRecommendationsSaga() {
       data,
     );
     yield put(getRecommendations.success(recommendations));
-    yield firebase.analytics().logEvent('search_recommend', params);
+    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMEND, params);
   } catch (e) {
     yield put(
       updateMessage({
@@ -85,7 +84,7 @@ function* getRecommendationsSaga() {
       }),
     );
     yield put(getRecommendations.failure(e));
-    yield firebase.analytics().logEvent('search_recommend_failure');
+    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMEND_FAILURE);
   }
   yield put(hideLoading());
 }
@@ -100,6 +99,7 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
 
     yield call(userApi.createLike, {placeID: selectedID, positive});
     yield put(createLike.success({positive}));
+    yield firebase.analytics().logEvent(EVENT.PRESS_LIKE, {positive});
   } catch (e) {
     yield put(createLike.failure(e));
   }
@@ -109,15 +109,10 @@ function* deleteLikeSaga(action: ReturnType<typeof deleteLike.request>) {
   try {
     yield call(userApi.deleteLike, action.payload);
     yield put(deleteLike.success(action.payload));
+    yield firebase.analytics().logEvent(EVENT.RECALL_LIKE);
   } catch (e) {
     yield put(deleteLike.failure(e));
   }
-}
-
-function* clearRecommendationsSaga() {
-  yield put(updateMessage({message: '다른 음식이 먹고싶나옹?'}));
-  yield navigate('Case');
-  yield firebase.analytics().logEvent('go_back_to_case_screen');
 }
 
 export default function* root() {
@@ -125,6 +120,4 @@ export default function* root() {
   yield takeEvery(getRecommendations.request, getRecommendationsSaga);
   yield takeEvery(createLike.request, createLikeSaga);
   yield takeEvery(deleteLike.request, deleteLikeSaga);
-  // sync
-  yield takeEvery(CLEAR_RECOMMENDATIONS, clearRecommendationsSaga);
 }
