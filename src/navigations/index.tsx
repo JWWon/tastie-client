@@ -1,9 +1,11 @@
 import '@react-native-firebase/analytics';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   NavigationContainer,
   NavigationState,
   PartialState,
+  useLinking,
+  InitialState,
 } from '@react-navigation/native';
 import _ from 'lodash';
 import firebase from '@react-native-firebase/app';
@@ -48,7 +50,21 @@ function getActiveRouteName(
 }
 
 export default () => {
+  // useRef
+  const containerRef = useRef(null);
+  // useLinking
+  const {getInitialState} = useLinking(containerRef, {
+    prefixes: ['tastie://'],
+    config: {
+      [SCREEN.RECOMMENDATION_DETAIL]: 'recommendation/:placeID',
+    },
+  });
+  // useState
+  const [initialState, setInitialState] = useState<InitialState>();
+  const [loading, setLoading] = useState<boolean>(true);
+  // useDispatch
   const dispatch = useDispatch();
+  // useSelector
   const {status} = useSelector((state: RootState) => state.auth);
   const {screenName: prevName} = useSelector(
     (state: RootState) => state.navbar,
@@ -63,6 +79,16 @@ export default () => {
     GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
     // Check Keychain
     dispatch(checkKeychain.request());
+  }
+
+  async function handleDeepLinking() {
+    try {
+      const state = await getInitialState();
+      if (state !== undefined) setInitialState(state);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   function stateChangeMiddleware(name: string) {
@@ -123,6 +149,7 @@ export default () => {
   }
 
   function renderNavigator() {
+    if (loading) return null;
     switch (status) {
       case 'PENDING':
         // TODO: Apply Splash Image when pending
@@ -136,8 +163,15 @@ export default () => {
 
   useEffect(__init__, []);
 
+  useEffect(() => {
+    handleDeepLinking();
+  }, [getInitialState]);
+
   return (
-    <NavigationContainer onStateChange={handleStateChange}>
+    <NavigationContainer
+      ref={containerRef}
+      initialState={initialState}
+      onStateChange={handleStateChange}>
       {renderNavigator()}
       <LikesModal />
     </NavigationContainer>
