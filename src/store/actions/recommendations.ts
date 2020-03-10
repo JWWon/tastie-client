@@ -21,14 +21,22 @@ export const getRecommendations = createAsyncAction(
 // END GET_RECOMMENDATIONS
 
 // CLEAR_RECOMMENDATIONS
-export const CLEAR_RECOMMENDATIONS = '@recommendations/CLEAR_RECOMMENDATIONS';
+export const CLEAR_RECOMMENDATIONS =
+  '@recommendations/CLEAR_RECOMMENDATIONS_REQUEST';
+export const CLEAR_RECOMMENDATIONS_SUCCESS =
+  '@recommendations/CLEAR_RECOMMENDATIONS_SUCCESS';
 
-export const clearRecommendations = createAction(CLEAR_RECOMMENDATIONS)();
+export const clearRecommendations = createAsyncAction(
+  CLEAR_RECOMMENDATIONS,
+  CLEAR_RECOMMENDATIONS_SUCCESS,
+  'DUMMY',
+)<undefined, undefined, undefined>();
 // END CLEAR_RECOMMENDATIONS
 
 // SHOW_LIKES_MODAL
 interface ShowLikesModal {
   selectedID: string;
+  onSelectPositive?: (positive: boolean) => void; // For local state
 }
 
 export const SHOW_LIKES_MODAL = '@recommendations/SHOW_LIKES_MODAL';
@@ -71,15 +79,14 @@ export const deleteLike = createAsyncAction(
 )<DeleteLike, DeleteLike, AxiosError<ResponseError>>();
 // END DELETE_LIKE
 
-// UPDATE_MAX_SWIPED_INDEX
-export const UPDATE_MAX_SWIPED_INDEX =
-  '@recommendations/UPDATE_MAX_SWIPED_INDEX';
+// CHECK_MAX_SWIPED_INDEX
+export const CHECK_MAX_SWIPED_INDEX = '@recommendations/CHECK_MAX_SWIPED_INDEX';
 
-export const updateMaxSwipedIndex = createAction(
-  UPDATE_MAX_SWIPED_INDEX,
+export const checkMaxSwipedIndex = createAction(
+  CHECK_MAX_SWIPED_INDEX,
   (payload: number) => payload,
 )();
-// END UPDATE_MAX_SWIPED_INDEX
+// END CHECK_MAX_SWIPED_INDEX
 
 const actions = {
   getRecommendations,
@@ -88,6 +95,6 @@ const actions = {
   hideLikesModal,
   createLike,
   deleteLike,
-  updateMaxSwipedIndex,
+  updateMaxSwipedIndex: checkMaxSwipedIndex,
 };
 export type RecommendationsAction = ActionType<typeof actions>;

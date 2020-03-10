@@ -1,5 +1,5 @@
+/* eslint-disable no-fallthrough */
 import {all, call, put, select, takeEvery} from 'redux-saga/effects';
-import firebase from '@react-native-firebase/app';
 import {AxiosResponse} from 'axios';
 import * as moment from 'moment';
 
@@ -10,8 +10,6 @@ import {
   getSituations,
   SELECT_CATEGORY,
   SELECT_SITUATION,
-  selectCategory,
-  selectSituation,
   updateHasRequired,
   selectLocation,
   getNearbyLocations,
@@ -19,10 +17,11 @@ import {
   getPreferences,
 } from '@store/actions/case';
 import {getUserCoords} from '@store/actions/auth';
-import {clearRecommendations} from '@store/actions/recommendations';
+import {getLikes} from '@store/actions/history';
 import {RootState} from '@store/reducers';
-import {CaseIndex} from '@store/reducers/case';
+import {CaseIndex, LocationInterface} from '@store/reducers/case';
 import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
+import {navigate} from '@utils/RootService';
 import {
   GetCategoriesRes,
   GetSituationsRes,
@@ -34,30 +33,27 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
-import {MY_LOCATION, EVENT} from '@utils/consts';
+import {MY_LOCATION, SCREEN} from '@utils/consts';
 
 function* clearCaseSaga() {
-  const {maxSwipedIndex}: RootState['recommendations'] = yield select(
-    (state: RootState) => state.recommendations,
-  );
-  if (maxSwipedIndex > 0) {
-    yield firebase.analytics().logEvent(EVENT.VISITED_RECOMMENDATIONS, {
-      count: maxSwipedIndex + 1,
-    });
-  }
-
   yield all([
     put(getUserCoords.request()),
     put(getCategories.request()),
-    put(clearRecommendations()),
+    put(getLikes.request()),
   ]);
 }
 
 function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {
-  if (action.payload !== CaseIndex.PREFERENCE) {
-    yield put(
-      updateMessage({message: '다시 고르겠나옹?', customAction: undefined}),
-    );
+  switch (action.payload) {
+    case CaseIndex.PREFERENCE:
+      break;
+    case CaseIndex.LOCATION:
+      yield put(getUserCoords.request());
+    // IMPORTANT! do not use `break` keyword
+    default:
+      yield put(
+        updateMessage({message: '다시 고르겠나옹?', customAction: undefined}),
+      );
   }
 }
 
@@ -159,6 +155,11 @@ function* getPreferencesSaga() {
 function* selectLocationSaga(
   action: ReturnType<typeof selectLocation.request>,
 ) {
+  function* putSuccess(params: LocationInterface) {
+    yield put(selectLocation.success(params));
+    yield call(validateInfo, '어떤 상황인가옹?');
+  }
+
   try {
     const {name, location, place_id} = action.payload;
     if (name === MY_LOCATION) {
@@ -168,7 +169,7 @@ function* selectLocationSaga(
         getAddress,
         userCoords,
       );
-      yield put(selectLocation.success({name, address, ...userCoords}));
+      yield call(putSuccess, {name, address, ...userCoords});
       return;
     }
 
@@ -178,7 +179,7 @@ function* selectLocationSaga(
         getAddress,
         location,
       );
-      yield put(selectLocation.success({name, address, ...location}));
+      yield call(putSuccess, {name, address, ...location});
       return;
     }
 
@@ -201,7 +202,7 @@ function* selectLocationSaga(
         .join(' ');
       const {lat: latitude, lng: longitude} = geometry.location;
 
-      yield put(selectLocation.success({name, address, latitude, longitude}));
+      yield call(putSuccess, {name, address, latitude, longitude});
       return;
     }
 
@@ -211,30 +212,35 @@ function* selectLocationSaga(
   }
 }
 
-function* selectCategorySaga(action: ReturnType<typeof selectCategory>) {
-  yield call(validateInfo, action.payload.onPress, '어디서 먹나옹?');
+function* selectCategorySaga() {
+  yield call(validateInfo, '어디서 먹나옹?');
   yield put(getSituations.request());
 }
 
-function* selectSituationSaga(action: ReturnType<typeof selectSituation>) {
-  yield call(validateInfo, action.payload.onPress);
+function* selectSituationSaga() {
+  yield call(validateInfo);
 }
 
-// MIDDLEWARE OF MIDDLEWARE
-function* validateInfo(customAction: () => void, message?: string) {
+// MIDDLEWARE
+function* validateInfo(message?: string) {
   const {category, situation, location}: RootState['case'] = yield select(
     state => state.case,
   );
   const hasRequired =
     category !== '' && situation !== '' && location.name !== '';
 
+  yield put(updateHasRequired({hasRequired}));
+
   if (hasRequired) {
-    yield put(updateMessage({message: '뭐 먹을지 정해줄까옹?', customAction}));
+    yield put(
+      updateMessage({
+        message: '뭐 먹을지 정해줄까옹?',
+        customAction: () => navigate(SCREEN.RECOMMENDATIONS),
+      }),
+    );
   } else if (message) {
     yield put(updateMessage({message}));
   }
-
-  yield put(updateHasRequired({hasRequired}));
 }
 
 export default function* root() {

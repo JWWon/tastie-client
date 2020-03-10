@@ -16,10 +16,6 @@ import {
   CaseIndex,
 } from '@store/reducers/case';
 
-interface ButtonInterface {
-  onPress: () => void;
-}
-
 // CLEAR_CASE
 export const CLEAR_CASE = '@case/CLEAR_CASE';
 
@@ -98,7 +94,7 @@ export const getPreferences = createAsyncAction(
 // END GET_PREFERENCES
 
 // SELECT_CATEGORY
-interface SelectCategory extends ButtonInterface {
+interface SelectCategory {
   category: string;
 }
 
@@ -111,7 +107,7 @@ export const selectCategory = createAction(
 // END SELECT_CATEGORY
 
 // SELECT_LOCATION
-interface SelectLocation extends ButtonInterface {
+interface SelectLocation {
   name: string;
   // NearbyLocations optional params
   location?: CoordsInterface;
@@ -131,7 +127,7 @@ export const selectLocation = createAsyncAction(
 // END SELECT_LOCATION
 
 // SELECT_SITUATION
-interface SelectSituation extends ButtonInterface {
+interface SelectSituation {
   situation: string;
 }
 

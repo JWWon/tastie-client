@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import {useSelector, useDispatch} from 'react-redux';
 
 import {RootState} from '@store/reducers';
@@ -16,7 +15,7 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
   const labels = [situation];
 
   function handleNavigate() {
-    navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, _.pick(data, ['id']));
+    navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, {placeID: data.id});
   }
 
   function handlePressLike() {

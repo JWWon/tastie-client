@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, Animated, Easing} from 'react-native';
+import {Animated, Easing} from 'react-native';
 
 import * as s from './Loading.style';
 
@@ -8,7 +8,7 @@ interface LoadingState {
 }
 
 const Loading: React.FC = () => {
-  const [items] = useState([
+  const [items] = useState<LoadingState[]>([
     {value: new Animated.Value(0)},
     {value: new Animated.Value(0)},
     {value: new Animated.Value(0)},
@@ -46,14 +46,7 @@ const Loading: React.FC = () => {
     ).start();
   });
 
-  return (
-    <FlatList<LoadingState>
-      data={items}
-      renderItem={renderDot}
-      keyExtractor={(_, idx) => idx.toString()}
-      horizontal={true}
-    />
-  );
+  return <s.FlatList data={items} renderItem={renderDot} />;
 };
 
 export default Loading;

@@ -7,7 +7,11 @@ import {RootState} from '@store/reducers';
 import {navigate} from '@utils/RootService';
 import {logout} from '@store/actions/auth';
 import size from '@styles/sizes';
-import {clearAction, expandNavbar} from '@store/actions/navbar';
+import {clearAction, expandNavbar, contractNavbar} from '@store/actions/navbar';
+import historyIcon from '@assets/images/icon-history/icon-history.png';
+import catIcon from '@assets/images/icon-cat/icon-cat.png';
+import closeMouthCatIcon from '@assets/images/icon-cat-no-mouth/icon-cat-no-mouth.png';
+import profileIcon from '@assets/images/icon-profile/icon-profile.png';
 import * as s from './TabBar.style';
 
 const minBorderOpacity = 0.25;
@@ -27,6 +31,18 @@ const TabBar: React.FC = () => {
   const isCurrentHome =
     screenName === SCREEN.CASE || screenName === SCREEN.RECOMMENDATIONS;
   const isCurrentProfile = screenName === SCREEN.PROFILE;
+
+  const getIcon = () => {
+    switch (screenName) {
+      case SCREEN.HISTORY:
+        return historyIcon;
+      case SCREEN.CASE:
+      case SCREEN.RECOMMENDATIONS:
+        return isTalking ? catIcon : closeMouthCatIcon;
+      case SCREEN.PROFILE:
+        return profileIcon;
+    }
+  };
 
   const glow = Animated.loop(
     Animated.sequence([
@@ -54,6 +70,13 @@ const TabBar: React.FC = () => {
     }
   };
 
+  const handleNavigate = (name: string, active: boolean) => {
+    if (!active) {
+      navigate(name);
+      dispatch(contractNavbar());
+    }
+  };
+
   useEffect(() => {
     if (isAlert) {
       glow.start();
@@ -72,39 +95,20 @@ const TabBar: React.FC = () => {
       />
       {expand ? (
         <>
-          <s.Button disabled={isCurrentHistory} onPress={() => {}}>
-            <s.Icon
-              currentScreen={isCurrentHistory}
-              source={require('@assets/images/icon-history/icon-history.png')}
-            />
-          </s.Button>
           <s.Button
-            disabled={isCurrentHome}
-            onPress={() => navigate(SCREEN.CASE)}>
-            <s.Icon
-              currentScreen={isCurrentHome}
-              source={require('@assets/images/icon-cat-no-mouth/icon-cat-no-mouth.png')}
-            />
+            onPress={() => handleNavigate(SCREEN.HISTORY, isCurrentHistory)}>
+            <s.Icon currentScreen={isCurrentHistory} source={historyIcon} />
           </s.Button>
-          <s.Button
-            disabled={isCurrentProfile}
-            onPress={() => dispatch(logout())}>
-            <s.Icon
-              currentScreen={isCurrentProfile}
-              source={require('@assets/images/icon-profile/icon-profile.png')}
-            />
+          <s.Button onPress={() => handleNavigate(SCREEN.CASE, isCurrentHome)}>
+            <s.Icon currentScreen={isCurrentHome} source={closeMouthCatIcon} />
+          </s.Button>
+          <s.Button onPress={() => dispatch(logout())}>
+            <s.Icon currentScreen={isCurrentProfile} source={profileIcon} />
           </s.Button>
         </>
       ) : (
         <s.Button onPress={handlePress}>
-          <s.Icon
-            currentScreen={isCurrentHome}
-            source={
-              isTalking
-                ? require('@assets/images/icon-cat/icon-cat.png')
-                : require('@assets/images/icon-cat-no-mouth/icon-cat-no-mouth.png')
-            }
-          />
+          <s.Icon currentScreen={true} source={getIcon()} />
         </s.Button>
       )}
     </s.RoundBox>

@@ -14,18 +14,26 @@ interface Button {
 }
 
 const LikesModal: React.FC = () => {
-  const {selectedID} = useSelector((state: RootState) => state.recommendations);
+  const {selectedID, onSelectPositive} = useSelector(
+    (state: RootState) => state.recommendations,
+  );
   const dispatch = useDispatch();
 
   const buttons: Button[] = [
     {
       positive: true,
-      onPress: () => dispatch(createLike.request({positive: true})),
+      onPress: () => {
+        dispatch(createLike.request({positive: true}));
+        if (onSelectPositive) onSelectPositive(true);
+      },
       message: '좋아요',
     },
     {
       positive: false,
-      onPress: () => dispatch(createLike.request({positive: false})),
+      onPress: () => {
+        dispatch(createLike.request({positive: false}));
+        if (onSelectPositive) onSelectPositive(false);
+      },
       message: '별로에요',
     },
   ];
