@@ -7,7 +7,6 @@ import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
 import {SelectAutocomplete} from '@components/atoms/InputHelper';
 import {RootState} from '@store/reducers';
-import {getRecommendations} from '@store/actions/recommendations';
 import {
   selectCategory,
   selectSituation,
@@ -44,18 +43,16 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const preferenceExist = preference !== undefined;
 
-  const searchRecommend = () => dispatch(getRecommendations.request());
-
   const handlePressMore = () => dispatch(getPreferences.request());
 
   const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
-    dispatch(selectCategory({category: name, onPress: searchRecommend}));
+    dispatch(selectCategory({category: name}));
   const handleSelectLocation: SelectAutocomplete = value =>
-    dispatch(selectLocation.request({...value, onPress: searchRecommend}));
+    dispatch(selectLocation.request({...value}));
   const handleSelectSituation: SelectAutocomplete = ({name}) =>
-    dispatch(selectSituation({situation: name, onPress: searchRecommend}));
+    dispatch(selectSituation({situation: name}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
 

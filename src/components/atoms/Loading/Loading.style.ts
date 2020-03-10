@@ -1,9 +1,11 @@
 import styled from 'styled-components/native';
+import {FlatList as RawFlatList} from 'react-native';
 
-export const Wrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
+export const FlatList = styled(RawFlatList).attrs({
+  horizontal: true,
+  keyExtractor: (_, idx) => idx.toString(),
+  contentContainerStyle: {alignItems: 'center'},
+})``;
 
 const width = 7;
 export const Dot = styled.View`

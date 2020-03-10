@@ -10,6 +10,7 @@ import space from '@styles/spaces';
 
 export const Container = styled.View`
   flex: 1;
+  background: ${({theme}) => theme.color.grayLight};
 `;
 
 const inlineCardsConfig: iPageInterpolation = {

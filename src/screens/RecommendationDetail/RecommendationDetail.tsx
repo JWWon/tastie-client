@@ -1,6 +1,6 @@
-import React from 'react';
-import _ from 'lodash';
+import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import _ from 'lodash';
 
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
 import {RootState} from '@store/reducers';
@@ -10,7 +10,10 @@ import {
   getTodayOpeningHours,
   makePhoneCall,
   selectLikeIcon,
+  getDistance,
 } from '@utils/helper';
+import * as api from '@services/recommendations';
+import {Recommendation} from '@services/recommendations';
 import RecommendationInfoGrid from '@components/molcules/RecommendationInfoGrid';
 import RecommendationInfo, {
   Props as InfoProps,
@@ -27,24 +30,42 @@ export interface Props {
   route: RootRouteProp<typeof SCREEN.RECOMMENDATION_DETAIL>;
 }
 
+const initData: Recommendation = {
+  id: '',
+  name: '',
+  rating: 0,
+  userRatingsTotal: 0,
+  priceLevel: 0,
+  types: [],
+  location: {latitude: 0, longitude: 0},
+  formattedAddress: '',
+  formattedPhoneNumber: '',
+  website: '',
+  photoUrls: [],
+  openingHours: {
+    openNow: false,
+  },
+};
+
 const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
-  const {id} = route.params;
+  // useState
+  const [data, setData] = useState<Recommendation>(initData);
+  const [loading, setLoading] = useState<boolean>(true);
+  // useSelector
+  const likes = useSelector((state: RootState) => state.history.likes);
   const situation = useSelector((state: RootState) => state.case.situation);
-  const recommendations = useSelector(
-    (state: RootState) => state.recommendations.data,
-  );
+  const userCoords = useSelector((state: RootState) => state.auth.userCoords);
+  // useDispatch
   const dispatch = useDispatch();
 
-  const idx = _.findIndex(recommendations, item => item.id === id);
-  const data = recommendations[idx];
-
   // TODO: Get multiple labels from backend
-  const labels = [situation];
+  const labels = [situation || 'No Tags'];
+
   const recommendationInfo: InfoProps[] = [
     {
       title: '나와의 거리',
       icon: require('@assets/images/icon-distance/icon-distance.png'),
-      data: data.distance,
+      data: data.distance || '알 수 없음',
     },
     {
       title: '가격대',
@@ -63,16 +84,52 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
     },
   ];
 
+  function handleSelectPositive(positive: boolean) {
+    setData({...data, positive});
+  }
+
   function handlePressLike() {
     if (data.positive !== undefined) {
       // delete current like
       dispatch(deleteLike.request({placeID: data.id}));
+      setData({...data, positive: undefined});
     } else {
-      dispatch(showLikesModal({selectedID: data.id}));
+      dispatch(
+        showLikesModal({
+          selectedID: data.id,
+          onSelectPositive: handleSelectPositive,
+        }),
+      );
     }
   }
 
-  return (
+  async function getRecommendation() {
+    const {placeID} = route.params;
+    try {
+      const response = await api.getRecommendation(placeID);
+      const likeIdx = _.findIndex(likes, like => like.placeID === placeID);
+
+      const recommendation = {...response.data};
+      if (userCoords.latitude !== 0 && userCoords.longitude !== 0)
+        recommendation.distance = getDistance(
+          response.data.location,
+          userCoords,
+        );
+      if (likeIdx > -1) recommendation.positive = likes[likeIdx].positive;
+
+      setData(recommendation);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    getRecommendation();
+  }, []);
+
+  // TODO: Handle loading view
+  return loading ? null : (
     <s.Container>
       <s.Scroll>
         <s.SwiperWrapper>

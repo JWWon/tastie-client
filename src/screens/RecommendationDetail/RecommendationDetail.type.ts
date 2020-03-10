@@ -1,3 +1,1 @@
-import {Recommendation} from '@services/recommendations';
-
-export type Params = Pick<Recommendation, 'id'>;
+export type Params = {placeID: string}; // placeID

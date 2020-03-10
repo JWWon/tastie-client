@@ -13,7 +13,7 @@ const triangleHeight = 16;
 
 const Message: React.FC = () => {
   const dispatch = useDispatch();
-  const {message, loading, showMessage, customAction} = useSelector(
+  const {message, loading, showMessage, expand, customAction} = useSelector(
     (state: RootState) => state.navbar,
   );
 
@@ -24,7 +24,7 @@ const Message: React.FC = () => {
 
   const isAlert = !!customAction && !loading;
 
-  return showMessage ? (
+  return showMessage && !expand ? (
     <Fading>
       <s.Container onLayout={layoutDidMount}>
         <s.Bubble>

@@ -8,9 +8,11 @@ import {
   getRecommendations,
   createLike,
   deleteLike,
+  clearRecommendations,
 } from '@store/actions/recommendations';
-import {navigate} from '@utils/RootService';
+import {addLike, removeLike} from '@store/actions/history';
 import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
+import {navigate} from '@utils/RootService';
 import {
   GetRecommendationsReq,
   GetRecommendationsRes,
@@ -20,21 +22,22 @@ import * as userApi from '@services/user';
 import {RootState} from '@store/reducers';
 import {SCREEN, EVENT} from '@utils/consts';
 import {getDistance} from '@utils/helper';
-import {GetLikesRes} from '@services/user';
 
 // HELPERS
 function* mapAdditionalInfos(data: GetRecommendationsRes) {
-  const auth: RootState['auth'] = yield select(
+  const {userCoords}: RootState['auth'] = yield select(
     (state: RootState) => state.auth,
   );
-
-  const {data: likes}: AxiosResponse<GetLikesRes> = yield call(
-    userApi.getLikes,
+  const {likes}: RootState['history'] = yield select(
+    (state: RootState) => state.history,
   );
+
   const nextData = data.map(item =>
     produce(item, draft => {
+      // map distance
+      draft.distance = getDistance(userCoords, item.location);
+      // map positive
       const idx = _.findIndex(likes, like => like.placeID === item.id);
-      draft.distance = getDistance(auth.userCoords, item.location);
       if (idx !== -1) draft.positive = likes[idx].positive;
     }),
   );
@@ -44,8 +47,6 @@ function* mapAdditionalInfos(data: GetRecommendationsRes) {
 // SAGAS
 function* getRecommendationsSaga() {
   yield put(showLoading());
-  yield navigate(SCREEN.RECOMMENDATIONS);
-
   try {
     const {
       category,
@@ -92,13 +93,15 @@ function* getRecommendationsSaga() {
 function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
   try {
     const {positive} = action.payload;
-    const {selectedID}: RootState['recommendations'] = yield select(
-      (state: RootState) => state.recommendations,
+    const placeID: RootState['recommendations']['selectedID'] = yield select(
+      (state: RootState) => state.recommendations.selectedID,
     );
-    if (!selectedID) throw new Error('There is no selected recommendation');
+    if (!placeID) throw new Error('There is no selected recommendation');
+    const like = {placeID, positive};
 
-    yield call(userApi.createLike, {placeID: selectedID, positive});
+    yield call(userApi.createLike, like);
     yield put(createLike.success({positive}));
+    yield put(addLike(like));
     yield firebase.analytics().logEvent(EVENT.PRESS_LIKE, {positive});
   } catch (e) {
     yield put(createLike.failure(e));
@@ -107,12 +110,26 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
 
 function* deleteLikeSaga(action: ReturnType<typeof deleteLike.request>) {
   try {
-    yield call(userApi.deleteLike, action.payload);
-    yield put(deleteLike.success(action.payload));
+    const like = action.payload;
+    yield call(userApi.deleteLike, like);
+    yield put(deleteLike.success(like));
+    yield put(removeLike(like));
     yield firebase.analytics().logEvent(EVENT.RECALL_LIKE);
   } catch (e) {
     yield put(deleteLike.failure(e));
   }
+}
+
+function* clearRecommendationsSaga() {
+  const {maxSwipedIndex}: RootState['recommendations'] = yield select(
+    (state: RootState) => state.recommendations,
+  );
+  if (maxSwipedIndex > 0)
+    yield firebase.analytics().logEvent(EVENT.VISITED_RECOMMENDATIONS, {
+      count: maxSwipedIndex + 1,
+    });
+
+  yield put(clearRecommendations.success());
 }
 
 export default function* root() {
@@ -120,4 +137,6 @@ export default function* root() {
   yield takeEvery(getRecommendations.request, getRecommendationsSaga);
   yield takeEvery(createLike.request, createLikeSaga);
   yield takeEvery(deleteLike.request, deleteLikeSaga);
+  yield takeEvery(clearRecommendations.request, clearRecommendationsSaga);
+  // sync
 }

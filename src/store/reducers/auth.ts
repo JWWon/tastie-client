@@ -68,7 +68,7 @@ const setFailureWithoutUser = <A extends {payload: any}>(
   action: A,
 ): AuthState => ({
   ...state,
-  ...action.payload,
+  error: action.payload,
   loading: false,
   status: 'NO_USER',
 });

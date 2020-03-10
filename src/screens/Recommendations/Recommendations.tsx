@@ -4,12 +4,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {PagerProvider} from '@crowdlinker/react-native-pager';
 
 import BaseView from '@components/templates/BaseView';
-import RecommendationCard from '@components/organisms/RecommendationCard';
+import RecommendationCard from '@components/atoms/RecommendationCard';
 import Dismiss from '@components/atoms/Dismiss';
 import TextHighlight from '@components/atoms/TextHighlight';
 import {RootState} from '@store/reducers';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
-import {updateMaxSwipedIndex} from '@store/actions/recommendations';
+import {checkMaxSwipedIndex} from '@store/actions/recommendations';
 import {RootNavigationProp} from '@navigations/Root';
 import {CHARACTER_NAME, SCREEN} from '@utils/consts';
 import size from '@styles/sizes';
@@ -36,7 +36,7 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
   const startPosition = (bodyHeight - messageHeight) * 0.46;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
-  const [activeIndex, onChange] = useState<number>(0);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [translateY] = useState<Animated.Value>(
     new Animated.Value(startPosition),
   );
@@ -55,8 +55,8 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
   }
 
   function handleSwipe(index: number) {
-    onChange(index);
-    dispatch(updateMaxSwipedIndex(index));
+    setActiveIndex(index);
+    dispatch(checkMaxSwipedIndex(index));
   }
 
   useEffect(() => {
@@ -65,6 +65,7 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
         // * Loading start
         translateY.setValue(startPosition);
         setStatus('LOADING');
+        setActiveIndex(0);
         return;
       }
     } else {

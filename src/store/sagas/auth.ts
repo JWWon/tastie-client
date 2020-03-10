@@ -53,7 +53,7 @@ function* getAuthFromJWT(data: api.GetTokenRes) {
   const auth: DecodeAccessToken = decode(data.accessToken);
   // Save data to Keychain
   yield call(Keychain.setGenericPassword, auth.name, JSON.stringify(data));
-  axios.setToken(data.accessToken);
+  yield axios.setToken(data.accessToken);
   return _.omit(auth, ['exp', 'iat', 'sub']);
 }
 
@@ -102,7 +102,6 @@ function* checkKeychainSaga() {
       Keychain.getGenericPassword,
     );
     if (!credentials || !credentials.username) {
-      yield call(logoutSaga);
       throw new Error('No credentials stored.');
     }
 
@@ -225,7 +224,7 @@ function* getUserCoordsSaga() {
 
     if (coords) {
       yield put(getUserCoords.success(coords));
-      yield put(getNearbyLocations.request({...coords, count: 10}));
+      yield put(getNearbyLocations.request({...coords, count: 8}));
       yield firebase.analytics().logEvent(EVENT.USER_COORDINATE, coords);
     }
     if (error) {

@@ -5,15 +5,25 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
+import _ from 'lodash';
 import firebase from '@react-native-firebase/app';
 import {GoogleSignin} from '@react-native-community/google-signin';
 import DeviceInfo from 'react-native-device-info';
 import {useDispatch, useSelector} from 'react-redux';
 
 import axios from '@services/axios.base';
-import {clearCase} from '@store/actions/case';
 import {checkKeychain} from '@store/actions/auth';
-import {updateScreenName, updateMessage} from '@store/actions/navbar';
+import {
+  updateScreenName,
+  updateMessage,
+  hideMessage,
+  showMessage,
+} from '@store/actions/navbar';
+import {clearCase} from '@store/actions/case';
+import {
+  getRecommendations,
+  clearRecommendations,
+} from '@store/actions/recommendations';
 import {SCREEN, EVENT} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
@@ -39,8 +49,10 @@ function getActiveRouteName(
 
 export default () => {
   const dispatch = useDispatch();
-  const {screenName} = useSelector((state: RootState) => state.navbar);
   const {status} = useSelector((state: RootState) => state.auth);
+  const {screenName: prevName} = useSelector(
+    (state: RootState) => state.navbar,
+  );
 
   function __init__() {
     // Axios
@@ -53,27 +65,60 @@ export default () => {
     dispatch(checkKeychain.request());
   }
 
+  function stateChangeMiddleware(name: string) {
+    // HANDLE_RECOMMENDATIONS
+    if (prevName === SCREEN.CASE && name === SCREEN.RECOMMENDATIONS) {
+      dispatch(getRecommendations.request());
+    }
+    if (
+      prevName === SCREEN.RECOMMENDATIONS &&
+      name !== SCREEN.RECOMMENDATION_DETAIL
+    ) {
+      if (name === SCREEN.CASE) {
+        dispatch(updateMessage({message: '골라준 음식이 별로인가옹? 😥'}));
+        firebase.analytics().logEvent(EVENT.GO_BACK_TO_CASE_SCREEN);
+      }
+      dispatch(clearRecommendations.request());
+    }
+    // END HANDLE_RECOMMENDATIONS
+
+    // CLEAR_CASE
+    if (
+      name === SCREEN.CASE &&
+      _.includes(
+        ['', SCREEN.WELCOME, SCREEN.LOGIN, SCREEN.SIGNUP_META],
+        prevName,
+      )
+    ) {
+      dispatch(clearCase());
+    }
+    // END CLEAR_CASE
+
+    // HANDLE_MESSAGE
+    switch (name) {
+      case SCREEN.CASE:
+      case SCREEN.RECOMMENDATIONS:
+        dispatch(showMessage());
+        break;
+      case SCREEN.RECOMMENDATION_DETAIL:
+      case SCREEN.HISTORY:
+      case SCREEN.PROFILE:
+        dispatch(hideMessage());
+        break;
+    }
+    // END HANDLE_MESSAGE
+  }
+
   function handleStateChange(state?: NavigationState) {
     if (!state) return;
 
     const name = getActiveRouteName(state);
-    if (!screenName || screenName !== name) {
+    if (!prevName || prevName !== name) {
       dispatch(updateScreenName(name));
       // SEND SCREEN NAME TO ANALYTICS
       firebase.analytics().setCurrentScreen(name, name);
       // MIDDLEWARE
-      switch (
-        name // current screen name
-      ) {
-        case SCREEN.CASE:
-          dispatch(clearCase());
-          if (screenName === SCREEN.RECOMMENDATIONS) {
-            // navigate RECOMMENDATIONS -> CASE
-            dispatch(updateMessage({message: '다른 음식이 먹고싶나옹?'}));
-            firebase.analytics().logEvent(EVENT.GO_BACK_TO_CASE_SCREEN);
-          }
-          break;
-      }
+      stateChangeMiddleware(name);
     }
   }
 

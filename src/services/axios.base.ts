@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import axios from 'axios';
 
 import {BASE_URL} from '@utils/consts';

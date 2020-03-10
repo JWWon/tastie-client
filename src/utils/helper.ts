@@ -171,11 +171,11 @@ export function getPriceLevel(level: number) {
   }
 }
 
-export function getTodayOpeningHours(hours?: string[]) {
+export function getTodayOpeningHours(hours?: string[]): string {
   const today = (moment().weekday() + 6) % 7;
   return hours && typeof hours[today] === 'string'
-    ? hours[today].split(': ')[1]
-    : '';
+    ? hours[today].split(': ')[1].replace(', ', '\n')
+    : '알 수 없음';
 }
 // END RECOMMENDATION_DETAIL
 

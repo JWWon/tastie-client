@@ -10,7 +10,9 @@ export const Container = styled.View`
   flex: 1;
 `;
 
-export const Scroll = styled.ScrollView`
+export const Scroll = styled.ScrollView.attrs({
+  showsVerticalScrollIndicator: false,
+})`
   flex: 1;
   background: ${({theme}) => theme.color.whiteMild};
   padding-bottom: ${({theme}) => theme.space.wide}px;
