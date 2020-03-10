@@ -50,6 +50,12 @@ export const ButtonBorder = styled.View`
   align-items: center;
 `;
 
+export const LoadingWrapper = styled.SafeAreaView`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const DismissSafe = styled.SafeAreaView`
   position: absolute;
   top: ${({theme}) => theme.space.rootTop}px;

@@ -22,6 +22,7 @@ import Dismiss from '@components/atoms/Dismiss';
 import ImageSwiper from '@components/atoms/ImageSwiper';
 import IconButton from '@components/atoms/IconButton';
 import MapView from '@components/atoms/MapView';
+import Loading from '@components/atoms/Loading';
 import {showLikesModal, deleteLike} from '@store/actions/recommendations';
 import * as s from './RecommendationDetail.style';
 
@@ -129,55 +130,61 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
   }, []);
 
   // TODO: Handle loading view
-  return loading ? null : (
+  return (
     <s.Container>
-      <s.Scroll>
-        <s.SwiperWrapper>
-          <ImageSwiper images={data.photoUrls} />
-        </s.SwiperWrapper>
-        <s.ContentWrapper>
-          <s.HeaderWrapper>
-            <s.PlaceName>{data.name}</s.PlaceName>
-            <s.LabelWrapper>
-              {labels.map(item => (
-                <s.Label key={item}>{item}</s.Label>
-              ))}
-            </s.LabelWrapper>
+      {loading ? (
+        <s.LoadingWrapper>
+          <Loading />
+        </s.LoadingWrapper>
+      ) : (
+        <s.Scroll>
+          <s.SwiperWrapper>
+            <ImageSwiper images={data.photoUrls} />
+          </s.SwiperWrapper>
+          <s.ContentWrapper>
+            <s.HeaderWrapper>
+              <s.PlaceName>{data.name}</s.PlaceName>
+              <s.LabelWrapper>
+                {labels.map(item => (
+                  <s.Label key={item}>{item}</s.Label>
+                ))}
+              </s.LabelWrapper>
 
-            <s.Buttons>
-              <s.ButtonBorder>
-                <IconButton
-                  onPress={() => makePhoneCall(data.formattedPhoneNumber)}
-                  source={require('@assets/images/icon-phone/icon-phone.png')}
-                  message="전화주문"
-                />
-              </s.ButtonBorder>
-              <s.Divider />
-              <s.ButtonBorder>
-                <IconButton
-                  onPress={handlePressLike}
-                  source={selectLikeIcon({
-                    positive: data.positive,
-                    black: true,
-                  })}
-                  message="평가하기"
-                />
-              </s.ButtonBorder>
-            </s.Buttons>
-          </s.HeaderWrapper>
+              <s.Buttons>
+                <s.ButtonBorder>
+                  <IconButton
+                    onPress={() => makePhoneCall(data.formattedPhoneNumber)}
+                    source={require('@assets/images/icon-phone/icon-phone.png')}
+                    message="전화주문"
+                  />
+                </s.ButtonBorder>
+                <s.Divider />
+                <s.ButtonBorder>
+                  <IconButton
+                    onPress={handlePressLike}
+                    source={selectLikeIcon({
+                      positive: data.positive,
+                      black: true,
+                    })}
+                    message="평가하기"
+                  />
+                </s.ButtonBorder>
+              </s.Buttons>
+            </s.HeaderWrapper>
 
-          <RecommendationInfoGrid data={recommendationInfo}>
-            <RecommendationInfo
-              title="식당 위치"
-              icon={require('@assets/images/icon-location/icon-location.png')}>
-              <MapView
-                location={data.location}
-                address={data.formattedAddress}
-              />
-            </RecommendationInfo>
-          </RecommendationInfoGrid>
-        </s.ContentWrapper>
-      </s.Scroll>
+            <RecommendationInfoGrid data={recommendationInfo}>
+              <RecommendationInfo
+                title="식당 위치"
+                icon={require('@assets/images/icon-location/icon-location.png')}>
+                <MapView
+                  location={data.location}
+                  address={data.formattedAddress}
+                />
+              </RecommendationInfo>
+            </RecommendationInfoGrid>
+          </s.ContentWrapper>
+        </s.Scroll>
+      )}
       {/* position: fixed */}
       <s.DismissSafe>
         <Dismiss icon="arrow" onPress={() => navigation.goBack()} />
