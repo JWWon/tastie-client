@@ -88,9 +88,21 @@ const Signup: React.FC<Props> = ({navigation}) => {
   const renderAgreement = (
     <s.Agreement>
       {"'다음' 버튼을 터치함므로써 "}
-      <s.Link onPress={() => console.log('서비스 약관')}>서비스 약관</s.Link>
+      <s.Link
+        onPress={() =>
+          navigation.navigate(SCREEN.WEB_VIEW, {
+            uri: 'https://www.tastie.me/term-of-use',
+          })
+        }>
+        서비스 약관
+      </s.Link>
       {' 및 '}
-      <s.Link onPress={() => console.log('개인정보 처리방침')}>
+      <s.Link
+        onPress={() =>
+          navigation.navigate(SCREEN.WEB_VIEW, {
+            uri: 'https://www.tastie.me/privacy',
+          })
+        }>
         개인정보 처리방침
       </s.Link>
       {'에 동의합니다.'}

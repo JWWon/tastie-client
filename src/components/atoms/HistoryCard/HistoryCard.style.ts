@@ -1,6 +1,8 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import IconButton from '@components/atoms/IconButton';
+
 export const Link = styled.TouchableOpacity.attrs({
   activeOpacity: 0.7,
 })`
@@ -34,6 +36,15 @@ export const ImageFilter = styled(LinearGradient).attrs({
   justify-content: center;
   align-items: center;
   padding: ${({theme}) => theme.space.basic}px;
+`;
+
+// Icon
+export const LikeIcon = styled(IconButton).attrs({
+  disabled: true,
+})`
+  position: absolute;
+  bottom: ${({theme}) => theme.space.basic}px;
+  right: ${({theme}) => theme.space.basic}px;
 `;
 
 // Text

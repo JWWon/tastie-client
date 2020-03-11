@@ -1,1 +1,3 @@
-export type Params = {placeID: string}; // placeID
+export interface Params {
+  placeID: string;
+}

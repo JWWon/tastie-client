@@ -16,7 +16,8 @@ export const SCREEN = {
   PROFILE: 'Profile' as const,
   // OTHER
   RECOMMENDATION_DETAIL: 'RecommendationDetail' as const,
-  // Session
+  WEB_VIEW: 'WebView' as const,
+  // SESSION
   WELCOME: 'Welcome' as const,
   SIGNUP: 'Signup' as const,
   SIGNUP_META: 'SignupMeta' as const,
@@ -37,6 +38,7 @@ export const EVENT = {
   PRESS_DISMISS_RECOMMENDATIONS: 'press_dismiss_recommendations' as const,
   PRESS_TABBAR: 'press_tabbar' as const,
   CLEAR_CASE_PARTLY: 'clear_case_partly' as const,
+  LOGOUT: 'logout' as const,
   // track error
   SEARCH_RECOMMENDATIONS_FAILURE: 'search_recommend_failure' as const,
 };
