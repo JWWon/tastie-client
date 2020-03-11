@@ -24,14 +24,34 @@ export const SCREEN = {
 };
 
 export const EVENT = {
-  GO_BACK_TO_CASE_SCREEN: 'go_back_to_case_screen' as const,
+  // collect data
   USER_COORDINATE: 'user_coordinate' as const,
-  VISITED_RECOMMENDATIONS: 'visited_recommendations' as const,
-  SEARCH_RECOMMEND: 'search_recommend' as const,
-  SEARCH_RECOMMEND_FAILURE: 'search_recommend_failure' as const,
   LOCATION_PERMISSION: 'location_permission' as const,
-  PRESS_LIKE: 'press_like' as const,
-  RECALL_LIKE: 'recall_like' as const,
+  GET_RECOMMENDATIONS_PERFORMANCE: 'get_recommendations_performance' as const,
+  // track user action
+  SEARCH_RECOMMENDATIONS: 'search_recommendations' as const,
+  VISITED_RECOMMENDATIONS: 'visited_recommendations' as const,
+  RATE_RECOMMENDATION: 'rate_recommendation' as const,
+  RESET_RATE_RECOMMENDATION: 'reset_rate_recommendation' as const,
+  SHARE_RECOMMENDATION: 'share_recommendation' as const,
+  PRESS_DISMISS_RECOMMENDATIONS: 'press_dismiss_recommendations' as const,
+  PRESS_TABBAR: 'press_tabbar' as const,
+  CLEAR_CASE_PARTLY: 'clear_case_partly' as const,
+  // track error
+  SEARCH_RECOMMENDATIONS_FAILURE: 'search_recommend_failure' as const,
+};
+
+export const MESSAGE = {
+  SHOW_RECOMMENDATIONS: '열심히 골라봤어옹~!',
+  SELECT_AGAIN: '다시 고르겠나옹?',
+  // HAPPY
+  READY_TO_RECOMMEND: '뭐 먹을지 정해줄까옹?',
+  POSITIVE: '맘에 든다니 기분이 좋다옹',
+  // SAD
+  NEGATIVE: '더 열심히 골라볼게옹..',
+  DISMISS_RECOMMENDATIONS: '골라준 음식이 별로인가옹..?',
+  CANNOT_FIND_RECOMMENDATIONS: '미안해옹.. 다시 물어봐줄래옹..?',
+  CANNOT_FIND_RESULTS: '검색결과를 찾지 못했어옹..',
 };
 
 // String

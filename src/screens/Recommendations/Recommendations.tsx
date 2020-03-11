@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import firebase from '@react-native-firebase/app';
 import {PagerProvider} from '@crowdlinker/react-native-pager';
 
 import BaseView from '@components/templates/BaseView';
@@ -11,7 +12,7 @@ import {RootState} from '@store/reducers';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
 import {checkMaxSwipedIndex} from '@store/actions/recommendations';
 import {RootNavigationProp} from '@navigations/Root';
-import {CHARACTER_NAME, SCREEN} from '@utils/consts';
+import {CHARACTER_NAME, SCREEN, EVENT, MESSAGE} from '@utils/consts';
 import size from '@styles/sizes';
 import space from '@styles/spaces';
 import * as s from './Recommendations.style';
@@ -33,7 +34,7 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     (state: RootState) => state.recommendations,
   );
   const {messageHeight} = useSelector((state: RootState) => state.device);
-  const startPosition = (bodyHeight - messageHeight) * 0.46;
+  const startPosition = (bodyHeight - messageHeight) * 0.44;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -41,7 +42,10 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     new Animated.Value(startPosition),
   );
 
-  const handleDismiss = () => navigation.navigate(SCREEN.CASE);
+  const handleDismiss = () => {
+    firebase.analytics().logEvent(EVENT.PRESS_DISMISS_RECOMMENDATIONS);
+    navigation.navigate(SCREEN.CASE);
+  };
 
   function getTitle() {
     switch (status) {
@@ -85,7 +89,7 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }).start(() => {
-          dispatch(updateMessage({message: '맘에 들었다면 츄르를 달라옹!'}));
+          dispatch(updateMessage({message: MESSAGE.SHOW_RECOMMENDATIONS}));
           setStatus('SUCCESS');
         });
         return;

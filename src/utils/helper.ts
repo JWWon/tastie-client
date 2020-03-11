@@ -69,7 +69,7 @@ export const checkPermission = async () => {
     }
     firebase.analytics().logEvent(EVENT.LOCATION_PERMISSION, {status});
   } catch (e) {
-    console.error(e);
+    console.warn(e);
   }
   return false;
 };

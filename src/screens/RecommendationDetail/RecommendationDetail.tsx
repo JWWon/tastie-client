@@ -1,12 +1,13 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {ImageSourcePropType} from 'react-native';
+import firebase from '@react-native-firebase/app';
 import Share, {Options} from 'react-native-share';
 import _ from 'lodash';
 
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
 import {RootState} from '@store/reducers';
-import {SCREEN} from '@utils/consts';
+import {SCREEN, EVENT} from '@utils/consts';
 import {
   getPriceLevel,
   getTodayOpeningHours,
@@ -116,7 +117,12 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
     const title = `${data.name}에 대해 어떻게 생각하나옹?`;
     const message = `tastie://recommendation/${data.id}`;
     const option: Options = {title, message};
-    await Share.open(option);
+    try {
+      firebase.analytics().logEvent(EVENT.SHARE_RECOMMENDATION);
+      await Share.open(option);
+    } catch (e) {
+      console.warn(e);
+    }
   }
 
   function handlePressLike() {
@@ -150,7 +156,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
 
       setData(recommendation);
     } catch (e) {
-      console.error(e);
+      console.warn(e);
     }
     setLoading(false);
   }
