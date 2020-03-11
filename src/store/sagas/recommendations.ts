@@ -1,5 +1,6 @@
-import {call, put, select, takeEvery} from 'redux-saga/effects';
+import {call, put, delay, select, takeEvery} from 'redux-saga/effects';
 import produce from 'immer';
+import moment from 'moment';
 import firebase from '@react-native-firebase/app';
 import _ from 'lodash';
 import {AxiosResponse} from 'axios';
@@ -20,7 +21,7 @@ import {
 import * as api from '@services/recommendations';
 import * as userApi from '@services/user';
 import {RootState} from '@store/reducers';
-import {SCREEN, EVENT} from '@utils/consts';
+import {SCREEN, EVENT, MESSAGE} from '@utils/consts';
 import {getDistance} from '@utils/helper';
 
 // HELPERS
@@ -47,6 +48,7 @@ function* mapAdditionalInfos(data: GetRecommendationsRes) {
 // SAGAS
 function* getRecommendationsSaga() {
   yield put(showLoading());
+  const start = moment(); // start logging performance
   try {
     const {
       category,
@@ -76,16 +78,21 @@ function* getRecommendationsSaga() {
       data,
     );
     yield put(getRecommendations.success(recommendations));
-    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMEND, params);
+    // Send event to firebase analytics
+    const performance = moment().diff(start); // end logging performance
+    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMENDATIONS, params);
+    yield firebase.analytics().logEvent(EVENT.GET_RECOMMENDATIONS_PERFORMANCE, {
+      milliseconds: performance,
+    });
   } catch (e) {
     yield put(
       updateMessage({
-        message: '미안해옹... 다시 알려줄래옹..?',
+        message: MESSAGE.CANNOT_FIND_RECOMMENDATIONS,
         customAction: () => navigate(SCREEN.CASE),
       }),
     );
     yield put(getRecommendations.failure(e));
-    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMEND_FAILURE);
+    yield firebase.analytics().logEvent(EVENT.SEARCH_RECOMMENDATIONS_FAILURE);
   }
   yield put(hideLoading());
 }
@@ -102,7 +109,16 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
     yield call(userApi.createLike, like);
     yield put(createLike.success({positive}));
     yield put(addLike(like));
-    yield firebase.analytics().logEvent(EVENT.PRESS_LIKE, {positive});
+
+    yield put(
+      updateMessage({message: MESSAGE[positive ? 'POSITIVE' : 'NEGATIVE']}),
+    );
+    yield firebase.analytics().logEvent(EVENT.RATE_RECOMMENDATION, {
+      positive: positive ? 'true' : 'false',
+      placeID,
+    });
+    yield delay(2000);
+    yield put(updateMessage({message: MESSAGE.SHOW_RECOMMENDATIONS}));
   } catch (e) {
     yield put(createLike.failure(e));
   }
@@ -114,7 +130,8 @@ function* deleteLikeSaga(action: ReturnType<typeof deleteLike.request>) {
     yield call(userApi.deleteLike, like);
     yield put(deleteLike.success(like));
     yield put(removeLike(like));
-    yield firebase.analytics().logEvent(EVENT.RECALL_LIKE);
+
+    yield firebase.analytics().logEvent(EVENT.RESET_RATE_RECOMMENDATION);
   } catch (e) {
     yield put(deleteLike.failure(e));
   }

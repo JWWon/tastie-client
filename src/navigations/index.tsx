@@ -10,7 +10,6 @@ import {
 import _ from 'lodash';
 import firebase from '@react-native-firebase/app';
 import {GoogleSignin} from '@react-native-community/google-signin';
-import DeviceInfo from 'react-native-device-info';
 import {useDispatch, useSelector} from 'react-redux';
 
 import axios from '@services/axios.base';
@@ -26,7 +25,7 @@ import {
   getRecommendations,
   clearRecommendations,
 } from '@store/actions/recommendations';
-import {SCREEN, EVENT} from '@utils/consts';
+import {SCREEN, MESSAGE} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import LikesModal from '@components/organisms/LikesModal';
@@ -34,9 +33,8 @@ import RootNavigator from './Root';
 import SessionNavigator from './Session';
 
 function configFirebase() {
-  const uuid = DeviceInfo.getUniqueId();
   firebase.analytics().setAnalyticsCollectionEnabled(!__DEV__);
-  firebase.analytics().setUserId(uuid);
+  firebase.analytics().logAppOpen();
 }
 
 function getActiveRouteName(
@@ -87,7 +85,7 @@ export default () => {
       if (state !== undefined) setInitialState(state);
       setLoading(false);
     } catch (e) {
-      console.error(e);
+      console.warn(e);
     }
   }
 
@@ -101,8 +99,7 @@ export default () => {
       name !== SCREEN.RECOMMENDATION_DETAIL
     ) {
       if (name === SCREEN.CASE) {
-        dispatch(updateMessage({message: '골라준 음식이 별로인가옹? 😥'}));
-        firebase.analytics().logEvent(EVENT.GO_BACK_TO_CASE_SCREEN);
+        dispatch(updateMessage({message: MESSAGE.DISMISS_RECOMMENDATIONS}));
       }
       dispatch(clearRecommendations.request());
     }

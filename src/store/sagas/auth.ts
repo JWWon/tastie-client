@@ -49,22 +49,42 @@ interface GetGoogleToken {
 }
 
 // HELPERS
-function* getAuthFromJWT(data: api.GetTokenRes) {
-  const auth: DecodeAccessToken = decode(data.accessToken);
-  // Save data to Keychain
-  yield call(Keychain.setGenericPassword, auth.name, JSON.stringify(data));
+const mapUserProperties = ({birthYear, ...auth}: AuthInterface) => ({
+  ...auth,
+  birthYear: birthYear ? birthYear.toString() : null,
+});
+
+function* getAuthFromJWT(data: api.GetTokenRes, checkValid?: boolean) {
+  let latestData: Pick<AuthInterface, 'name' | 'email'> | undefined;
+  // Set Axios header
   yield axios.setToken(data.accessToken);
-  return _.omit(auth, ['exp', 'iat', 'sub']);
+  // [Option] Check token is valid
+  if (checkValid) {
+    const response: AxiosResponse<userApi.UserInfo> = yield call(
+      userApi.getUserInfo,
+    );
+    latestData = _.pick(response.data, ['name', 'email']);
+  }
+  // Save data to Keychain
+  const rawAuth: DecodeAccessToken = {
+    ...decode(data.accessToken),
+    ...latestData,
+    type: data.type,
+  };
+  const auth: AuthInterface = _.omit(rawAuth, ['exp', 'iat', 'sub']);
+  yield call(Keychain.setGenericPassword, auth.name, JSON.stringify(data));
+  // Log analytics
+  yield firebase.analytics().setUserId(auth.email);
+  yield firebase.analytics().setUserProperties(mapUserProperties(auth));
+  yield firebase.analytics().logLogin({method: auth.type});
+
+  return auth;
 }
 
 function* handleBackendError(e: any) {
   if (isAxiosError(e)) {
     const {response}: AxiosError<ResponseError> = e;
     switch (response?.status) {
-      case 400:
-        // Bad Request
-        console.error(response.data);
-        break;
       case 401:
         // Invalid user credential
         const loginFormik = useLoginFormik();
@@ -91,6 +111,9 @@ function* handleBackendError(e: any) {
           });
         }
         break;
+      default:
+        // Unexpected error
+        console.warn(response?.data);
     }
   }
 }
@@ -106,16 +129,8 @@ function* checkKeychainSaga() {
     }
 
     const data: api.GetTokenRes = JSON.parse(credentials.password);
-    const auth: AuthInterface = yield call(getAuthFromJWT, data);
-    const response: AxiosResponse<userApi.UserInfo> = yield call(
-      userApi.getUserInfo,
-    );
-    yield put(
-      checkKeychain.success({
-        ...auth,
-        ..._.pick(response.data, ['name', 'email']),
-      }),
-    );
+    const auth: AuthInterface = yield call(getAuthFromJWT, data, true);
+    yield put(checkKeychain.success(auth));
   } catch (e) {
     yield call(logoutSaga);
     yield put(checkKeychain.failure(e));
@@ -139,7 +154,10 @@ function* loginWithFacebookSaga() {
       type: 'facebook',
       token: accessToken,
     });
-    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, {
+      ...response.data,
+      type: 'facebook', // re-map type for firebase
+    });
     yield put(loginWithFacebook.success(auth));
   } catch (e) {
     yield call(handleBackendError, e);
@@ -158,7 +176,10 @@ function* loginWithGoogleSaga() {
       type: 'google',
       token: accessToken,
     });
-    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, {
+      ...response.data,
+      type: 'google', // re-map type for firebase
+    });
     yield put(loginWithFacebook.success(auth));
   } catch (e) {
     yield call(handleBackendError, e);
@@ -174,7 +195,10 @@ function* loginWithEmailSaga(
       type: 'email',
       ...action.payload,
     });
-    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, {
+      ...response.data,
+      type: 'email', // re-map type for firebase
+    });
     yield put(loginWithEmail.success(auth));
   } catch (e) {
     yield call(handleBackendError, e);
@@ -189,7 +213,10 @@ function* signupSaga(action: ReturnType<typeof signup.request>) {
       api.getToken,
       _.omit(action.payload, ['name', 'birthYear']),
     );
-    const auth: AuthInterface = yield call(getAuthFromJWT, response.data);
+    const auth: AuthInterface = yield call(getAuthFromJWT, {
+      ...response.data,
+      type: action.payload.type, // re-map type for firebase
+    });
     yield put(signup.success(auth));
   } catch (e) {
     yield call(handleBackendError, e);

@@ -1,31 +1,52 @@
 import React, {useState, useEffect} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import firebase from '@react-native-firebase/app';
 
-import {SCREEN} from '@utils/consts';
+import {SCREEN, EVENT, MESSAGE} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {navigate} from '@utils/RootService';
 import {logout} from '@store/actions/auth';
 import size from '@styles/sizes';
 import {clearAction, expandNavbar, contractNavbar} from '@store/actions/navbar';
 import historyIcon from '@assets/images/icon-history/icon-history.png';
-import catIcon from '@assets/images/icon-cat/icon-cat.png';
-import closeMouthCatIcon from '@assets/images/icon-cat-no-mouth/icon-cat-no-mouth.png';
+import catThinkingIcon from '@assets/images/icon-cat/icon-cat-thinking.png';
 import profileIcon from '@assets/images/icon-profile/icon-profile.png';
 import * as s from './TabBar.style';
 
 const minBorderOpacity = 0.25;
 const buttonSize = size.button.cat;
 
+const getCatIcon = (thinking: boolean, message: string) => {
+  if (thinking) return catThinkingIcon;
+
+  switch (message) {
+    case MESSAGE.POSITIVE:
+    case MESSAGE.READY_TO_RECOMMEND:
+      return require('@assets/images/icon-cat/icon-cat-happy.png');
+    case MESSAGE.NEGATIVE:
+    case MESSAGE.CANNOT_FIND_RECOMMENDATIONS:
+    case MESSAGE.CANNOT_FIND_RESULTS:
+    case MESSAGE.DISMISS_RECOMMENDATIONS:
+      return require('@assets/images/icon-cat/icon-cat-sad.png');
+    default:
+      return require('@assets/images/icon-cat/icon-cat.png');
+  }
+};
+
 const TabBar: React.FC = () => {
   const [opacity] = useState(new Animated.Value(0.25));
   const dispatch = useDispatch();
-  const {loading, expand, showMessage, customAction, screenName} = useSelector(
-    (state: RootState) => state.navbar,
-  );
+  const {
+    loading,
+    expand,
+    showMessage,
+    message,
+    customAction,
+    screenName,
+  } = useSelector((state: RootState) => state.navbar);
 
   const isAlert = !loading && !!customAction;
-  const isTalking = !loading && showMessage;
 
   const isCurrentHistory = screenName === SCREEN.HISTORY;
   const isCurrentHome =
@@ -38,7 +59,7 @@ const TabBar: React.FC = () => {
         return historyIcon;
       case SCREEN.CASE:
       case SCREEN.RECOMMENDATIONS:
-        return isTalking ? catIcon : closeMouthCatIcon;
+        return getCatIcon(loading || !showMessage, message);
       case SCREEN.PROFILE:
         return profileIcon;
     }
@@ -68,6 +89,9 @@ const TabBar: React.FC = () => {
     } else {
       dispatch(expandNavbar());
     }
+    firebase.analytics().logEvent(EVENT.PRESS_TABBAR, {
+      message: showMessage ? message : 'no_message',
+    });
   };
 
   const handleNavigate = (name: string, active: boolean) => {
@@ -100,7 +124,7 @@ const TabBar: React.FC = () => {
             <s.Icon currentScreen={isCurrentHistory} source={historyIcon} />
           </s.Button>
           <s.Button onPress={() => handleNavigate(SCREEN.CASE, isCurrentHome)}>
-            <s.Icon currentScreen={isCurrentHome} source={closeMouthCatIcon} />
+            <s.Icon currentScreen={isCurrentHome} source={catThinkingIcon} />
           </s.Button>
           <s.Button onPress={() => dispatch(logout())}>
             <s.Icon currentScreen={isCurrentProfile} source={profileIcon} />

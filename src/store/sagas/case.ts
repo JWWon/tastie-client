@@ -33,7 +33,7 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
-import {MY_LOCATION, SCREEN} from '@utils/consts';
+import {MY_LOCATION, SCREEN, MESSAGE} from '@utils/consts';
 
 function* clearCaseSaga() {
   yield all([
@@ -52,7 +52,7 @@ function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {
     // IMPORTANT! do not use `break` keyword
     default:
       yield put(
-        updateMessage({message: '다시 고르겠나옹?', customAction: undefined}),
+        updateMessage({message: MESSAGE.SELECT_AGAIN, customAction: undefined}),
       );
   }
 }
@@ -128,10 +128,10 @@ function* searchLocationsSaga(
       name: item.structured_formatting.main_text,
       place_id: item.place_id,
     }));
-    yield put(updateMessage({message: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
+    yield call(validateInfo, '장소를 선택하라옹');
   } catch (e) {
-    yield put(updateMessage({message: '검색결과를 찾지 못했어옹...'}));
+    yield put(updateMessage({message: MESSAGE.CANNOT_FIND_RESULTS}));
     yield put(searchLocations.failure(e));
   }
   yield put(hideLoading());
@@ -234,7 +234,7 @@ function* validateInfo(message?: string) {
   if (hasRequired) {
     yield put(
       updateMessage({
-        message: '뭐 먹을지 정해줄까옹?',
+        message: MESSAGE.READY_TO_RECOMMEND,
         customAction: () => navigate(SCREEN.RECOMMENDATIONS),
       }),
     );

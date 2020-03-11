@@ -12,7 +12,7 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
   const situation = useSelector((state: RootState) => state.case.situation);
   const dispatch = useDispatch();
 
-  const labels = [situation];
+  const labels = [situation || 'NO_LABEL'];
 
   function handleNavigate() {
     navigation.navigate(SCREEN.RECOMMENDATION_DETAIL, {placeID: data.id});

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FlatList} from 'react-native';
+import firebase from '@react-native-firebase/app';
 
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
@@ -19,7 +20,7 @@ import {
 import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
 import {RootNavigationProp} from '@navigations/Root';
-import {MY_LOCATION, SCREEN} from '@utils/consts';
+import {MY_LOCATION, SCREEN, EVENT} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
@@ -44,6 +45,10 @@ const Case: React.FC<Props> = ({navigation}) => {
   const preferenceExist = preference !== undefined;
 
   const handlePressMore = () => dispatch(getPreferences.request());
+  const handleClearPartly = (index: number) => {
+    dispatch(clearCasePartly(index));
+    firebase.analytics().logEvent(EVENT.CLEAR_CASE_PARTLY, {index});
+  };
 
   const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
@@ -69,7 +74,7 @@ const Case: React.FC<Props> = ({navigation}) => {
           onSelect: handleSelectCategory,
         }}
         value={category}
-        onPress={() => dispatch(clearCasePartly(CaseIndex.CATEGORY))}
+        onPress={() => handleClearPartly(CaseIndex.CATEGORY)}
       />
       {category !== '' && (
         <Sentence
@@ -85,7 +90,7 @@ const Case: React.FC<Props> = ({navigation}) => {
           }}
           placeholder={location.address}
           value={location.name}
-          onPress={() => dispatch(clearCasePartly(CaseIndex.LOCATION))}
+          onPress={() => handleClearPartly(CaseIndex.LOCATION)}
           onChangeText={handleSearchLocation}
         />
       )}
@@ -98,7 +103,7 @@ const Case: React.FC<Props> = ({navigation}) => {
             onSelect: handleSelectSituation,
           }}
           value={situation}
-          onPress={() => dispatch(clearCasePartly(CaseIndex.SITUATION))}
+          onPress={() => handleClearPartly(CaseIndex.SITUATION)}
         />
       )}
       {hasRequired && !preferenceExist && (
@@ -115,16 +120,16 @@ const Case: React.FC<Props> = ({navigation}) => {
               {
                 leadMessage: '나는 ',
                 maxSize: 8,
-                message: '걸',
+                message: '와',
                 autocomplete: {
                   data: preferences,
                   onSelect: handleSelectPreference,
                 },
                 value: preference,
-                onPress: () => dispatch(clearCasePartly(CaseIndex.PREFERENCE)),
+                onPress: () => handleClearPartly(CaseIndex.PREFERENCE),
               },
               {
-                message: '좋아해.',
+                message: '만나기로 했어.',
               },
             ]}
             renderItem={({item}) => <Sentence {...item} />}
