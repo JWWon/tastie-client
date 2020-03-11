@@ -42,6 +42,16 @@
 				<string>com.googleusercontent.apps.297158642366-9dhfsih7kfcuuitieela4f06jkv84ul7</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Deep Linking</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tastie</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -69,6 +79,11 @@
 		<string>fbauth</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
+		<string>instagram</string>
+		<string>facebook</string>
+		<string>whatsapp</string>
+		<string>kakaolink</string>
+		<string>kakaotalk-5.9.7</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

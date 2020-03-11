@@ -1,5 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import {ImageSourcePropType} from 'react-native';
+import Share, {Options} from 'react-native-share';
 import _ from 'lodash';
 
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
@@ -31,6 +33,12 @@ export interface Props {
   route: RootRouteProp<typeof SCREEN.RECOMMENDATION_DETAIL>;
 }
 
+interface Button {
+  onPress: () => void;
+  icon: ImageSourcePropType;
+  message: string;
+}
+
 const initData: Recommendation = {
   id: '',
   name: '',
@@ -59,9 +67,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
   // useDispatch
   const dispatch = useDispatch();
 
-  // TODO: Get multiple labels from backend
   const labels = [situation || 'No Tags'];
-
   const recommendationInfo: InfoProps[] = [
     {
       title: '나와의 거리',
@@ -84,9 +90,33 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
       data: getTodayOpeningHours(data.openingHours.weekdayText),
     },
   ];
+  const buttons: Button[] = [
+    {
+      message: '전화주문',
+      icon: require('@assets/images/icon-phone/icon-phone.png'),
+      onPress: () => makePhoneCall(data.formattedPhoneNumber),
+    },
+    {
+      message: '공유하기',
+      icon: require('@assets/images/icon-share/icon-share.png'),
+      onPress: handleShare,
+    },
+    {
+      message: '평가하기',
+      icon: selectLikeIcon({positive: data.positive, black: true}),
+      onPress: handlePressLike,
+    },
+  ];
 
   function handleSelectPositive(positive: boolean) {
     setData({...data, positive});
+  }
+
+  async function handleShare() {
+    const title = `${data.name}에 대해 어떻게 생각하나옹?`;
+    const message = `tastie://recommendation/${data.id}`;
+    const option: Options = {title, message};
+    await Share.open(option);
   }
 
   function handlePressLike() {
@@ -151,24 +181,18 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
               </s.LabelWrapper>
 
               <s.Buttons>
-                <s.ButtonBorder>
-                  <IconButton
-                    onPress={() => makePhoneCall(data.formattedPhoneNumber)}
-                    source={require('@assets/images/icon-phone/icon-phone.png')}
-                    message="전화주문"
-                  />
-                </s.ButtonBorder>
-                <s.Divider />
-                <s.ButtonBorder>
-                  <IconButton
-                    onPress={handlePressLike}
-                    source={selectLikeIcon({
-                      positive: data.positive,
-                      black: true,
-                    })}
-                    message="평가하기"
-                  />
-                </s.ButtonBorder>
+                {buttons.map((item, idx) => (
+                  <Fragment key={idx.toString()}>
+                    {idx !== 0 && <s.Divider />}
+                    <s.ButtonBorder>
+                      <IconButton
+                        onPress={item.onPress}
+                        source={item.icon}
+                        message={item.message}
+                      />
+                    </s.ButtonBorder>
+                  </Fragment>
+                ))}
               </s.Buttons>
             </s.HeaderWrapper>
 

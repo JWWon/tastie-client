@@ -10,6 +10,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTLinkingManager.h>
 // @react-native-firebase/app
 #import <Firebase.h>
 // facebook sdk
@@ -47,14 +48,15 @@
   return YES;
 }
 
-// Facebook
+// Facebook & Google & DeepLinking
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
   BOOL handled =
   [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]
-  || [RNGoogleSignin application:application openURL:url options:options];
+  || [RNGoogleSignin application:application openURL:url options:options]
+  || [RCTLinkingManager application:application openURL:url options:options];
   // Add any custom logic here.
   return handled;
 }

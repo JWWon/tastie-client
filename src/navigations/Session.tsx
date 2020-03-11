@@ -11,12 +11,17 @@ import Signup from '@screens/Signup';
 import SignupMeta from '@screens/SignupMeta';
 import Login from '@screens/Login';
 import {SignupReq} from '@services/auth';
+import RecommendationDetail, {
+  Params as RecommendationDetailParams,
+} from '@screens/RecommendationDetail';
 
 type SessionParamList = {
   [SCREEN.WELCOME]: undefined;
   [SCREEN.SIGNUP]: undefined;
   [SCREEN.SIGNUP_META]: SignupReq;
   [SCREEN.LOGIN]: undefined;
+  // For DeepLinking
+  [SCREEN.RECOMMENDATION_DETAIL]: RecommendationDetailParams;
 };
 
 export type SessionNavigationProp<
@@ -36,5 +41,10 @@ export default () => (
     <Session.Screen name={SCREEN.SIGNUP} component={Signup} />
     <Session.Screen name={SCREEN.SIGNUP_META} component={SignupMeta} />
     <Session.Screen name={SCREEN.LOGIN} component={Login} />
+    {/* For DeepLinking */}
+    <Session.Screen
+      name={SCREEN.RECOMMENDATION_DETAIL}
+      component={RecommendationDetail}
+    />
   </Session.Navigator>
 );
