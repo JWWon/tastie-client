@@ -28,7 +28,7 @@ const History: React.FC = () => {
         data={recommendations}
         ListHeaderComponent={
           <s.HeaderWrapper>
-            <s.TextHighlight message="내 <b>히스토리</b>" />
+            <s.TextHighlight message="나의 <b>평가</b>" />
           </s.HeaderWrapper>
         }
         renderItem={({item}) =>

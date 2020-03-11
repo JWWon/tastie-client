@@ -228,6 +228,7 @@ function* logoutSaga() {
   yield call(Keychain.resetGenericPassword);
   yield call(axios.removeToken);
   yield all([put(clearNavbar())]);
+  yield firebase.analytics().logEvent(EVENT.LOGOUT);
 }
 
 function* getUserCoordsSaga() {

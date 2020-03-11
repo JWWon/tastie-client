@@ -10,10 +10,12 @@ import ContentNavigator, {ContentParamList} from './Content';
 import RecommendationDetail, {
   Params as RecommendationDetailParams,
 } from '@screens/RecommendationDetail';
+import WebView, {Params as WebViewParams} from '@screens/WebView';
 
 type RootParamList = ContentParamList & {
   [NAVIGATOR.CONTENT]: undefined;
   [SCREEN.RECOMMENDATION_DETAIL]: RecommendationDetailParams;
+  [SCREEN.WEB_VIEW]: WebViewParams;
 };
 
 export type RootNavigationProp<
@@ -34,5 +36,6 @@ export default () => (
       name={SCREEN.RECOMMENDATION_DETAIL}
       component={RecommendationDetail}
     />
+    <Root.Screen name={SCREEN.WEB_VIEW} component={WebView} />
   </Root.Navigator>
 );

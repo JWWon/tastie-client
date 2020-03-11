@@ -6,7 +6,6 @@ import firebase from '@react-native-firebase/app';
 import {SCREEN, EVENT, MESSAGE} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {navigate} from '@utils/RootService';
-import {logout} from '@store/actions/auth';
 import size from '@styles/sizes';
 import {clearAction, expandNavbar, contractNavbar} from '@store/actions/navbar';
 import historyIcon from '@assets/images/icon-history/icon-history.png';
@@ -126,7 +125,8 @@ const TabBar: React.FC = () => {
           <s.Button onPress={() => handleNavigate(SCREEN.CASE, isCurrentHome)}>
             <s.Icon currentScreen={isCurrentHome} source={catThinkingIcon} />
           </s.Button>
-          <s.Button onPress={() => dispatch(logout())}>
+          <s.Button
+            onPress={() => handleNavigate(SCREEN.PROFILE, isCurrentProfile)}>
             <s.Icon currentScreen={isCurrentProfile} source={profileIcon} />
           </s.Button>
         </>

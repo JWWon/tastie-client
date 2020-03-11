@@ -70,7 +70,6 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
         translateY.setValue(startPosition);
         setStatus('LOADING');
         setActiveIndex(0);
-        return;
       }
     } else {
       if (status === 'LOADING') {
@@ -92,7 +91,6 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
           dispatch(updateMessage({message: MESSAGE.SHOW_RECOMMENDATIONS}));
           setStatus('SUCCESS');
         });
-        return;
       }
     }
   }, [loading]);

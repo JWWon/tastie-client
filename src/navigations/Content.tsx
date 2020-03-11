@@ -6,6 +6,7 @@ import Navbar from '@components/organisms/Navbar';
 import Recommendations from '@screens/Recommendations';
 import Case from '@screens/Case';
 import History from '@screens/History';
+import Profile from '@screens/Profile';
 import {RootState} from '@store/reducers';
 import {SCREEN} from '@utils/consts';
 
@@ -34,6 +35,7 @@ export default () => {
         name={SCREEN.RECOMMENDATIONS}
         component={Recommendations}
       />
+      <Content.Screen name={SCREEN.PROFILE} component={Profile} />
     </Content.Navigator>
   );
 };

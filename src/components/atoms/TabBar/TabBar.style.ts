@@ -42,7 +42,7 @@ interface IconProps {
   currentScreen: boolean;
 }
 
-const catSize = 0.56; // relative size
+const catSize = 0.5; // relative size
 export const Icon = styled.Image.attrs({
   resizeMode: 'contain',
 })<IconProps>`

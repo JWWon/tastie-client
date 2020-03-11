@@ -14,14 +14,16 @@ import {SignupReq} from '@services/auth';
 import RecommendationDetail, {
   Params as RecommendationDetailParams,
 } from '@screens/RecommendationDetail';
+import WebView, {Params as WebViewParams} from '@screens/WebView';
 
 type SessionParamList = {
   [SCREEN.WELCOME]: undefined;
   [SCREEN.SIGNUP]: undefined;
   [SCREEN.SIGNUP_META]: SignupReq;
   [SCREEN.LOGIN]: undefined;
-  // For DeepLinking
+  // OTHERS
   [SCREEN.RECOMMENDATION_DETAIL]: RecommendationDetailParams;
+  [SCREEN.WEB_VIEW]: WebViewParams;
 };
 
 export type SessionNavigationProp<
@@ -41,10 +43,11 @@ export default () => (
     <Session.Screen name={SCREEN.SIGNUP} component={Signup} />
     <Session.Screen name={SCREEN.SIGNUP_META} component={SignupMeta} />
     <Session.Screen name={SCREEN.LOGIN} component={Login} />
-    {/* For DeepLinking */}
+    {/* OTHERS */}
     <Session.Screen
       name={SCREEN.RECOMMENDATION_DETAIL}
       component={RecommendationDetail}
     />
+    <Session.Screen name={SCREEN.WEB_VIEW} component={WebView} />
   </Session.Navigator>
 );
