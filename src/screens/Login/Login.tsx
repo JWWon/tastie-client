@@ -58,7 +58,7 @@ const Login: React.FC<Props> = ({navigation}) => {
       title="<b>이메일</b>로 로그인하기"
       description={{
         message: '<a>비밀번호를 잊어버리셨나요?</a>',
-        onPress: () => console.log('비밀번호 찾기'),
+        onPress: () => navigation.navigate(SCREEN.RESET_PASSWORD),
       }}
       dismiss={{icon: 'arrow', onPress: navigation.goBack}}
       pageButton={{

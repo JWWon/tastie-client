@@ -22,6 +22,8 @@ export const SCREEN = {
   SIGNUP: 'Signup' as const,
   SIGNUP_META: 'SignupMeta' as const,
   LOGIN: 'Login' as const,
+  RESET_PASSWORD: 'ResetPassword' as const,
+  CONFIRM_EMAIL: 'ConfirmEmail' as const,
 };
 
 export const EVENT = {
