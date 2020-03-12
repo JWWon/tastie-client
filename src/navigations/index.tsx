@@ -29,6 +29,7 @@ import {SCREEN, MESSAGE} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
 import LikesModal from '@components/organisms/LikesModal';
+import Splash from '@components/atoms/Splash';
 import RootNavigator from './Root';
 import SessionNavigator from './Session';
 
@@ -149,8 +150,7 @@ export default () => {
     if (loading) return null;
     switch (status) {
       case 'PENDING':
-        // TODO: Apply Splash Image when pending
-        return null;
+        return <Splash />;
       case 'USER_EXIST':
         return <RootNavigator />;
       case 'NO_USER':

@@ -4,6 +4,8 @@ import {FormikProps, useFormik} from 'formik';
 import * as yup from 'yup';
 
 import {SessionNavigationProp} from '@navigations/Session';
+import {ConfirmEmail} from '@services/auth';
+import * as api from '@services/auth';
 import {SCREEN} from '@utils/consts';
 import StackView from '@components/templates/StackView';
 import TextInput from '@components/molcules/TextInput';
@@ -16,7 +18,7 @@ const ResetPassword: React.FC<Props> = ({navigation}) => {
   const [hadSubmit, setHadSubmit] = useState<boolean>(false);
   const emailRef = useRef<InputType>(null);
 
-  const formik: FormikProps<{email: string}> = useFormik({
+  const formik: FormikProps<ConfirmEmail> = useFormik({
     initialValues: {email: ''},
     validationSchema: yup.object().shape({
       email: yup
@@ -27,8 +29,10 @@ const ResetPassword: React.FC<Props> = ({navigation}) => {
     validateOnMount: true,
     onSubmit: values => {
       if (!hadSubmit) setHadSubmit(true);
-      console.log(values); // TODO: Remove console.log
-      navigation.navigate(SCREEN.CONFIRM_EMAIL);
+      api
+        .confirmEmail(values)
+        .then(() => navigation.navigate(SCREEN.CONFIRM_EMAIL))
+        .catch(e => console.warn(e.response));
     },
   });
 

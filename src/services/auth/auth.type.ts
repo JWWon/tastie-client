@@ -42,3 +42,9 @@ export interface CheckAuthExistReq {
   email: string;
 }
 // END CHECK_AUTH_EXIST
+
+// CONFIRM_EMAIL
+export interface ConfirmEmail {
+  email: string;
+}
+// END CONFIRM_EMAIL
