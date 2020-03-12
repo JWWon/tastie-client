@@ -17,7 +17,7 @@ const selectBgColor = ({theme, disabled}: any) =>
 const borderSize = 1;
 
 export const MessageBubble = styled.TouchableOpacity.attrs({
-  activeOpacity: 0.8,
+  activeOpacity: 0.92,
 })<BubbleProps>`
   border-radius: ${({theme}) => theme.size.border.basic}px;
   ${shadow}

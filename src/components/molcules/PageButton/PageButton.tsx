@@ -57,7 +57,7 @@ const PageButton: React.FC<Props> = ({
         <s.TextBox disabled={disabled}>
           <s.Message disabled={disabled}>{message}</s.Message>
         </s.TextBox>
-        <Triangle point="right" active={!disabled} width={14} height={10} />
+        <Triangle point="right" active={!disabled} width={12} height={9} />
       </s.MessageBubble>
     </s.Wrapper>
   );
