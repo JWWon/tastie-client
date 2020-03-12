@@ -6,6 +6,7 @@ import {
   SignupReq,
   SignupRes,
   CheckAuthExistReq,
+  ConfirmEmail,
 } from './auth.type';
 
 const BASE_URL = '/auth';
@@ -33,3 +34,6 @@ export const signup = (params: SignupReq) =>
 
 export const checkAuthExist = (params: CheckAuthExistReq) =>
   axios.get<CheckAuthExistReq, undefined>(`${BASE_URL}/accounts`, {params});
+
+export const confirmEmail = (params: ConfirmEmail) =>
+  axios.get<ConfirmEmail, undefined>(`${BASE_URL}/code`, {params});
