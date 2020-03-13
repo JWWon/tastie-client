@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {FlatList} from 'react-native';
+import {FlatList, TextInput, Keyboard} from 'react-native';
 import firebase from '@react-native-firebase/app';
 
 import Sentence from '@components/molcules/Sentence';
@@ -20,7 +20,7 @@ import {
 import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
 import {RootNavigationProp} from '@navigations/Root';
-import {MY_LOCATION, SCREEN, EVENT} from '@utils/consts';
+import {SCREEN, EVENT, LOCATION} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
@@ -28,7 +28,11 @@ interface Props {
 }
 
 const Case: React.FC<Props> = ({navigation}) => {
+  // useDispatch
   const dispatch = useDispatch();
+  // useRef
+  const locationInputRef = useRef<TextInput>();
+  // useSelector
   const {
     categories,
     nearbyLocations,
@@ -54,8 +58,15 @@ const Case: React.FC<Props> = ({navigation}) => {
     dispatch(searchLocations.request({input: value}));
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
     dispatch(selectCategory({category: name}));
-  const handleSelectLocation: SelectAutocomplete = value =>
+  const handleSelectLocation: SelectAutocomplete = value => {
+    if (value.name === LOCATION.SEARCH) {
+      locationInputRef.current?.focus();
+      firebase.analytics().logEvent(EVENT.PRESS_LOCATION_SEARCH);
+      return;
+    }
     dispatch(selectLocation.request({...value}));
+    Keyboard.dismiss();
+  };
   const handleSelectSituation: SelectAutocomplete = ({name}) =>
     dispatch(selectSituation({situation: name}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
@@ -81,7 +92,8 @@ const Case: React.FC<Props> = ({navigation}) => {
           message="에서"
           autocomplete={{
             data: [
-              {name: MY_LOCATION, isDefault: true},
+              {name: LOCATION.MY_LOCATION, isDefault: true},
+              {name: LOCATION.SEARCH, isDefault: true},
               ...(searchedLocations.length > 0
                 ? searchedLocations
                 : nearbyLocations),
@@ -92,6 +104,7 @@ const Case: React.FC<Props> = ({navigation}) => {
           value={location.name}
           onPress={() => handleClearPartly(CaseIndex.LOCATION)}
           onChangeText={handleSearchLocation}
+          inputRef={locationInputRef}
         />
       )}
       {location.name !== '' && (

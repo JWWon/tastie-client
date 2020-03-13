@@ -117,7 +117,7 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
       positive: positive ? 'true' : 'false',
       placeID,
     });
-    yield delay(2000);
+    yield delay(5000);
     yield put(updateMessage({message: MESSAGE.SHOW_RECOMMENDATIONS}));
   } catch (e) {
     yield put(createLike.failure(e));
