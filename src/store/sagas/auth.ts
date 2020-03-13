@@ -218,6 +218,7 @@ function* signupSaga(action: ReturnType<typeof signup.request>) {
       type: action.payload.type, // re-map type for firebase
     });
     yield put(signup.success(auth));
+    yield firebase.analytics().logEvent(EVENT.SIGNUP, mapUserProperties(auth));
   } catch (e) {
     yield call(handleBackendError, e);
     yield put(signup.failure(e));

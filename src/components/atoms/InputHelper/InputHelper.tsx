@@ -33,6 +33,7 @@ const InputHelper: React.FC<Props> = ({
           keyExtractor={(_, idx) => idx.toString()}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
         />
       </s.AutoCompleteWrapper>
     );

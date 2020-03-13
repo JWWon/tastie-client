@@ -32,11 +32,13 @@ export const EVENT = {
   LOCATION_PERMISSION: 'location_permission' as const,
   GET_RECOMMENDATIONS_PERFORMANCE: 'get_recommendations_performance' as const,
   // track user action
+  SIGNUP: 'signup' as const,
   SEARCH_RECOMMENDATIONS: 'search_recommendations' as const,
   VISITED_RECOMMENDATIONS: 'visited_recommendations' as const,
   RATE_RECOMMENDATION: 'rate_recommendation' as const,
   RESET_RATE_RECOMMENDATION: 'reset_rate_recommendation' as const,
   SHARE_RECOMMENDATION: 'share_recommendation' as const,
+  PRESS_LOCATION_SEARCH: 'press_location_search' as const,
   PRESS_DISMISS_RECOMMENDATIONS: 'press_dismiss_recommendations' as const,
   PRESS_TABBAR: 'press_tabbar' as const,
   CLEAR_CASE_PARTLY: 'clear_case_partly' as const,
@@ -58,7 +60,11 @@ export const MESSAGE = {
   CANNOT_FIND_RESULTS: '검색결과를 찾지 못했어옹..',
 };
 
+export const LOCATION = {
+  MY_LOCATION: '내 위치',
+  SEARCH: '직접 입력하기',
+};
+
 // String
-export const MY_LOCATION = '내 위치';
 export const APP_IDENTIFIER = 'me.tastie.client';
 export const CHARACTER_NAME = '고양이';

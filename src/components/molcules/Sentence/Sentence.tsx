@@ -12,6 +12,7 @@ const Sentence: React.FC<Props> = ({
   placeholder,
   onChangeText,
   onPress,
+  inputRef,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -58,6 +59,7 @@ const Sentence: React.FC<Props> = ({
           onBlur={handleBlur}
           onPress={handlePress}
           value={isEditing ? inputValue : storeValue}
+          ref={inputRef}
           {...props}
         />
       ) : (

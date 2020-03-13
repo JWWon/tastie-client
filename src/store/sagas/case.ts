@@ -33,7 +33,7 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
-import {MY_LOCATION, SCREEN, MESSAGE} from '@utils/consts';
+import {LOCATION, SCREEN, MESSAGE} from '@utils/consts';
 
 function* clearCaseSaga() {
   yield all([
@@ -162,7 +162,7 @@ function* selectLocationSaga(
 
   try {
     const {name, location, place_id} = action.payload;
-    if (name === MY_LOCATION) {
+    if (name === LOCATION.MY_LOCATION) {
       // * current user location
       const {userCoords}: RootState['auth'] = yield select(state => state.auth);
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
