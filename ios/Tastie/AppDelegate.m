@@ -48,14 +48,16 @@
   return YES;
 }
 
-// Facebook & Google & DeepLinking
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
   BOOL handled =
+  // Facebook
   [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]
+  // Google
   || [RNGoogleSignin application:application openURL:url options:options]
+  // Firebase DeepLinks
   || [RCTLinkingManager application:application openURL:url options:options];
   // Add any custom logic here.
   return handled;
@@ -68,6 +70,16 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+// Univeral Link (Firebase DeepLinks)
+- (BOOL)application:(UIApplication *)application
+continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
 }
 
 @end

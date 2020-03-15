@@ -133,7 +133,7 @@ const Case: React.FC<Props> = ({navigation}) => {
               {
                 leadMessage: '나는 ',
                 maxSize: 8,
-                message: '와',
+                message: '을(를)',
                 autocomplete: {
                   data: preferences,
                   onSelect: handleSelectPreference,
@@ -142,7 +142,7 @@ const Case: React.FC<Props> = ({navigation}) => {
                 onPress: () => handleClearPartly(CaseIndex.PREFERENCE),
               },
               {
-                message: '만나기로 했어.',
+                message: '좋아해.',
               },
             ]}
             renderItem={({item}) => <Sentence {...item} />}

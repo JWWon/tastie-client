@@ -3,6 +3,7 @@ import {FormikProps} from 'formik';
 
 import {SCREEN} from '@utils/consts';
 import {SessionNavigationProp} from '@navigations/Session';
+import {getInitialLink} from '@utils/dynamicLink';
 
 interface ConfigInterface {
   navigation?: SessionNavigationProp<typeof SCREEN.WELCOME>;
@@ -19,6 +20,7 @@ const config: ConfigInterface = {};
 // NAVIGATION
 export function setNavigation(nav: ConfigInterface['navigation']) {
   if (nav) config.navigation = nav;
+  getInitialLink(navigate);
 }
 
 export function navigate(name: string, params?: object) {

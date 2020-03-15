@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
+import _ from 'lodash';
 
 import Loading from '@components/atoms/Loading';
 import {setRecommendationData} from '@store/actions/history';
@@ -28,7 +29,7 @@ export const HistoryEmpty: React.FC<EmptyProps> = ({id}) => {
 const HistoryFull: React.FC<Props> = data => (
   <s.Link
     onPress={() => navigate(SCREEN.RECOMMENDATION_DETAIL, {placeID: data.id})}>
-    <s.Image source={{uri: data.photoUrls[0]}} />
+    <s.Image source={{uri: _.head(data.photoUrls)}} />
 
     <s.ImageFilter>
       <s.Address>{data.formattedAddress}</s.Address>

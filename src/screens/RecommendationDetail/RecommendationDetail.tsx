@@ -1,8 +1,10 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {ImageSourcePropType} from 'react-native';
+import {ImageSourcePropType, Share} from 'react-native';
 import firebase from '@react-native-firebase/app';
-import Share, {Options} from 'react-native-share';
+import dynamicLinks, {
+  FirebaseDynamicLinksTypes,
+} from '@react-native-firebase/dynamic-links';
 import _ from 'lodash';
 
 import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
@@ -39,6 +41,28 @@ interface Button {
   icon: ImageSourcePropType;
   message: string;
 }
+
+const dynamicLinksOption = (
+  data: Recommendation,
+): FirebaseDynamicLinksTypes.DynamicLinkParameters => ({
+  link: `https://app.tastie.me/recommendation?placeID=${data.id}`,
+  domainUriPrefix: 'https://link.tastie.me',
+  analytics: {campaign: 'click_shared_recommendation'},
+  social: {
+    title: '오늘의 맛집',
+    descriptionText: `${data.name} 여기는 어떤가옹?`,
+    imageUrl: _.head(data.photoUrls),
+  },
+  android: {
+    packageName: 'me.tastie.client',
+    fallbackUrl:
+      'https://play.google.com/store/apps/details?id=me.tastie.client',
+  },
+  ios: {
+    bundleId: 'me.tastie.client',
+    appStoreId: '1499347694',
+  },
+});
 
 const initData: Recommendation = {
   id: '',
@@ -114,12 +138,17 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
   }
 
   async function handleShare() {
-    const title = `${data.name}에 대해 어떻게 생각하나옹?`;
-    const message = `tastie://recommendation/${data.id}`;
-    const option: Options = {title, message};
     try {
-      firebase.analytics().logEvent(EVENT.SHARE_RECOMMENDATION);
-      await Share.open(option);
+      const links = await dynamicLinks().buildShortLink(
+        dynamicLinksOption(data),
+      );
+      const response = await Share.share({message: links});
+      if (response.action === Share.sharedAction && response.activityType) {
+        firebase.analytics().logEvent(EVENT.SHARE_RECOMMENDATION, {
+          placeID: data.id,
+          type: response.activityType,
+        });
+      }
     } catch (e) {
       console.warn(e);
     }
@@ -143,6 +172,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
   async function getRecommendation() {
     const {placeID} = route.params;
     try {
+      // Get data directly from API
       const response = await api.getRecommendation(placeID);
       const likeIdx = _.findIndex(likes, like => like.placeID === placeID);
 
@@ -165,7 +195,6 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
     getRecommendation();
   }, []);
 
-  // TODO: Handle loading view
   return (
     <s.Container>
       {loading ? (

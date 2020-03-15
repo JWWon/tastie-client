@@ -1,6 +1,7 @@
 import {CommonActions} from '@react-navigation/native';
 
 import {RootNavigationProp} from '@navigations/Root';
+import {getInitialLink} from '@utils/dynamicLink';
 import {SCREEN} from '@utils/consts';
 
 interface ConfigInterface {
@@ -12,6 +13,7 @@ const config: ConfigInterface = {};
 // NAVIGATION
 export function setNavigation(nav: ConfigInterface['navigation']) {
   if (nav) config.navigation = nav;
+  getInitialLink(navigate);
 }
 
 export function navigate(name: string, params?: object) {
