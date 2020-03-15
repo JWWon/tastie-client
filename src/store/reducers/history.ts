@@ -36,8 +36,8 @@ const initState: HistoryState = {
   loading: true,
 };
 
-const getPlaceIds = (likes: Like[], count?: number) =>
-  likes.slice(0, count || 6).map(item => item.placeID);
+const getPlaceIds = (likes: Like[], index?: number) =>
+  likes.slice(index || 0, 6).map(item => item.placeID);
 
 const historyReducer = createReducer<HistoryState, HistoryActions>(initState, {
   // ASYNC
@@ -67,7 +67,7 @@ const historyReducer = createReducer<HistoryState, HistoryActions>(initState, {
         state.likes,
         item => item.placeID === like.placeID,
       );
-      if (idx === -1) draft.likes.push(like);
+      if (idx === -1) draft.likes = [like, ...draft.likes];
       else draft.likes[idx] = like;
       // TODO: Optimizing remove item from recommendations
       draft.recommendations = getPlaceIds(draft.likes);

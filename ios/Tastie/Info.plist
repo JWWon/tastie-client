@@ -46,10 +46,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Deep Linking</string>
+			<string>Firebase Dynamic Links</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>tastie</string>
+				<string>link.tastie.me</string>
 			</array>
 		</dict>
 	</array>
@@ -64,7 +64,6 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>telprompt</string>
-		<string>nmap</string>
 		<string>fbapi</string>
 		<string>fbapi20130214</string>
 		<string>fbapi20130410</string>
@@ -79,11 +78,6 @@
 		<string>fbauth</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
-		<string>instagram</string>
-		<string>facebook</string>
-		<string>whatsapp</string>
-		<string>kakaolink</string>
-		<string>kakaotalk-5.9.7</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

@@ -9,7 +9,7 @@ interface ScreenInterface {
 }
 
 export const ScreenWrapper = styled.ScrollView.attrs({
-  keyboardShouldPersistTaps: 'never',
+  keyboardShouldPersistTaps: 'always',
 })<ScreenInterface>`
   flex: 1;
   padding-top: ${({theme, hasDismiss}) =>

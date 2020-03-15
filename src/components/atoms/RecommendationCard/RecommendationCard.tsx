@@ -1,5 +1,6 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import _ from 'lodash';
 
 import {RootState} from '@store/reducers';
 import {showLikesModal, deleteLike} from '@store/actions/recommendations';
@@ -29,7 +30,7 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
 
   return (
     <s.TouchableWrapper onPress={handleNavigate}>
-      <s.BackgroundImage source={{uri: data.photoUrls[0]}} />
+      <s.BackgroundImage source={{uri: _.head(data.photoUrls)}} />
       <s.ImageFilter>
         <s.Address>{data.formattedAddress}</s.Address>
         <s.Distance>{data.distance}</s.Distance>

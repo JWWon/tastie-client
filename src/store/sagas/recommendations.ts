@@ -108,7 +108,7 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
 
     yield call(userApi.createLike, like);
     yield put(createLike.success({positive}));
-    yield put(addLike(like));
+    yield put(addLike({...like, updatedAt: moment().format()}));
 
     yield put(
       updateMessage({message: MESSAGE[positive ? 'POSITIVE' : 'NEGATIVE']}),
@@ -117,7 +117,7 @@ function* createLikeSaga(action: ReturnType<typeof createLike.request>) {
       positive: positive ? 'true' : 'false',
       placeID,
     });
-    yield delay(5000);
+    yield delay(3600);
     yield put(updateMessage({message: MESSAGE.SHOW_RECOMMENDATIONS}));
   } catch (e) {
     yield put(createLike.failure(e));
