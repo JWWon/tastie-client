@@ -69,7 +69,7 @@ $ cd android
 # for generate Android App Bundle
 $ ./gradlew bundleRelease
 # for generate APK
-$ ./gradlew assembleRelease
+$ ./gradlew app:assembleRelease
 ```
 
 ## Notice

@@ -132,8 +132,8 @@ const Case: React.FC<Props> = ({navigation}) => {
             data={[
               {
                 leadMessage: '나는 ',
-                maxSize: 8,
-                message: '을(를)',
+                maxSize: 10,
+                message: '걸',
                 autocomplete: {
                   data: preferences,
                   onSelect: handleSelectPreference,
