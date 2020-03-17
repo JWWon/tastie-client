@@ -47,6 +47,16 @@
                ReferencedContainer = "container:Tastie.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "550C3004241F7D43006C4DF9"
+               BuildableName = "TastieUITests.xctest"
+               BlueprintName = "TastieUITests"
+               ReferencedContainer = "container:Tastie.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
