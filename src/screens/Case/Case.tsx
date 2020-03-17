@@ -133,7 +133,7 @@ const Case: React.FC<Props> = ({navigation}) => {
               {
                 leadMessage: '나는 ',
                 maxSize: 10,
-                message: '걸',
+                message: '을',
                 autocomplete: {
                   data: preferences,
                   onSelect: handleSelectPreference,
