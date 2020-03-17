@@ -1,6 +1,6 @@
 # Mobile Application of 'Tastie'
 
-> last update : 2020.02.25
+> last update : 2020.03.15
 
 ## How to start
 
@@ -39,6 +39,8 @@ $ yarn android
 
 #### How to debug Firebase Analytics
 
+Set `setAnalyticsCollectionEnabled(true)` on `@navigations/index.ts`
+
 - For iOS
 
 ```bash
@@ -58,11 +60,21 @@ $ yarn firebase-stop
 
 ## How to deploy
 
+### iOS
+
+https://docs.fastlane.tools/getting-started/ios/appstore-deployment/
+
+> CREATE RELEASE AUTOMATICALLY
+
 ### Android
 
 1. Set password on keychain access (for macOS) [Google Docs](https://docs.google.com/document/d/1mx7DgIPbfvOTDKyMyQ2hBDUfcssO3wagtNzMwWqQ7oc/edit#)
-2. Download `tastie-release.keystore` and place it on `~/android/app` [Google Drive](https://drive.google.com/drive/u/0/folders/1FtT6fO7f0NCUO48vvVGaSEFQhemA1XgJ)
-3. Generate Release APK
+2. Download `tastie-release.keystore`, `app-*.json` and place it on `~/android/app` [Google Drive](https://drive.google.com/drive/u/0/folders/1FtT6fO7f0NCUO48vvVGaSEFQhemA1XgJ)
+3. Generate Release AAB(Android App Bundle)
+
+https://docs.fastlane.tools/getting-started/android/release-deployment/
+
+> CREATE RELEASE AUTOMATICALLY
 
 ```bash
 $ cd android
@@ -71,6 +83,8 @@ $ ./gradlew bundleRelease
 # for generate APK
 $ ./gradlew app:assembleRelease
 ```
+
+> GENERATE FILE MANUALLY
 
 ## Notice
 

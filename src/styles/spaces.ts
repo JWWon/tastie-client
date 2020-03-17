@@ -1,37 +1,13 @@
-import DeviceInfo from 'react-native-device-info';
-
-class Model {
-  private model: string;
-
-  constructor() {
-    this.model = DeviceInfo.getModel();
-  }
-
-  public isIphoneWithNotch = () => {
-    switch (this.model) {
-      case 'iPhone X':
-      case 'iPhone Xs':
-      case 'iPhone Xs Max':
-      case 'iPhone 11':
-      case 'iPhone 11 Pro':
-      case 'iPhone 11 Pro Max':
-        return true;
-      default:
-        return false;
-    }
-  };
-}
-
-// singleton pattern
-const model = new Model();
+import {isIphoneX, getBottomSpace} from '@utils/device';
 
 const rootVertical = 16;
+
 export default {
   // root
   rootHorizontal: 24,
   rootTop: rootVertical,
-  rootBottom: model.isIphoneWithNotch() ? 0 : rootVertical,
-  notchBottom: model.isIphoneWithNotch() ? 34 : 0,
+  rootBottom: isIphoneX() ? 0 : rootVertical,
+  notchBottom: getBottomSpace(),
   // general
   wide: 24,
   basic: 16,
