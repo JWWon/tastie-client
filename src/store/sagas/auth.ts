@@ -142,7 +142,7 @@ function* loginWithFacebookSaga() {
     // Get accessToken from Facebook
     const loginRes: LoginResult = yield call(
       LoginManager.logInWithPermissions,
-      ['public_profile', 'email', 'user_birthday'],
+      ['public_profile', 'email'],
     );
     if (loginRes.isCancelled) throw new Error('Login cancelled by user');
 
