@@ -1,7 +1,7 @@
 import {AxiosError} from 'axios';
 import {createAsyncAction, ActionType, createAction} from 'typesafe-actions';
 
-import {Recommendation} from '@services/recommendations';
+import {RecommendationDetail} from '@services/recommendations';
 import {Like, DeleteLike} from '@services/user';
 import {ResponseError} from '@services/axios.base';
 
@@ -41,7 +41,7 @@ export const setRecommendationData = createAsyncAction(
   SET_RECOMMENDATION_DATA,
   SET_RECOMMENDATION_DATA_SUCCESS,
   SET_RECOMMENDATION_DATA_FAILURE,
-)<string, Recommendation, AxiosError<ResponseError>>();
+)<string, RecommendationDetail, AxiosError<ResponseError>>();
 // END SET_RECOMMENDATION_DATA
 
 // ADD_LIKE

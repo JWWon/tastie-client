@@ -3,7 +3,7 @@ import _ from 'lodash';
 import produce from 'immer';
 
 import {Like} from '@services/user';
-import {Recommendation} from '@services/recommendations';
+import {RecommendationDetail} from '@services/recommendations';
 import {
   HistoryActions,
   GET_LIKES,
@@ -24,7 +24,7 @@ import {
 type PlaceID = string;
 export interface HistoryState {
   likes: Like[];
-  recommendations: (Recommendation | PlaceID)[];
+  recommendations: (RecommendationDetail | PlaceID)[];
   // OTHER
   loading: boolean;
 }

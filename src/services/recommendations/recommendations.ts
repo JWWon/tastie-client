@@ -2,7 +2,7 @@ import axios, {AxiosResponse} from 'axios';
 import {
   GetRecommendationsReq,
   GetRecommendationsRes,
-  Recommendation,
+  RecommendationDetail,
 } from './recommendations.type';
 
 const BASE_URL = '/recommendations';
@@ -14,4 +14,6 @@ export const getRecommendations = (params: GetRecommendationsReq) =>
   );
 
 export const getRecommendation = (placeID: string) =>
-  axios.get<undefined, AxiosResponse<Recommendation>>(`${BASE_URL}/${placeID}`);
+  axios.get<undefined, AxiosResponse<RecommendationDetail>>(
+    `${BASE_URL}/${placeID}`,
+  );

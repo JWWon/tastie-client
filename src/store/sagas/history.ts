@@ -27,13 +27,13 @@ function* setRecommendationDataSaga(
 
     const placeID = action.payload;
     // eslint-disable-next-line prettier/prettier
-    const response: AxiosResponse<recommendationsApi.Recommendation> = yield call(
+    const response: AxiosResponse<recommendationsApi.RecommendationDetail> = yield call(
       recommendationsApi.getRecommendation,
       placeID,
     );
 
     const likeIdx = _.findIndex(likes, item => item.placeID === placeID);
-    const data: recommendationsApi.Recommendation = {
+    const data: recommendationsApi.RecommendationDetail = {
       ...response.data,
       positive: likes[likeIdx].positive,
     };
