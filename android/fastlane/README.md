@@ -26,6 +26,11 @@ Increase build_number and version_number
 fastlane android test
 ```
 Runs all the tests
+### android internal
+```
+fastlane android internal
+```
+Release a new internal version to the Google Play
 ### android beta
 ```
 fastlane android beta
