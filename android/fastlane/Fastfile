@@ -42,20 +42,20 @@ platform :android do
   lane :internal do
     gradle(task: "clean")
     gradle(task: 'assemble', build_type: 'Release')
-    upload_to_play_store(track: 'internal', skip_upload_apk: true)
+    upload_to_play_store(track: 'internal', skip_upload_aab: true, skip_upload_changelogs: true)
   end
 
   desc "Relase a new beta version to the Google Play"
   lane :beta do
     gradle(task: "clean")
     gradle(task: 'assemble', build_type: 'Release')
-    upload_to_play_store(track: 'beta', skip_upload_apk: true)
+    upload_to_play_store(track: 'beta', skip_upload_aab: true, skip_upload_changelogs: true)
   end
 
   desc "Relase a new version to the Google Play"
   lane :release do
     gradle(task: "clean")
     gradle(task: 'assemble', build_type: 'Release')
-    upload_to_play_store(skip_upload_apk: true)
+    upload_to_play_store(skip_upload_aab: true, skip_upload_changelogs: true)
   end
 end
