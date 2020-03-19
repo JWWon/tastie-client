@@ -21,7 +21,7 @@ import {
   hideMessage,
   showMessage,
 } from '@store/actions/navbar';
-import {clearCase} from '@store/actions/case';
+import {clearCase, validateCaseInfo} from '@store/actions/case';
 import {
   getRecommendations,
   clearRecommendations,
@@ -82,6 +82,8 @@ export default () => {
       name !== SCREEN.RECOMMENDATION_DETAIL
     ) {
       if (name === SCREEN.CASE) {
+        // navigate RECOMMENDATIONS -> CASE
+        dispatch(validateCaseInfo());
         dispatch(updateMessage({message: MESSAGE.DISMISS_RECOMMENDATIONS}));
       }
       dispatch(clearRecommendations.request());

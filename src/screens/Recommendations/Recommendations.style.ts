@@ -1,30 +1,29 @@
 import styled from 'styled-components/native';
-import {
-  Pager as RawPager,
-  iPageInterpolation,
-} from '@crowdlinker/react-native-pager';
+import RawCarousel from 'react-native-snap-carousel';
+import {Dimensions} from 'react-native';
 
 interface PagerCustomProps {
   messageHeight: number;
 }
 
-const inlineCardsConfig: iPageInterpolation = {
-  opacity: {
-    inputRange: [-1, 0, 1],
-    outputRange: [0.7, 1, 0.7],
-  },
-};
+const {width} = Dimensions.get('screen');
 
-export const Pager = styled(RawPager).attrs({
-  pageInterpolation: inlineCardsConfig,
-  adjacentChildOffset: 1,
-})<PagerCustomProps>`
-  flex: 1;
-  margin: 0 -${({theme}) => theme.space.pager}px;
-  padding-top: ${({theme}) => theme.space.wide}px;
-  padding-bottom: ${({theme, messageHeight}) =>
-    messageHeight +
-    theme.space.basic +
-    theme.size.button.cat +
-    theme.space.rootBottom}px;
-`;
+export const Carousel = styled(RawCarousel).attrs<PagerCustomProps>(
+  ({theme, messageHeight}) => ({
+    containerCustomStyle: {
+      flex: 1,
+      marginHorizontal: -theme.space.rootHorizontal,
+      paddingTop: theme.space.wide,
+      paddingBottom:
+        messageHeight +
+        theme.space.basic +
+        theme.size.button.cat +
+        theme.space.rootBottom,
+    },
+    sliderWidth: width,
+    itemWidth: width - 2 * (theme.space.rootHorizontal - theme.space.pager),
+    inactiveSlideScale: 1,
+    initialNumToRender: 3,
+    windowSize: 3,
+  }),
+)<PagerCustomProps>``;

@@ -15,6 +15,7 @@ import {
   getNearbyLocations,
   searchLocations,
   getPreferences,
+  VALIDATE_CASE_INFO,
 } from '@store/actions/case';
 import {getUserCoords} from '@store/actions/auth';
 import {getLikes} from '@store/actions/history';
@@ -256,4 +257,5 @@ export default function* root() {
   yield takeEvery(clearCasePartly, clearCasePartlySaga);
   yield takeEvery(SELECT_CATEGORY, selectCategorySaga);
   yield takeEvery(SELECT_SITUATION, selectSituationSaga);
+  yield takeEvery(VALIDATE_CASE_INFO, validateInfo);
 }

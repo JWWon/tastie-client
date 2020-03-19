@@ -1,9 +1,6 @@
 import styled from 'styled-components/native';
-import {Dimensions} from 'react-native';
 
 import RawLabel from '@components/atoms/Label';
-
-const screenHeight = Dimensions.get('screen').height;
 
 // View
 export const Container = styled.View`
@@ -16,10 +13,6 @@ export const Scroll = styled.ScrollView.attrs({
   flex: 1;
   background: ${({theme}) => theme.color.whiteMild};
   padding-bottom: ${({theme}) => theme.space.wide}px;
-`;
-
-export const SwiperWrapper = styled.View`
-  height: ${screenHeight * 0.6}px;
 `;
 
 export const ContentWrapper = styled.View`
