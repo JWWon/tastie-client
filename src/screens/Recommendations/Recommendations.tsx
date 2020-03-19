@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {Animated, Easing} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import firebase from '@react-native-firebase/app';
-import {PagerProvider} from '@crowdlinker/react-native-pager';
 
 import BaseView from '@components/templates/BaseView';
 import RecommendationCard from '@components/atoms/RecommendationCard';
 import Dismiss from '@components/atoms/Dismiss';
 import TextHighlight from '@components/atoms/TextHighlight';
 import {RootState} from '@store/reducers';
+import {Recommendation} from '@services/recommendations';
 import {updateMessage, hideMessage} from '@store/actions/navbar';
 import {checkMaxSwipedIndex} from '@store/actions/recommendations';
 import {RootNavigationProp} from '@navigations/Root';
@@ -37,7 +37,6 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
   const startPosition = (bodyHeight - messageHeight) * 0.44;
   // useState
   const [status, setStatus] = useState<Status>('LOADING');
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [translateY] = useState<Animated.Value>(
     new Animated.Value(startPosition),
   );
@@ -46,6 +45,8 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     firebase.analytics().logEvent(EVENT.PRESS_DISMISS_RECOMMENDATIONS);
     navigation.navigate(SCREEN.CASE);
   };
+
+  const handleSnap = (index: number) => dispatch(checkMaxSwipedIndex(index));
 
   function getTitle() {
     switch (status) {
@@ -58,18 +59,12 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     }
   }
 
-  function handleSwipe(index: number) {
-    setActiveIndex(index);
-    dispatch(checkMaxSwipedIndex(index));
-  }
-
   useEffect(() => {
     if (loading) {
       if (status !== 'LOADING') {
         // * Loading start
         translateY.setValue(startPosition);
         setStatus('LOADING');
-        setActiveIndex(0);
       }
     } else {
       if (status === 'LOADING') {
@@ -95,6 +90,10 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
     }
   }, [loading]);
 
+  const renderCard = ({item}: {item: Recommendation; index: number}) => (
+    <RecommendationCard navigation={navigation} {...item} />
+  );
+
   return (
     <BaseView noWrapper>
       <Dismiss icon="close" onPress={handleDismiss} />
@@ -102,20 +101,12 @@ const Recommendations: React.FC<Props> = ({navigation}) => {
         <TextHighlight message={getTitle()} />
       </Animated.View>
       {status === 'SUCCESS' && (
-        <PagerProvider>
-          <s.Pager
-            messageHeight={messageHeight}
-            activeIndex={activeIndex}
-            onChange={handleSwipe}>
-            {data.map((item, idx) => (
-              <RecommendationCard
-                key={idx.toString()}
-                navigation={navigation}
-                {...item}
-              />
-            ))}
-          </s.Pager>
-        </PagerProvider>
+        <s.Carousel
+          data={data}
+          renderItem={renderCard}
+          messageHeight={messageHeight}
+          onSnapToItem={handleSnap}
+        />
       )}
     </BaseView>
   );

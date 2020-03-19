@@ -16,11 +16,7 @@ import {
   CHECK_MAX_SWIPED_INDEX,
   CLEAR_RECOMMENDATIONS_SUCCESS,
 } from '@store/actions/recommendations';
-import {
-  setPendingWithLoading,
-  setErrorWithLoading,
-  setError,
-} from '@utils/helper';
+import {setErrorWithLoading, setError} from '@utils/helper';
 import {AxiosError} from 'axios';
 import {createReducer} from 'typesafe-actions';
 
@@ -46,7 +42,12 @@ const recommendationReducer = createReducer<
   RecommendationsAction
 >(initState, {
   // ASYNC
-  [GET_RECOMMENDATIONS]: setPendingWithLoading,
+  [GET_RECOMMENDATIONS]: state => ({
+    ...state,
+    data: [],
+    loading: true,
+    error: undefined,
+  }),
   [GET_RECOMMENDATIONS_SUCCESS]: (state, action) => ({
     ...state,
     data: action.payload,

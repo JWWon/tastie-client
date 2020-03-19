@@ -13,5 +13,5 @@ export default {
   basic: 16,
   narrow: 12,
   // component spceific
-  pager: 6,
+  pager: 8,
 };

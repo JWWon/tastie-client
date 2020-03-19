@@ -1,15 +1,14 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {ImageSourcePropType, Share} from 'react-native';
+import {Share} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import dynamicLinks, {
   FirebaseDynamicLinksTypes,
 } from '@react-native-firebase/dynamic-links';
 import _ from 'lodash';
 
-import {RootNavigationProp, RootRouteProp} from '@navigations/Root';
 import {RootState} from '@store/reducers';
-import {SCREEN, EVENT} from '@utils/consts';
+import {EVENT} from '@utils/consts';
 import {
   getPriceLevel,
   getTodayOpeningHours,
@@ -18,32 +17,22 @@ import {
   getDistance,
 } from '@utils/helper';
 import * as api from '@services/recommendations';
-import {Recommendation} from '@services/recommendations';
+import {RecommendationDetail as RecommendationDetailProps} from '@services/recommendations';
 import RecommendationInfoGrid from '@components/molcules/RecommendationInfoGrid';
 import RecommendationInfo, {
   Props as InfoProps,
 } from '@components/atoms/RecommendationInfo';
 import Dismiss from '@components/atoms/Dismiss';
-import ImageSwiper from '@components/atoms/ImageSwiper';
+import ImageCarousel from '@components/atoms/ImageCarousel';
 import IconButton from '@components/atoms/IconButton';
 import MapView from '@components/atoms/MapView';
 import Loading from '@components/atoms/Loading';
 import {showLikesModal, deleteLike} from '@store/actions/recommendations';
+import {Props, Button} from './RecommendationDetail.type';
 import * as s from './RecommendationDetail.style';
 
-export interface Props {
-  navigation: RootNavigationProp<typeof SCREEN.RECOMMENDATION_DETAIL>;
-  route: RootRouteProp<typeof SCREEN.RECOMMENDATION_DETAIL>;
-}
-
-interface Button {
-  onPress: () => void;
-  icon: ImageSourcePropType;
-  message: string;
-}
-
 const dynamicLinksOption = (
-  data: Recommendation,
+  data: RecommendationDetailProps,
 ): FirebaseDynamicLinksTypes.DynamicLinkParameters => ({
   link: `https://app.tastie.me/recommendation?placeID=${data.id}`,
   domainUriPrefix: 'https://link.tastie.me',
@@ -64,7 +53,7 @@ const dynamicLinksOption = (
   },
 });
 
-const initData: Recommendation = {
+const initData: RecommendationDetailProps = {
   id: '',
   name: '',
   rating: 0,
@@ -83,7 +72,7 @@ const initData: Recommendation = {
 
 const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
   // useState
-  const [data, setData] = useState<Recommendation>(initData);
+  const [data, setData] = useState<RecommendationDetailProps>(initData);
   const [loading, setLoading] = useState<boolean>(true);
   // useSelector
   const likes = useSelector((state: RootState) => state.history.likes);
@@ -203,9 +192,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
         </s.LoadingWrapper>
       ) : (
         <s.Scroll>
-          <s.SwiperWrapper>
-            <ImageSwiper images={data.photoUrls} />
-          </s.SwiperWrapper>
+          <ImageCarousel photoUrls={data.photoUrls} />
           <s.ContentWrapper>
             <s.HeaderWrapper>
               <s.PlaceName>{data.name}</s.PlaceName>

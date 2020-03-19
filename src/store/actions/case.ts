@@ -165,6 +165,12 @@ export const updateHasRequired = createAction(
 )();
 // END UPDATE_HAS_REQUIRED
 
+// VALIDATE_CASE_INFO
+export const VALIDATE_CASE_INFO = '@case/VALIDATE_CASE_INFO';
+
+export const validateCaseInfo = createAction(VALIDATE_CASE_INFO)();
+// END VALIDATE_CASE_INFO
+
 const actions = {
   clearCase,
   clearCasePartly,
@@ -178,5 +184,6 @@ const actions = {
   selectSituation,
   selectPreference,
   updateHasRequired,
+  validateCaseInfo,
 };
 export type CaseAction = ActionType<typeof actions>;
