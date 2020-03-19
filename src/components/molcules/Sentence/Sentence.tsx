@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 
 import {Props} from './Sentence.type';
 import * as s from './Sentence.style';
-import Text from '@components/atoms/TextRow';
-import Input from '@components/atoms/InputRow';
-import Helper, {SelectAutocomplete} from '@components/atoms/HelperRow';
+import Text from '@components/atoms/TextHighlight';
+import Input from '@components/atoms/InputWithText';
+import Helper, {SelectAutocomplete} from '@components/atoms/InputHelper';
 
 const Sentence: React.FC<Props> = ({
   value: storeValue,
@@ -12,6 +12,7 @@ const Sentence: React.FC<Props> = ({
   placeholder,
   onChangeText,
   onPress,
+  inputRef,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -20,9 +21,8 @@ const Sentence: React.FC<Props> = ({
 
   // * Active when editable={true}
   function handleFocus() {
-    if (onPress) {
-      onPress();
-    }
+    if (onPress) onPress();
+
     setIsEditing(true);
     // sync values with remote
     setInputValue(storeValue || '');
@@ -38,9 +38,7 @@ const Sentence: React.FC<Props> = ({
 
   // * Active when editable={false}
   function handlePress() {
-    if (!!storeValue && onPress) {
-      onPress();
-    }
+    if (!!storeValue && onPress) onPress();
   }
   // END Active when editable={false}
 
@@ -61,6 +59,7 @@ const Sentence: React.FC<Props> = ({
           onBlur={handleBlur}
           onPress={handlePress}
           value={isEditing ? inputValue : storeValue}
+          ref={inputRef}
           {...props}
         />
       ) : (

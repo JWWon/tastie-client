@@ -1,39 +1,28 @@
-import {
-  all,
-  call,
-  put,
-  select,
-  fork,
-  take,
-  takeEvery,
-  race,
-} from 'redux-saga/effects';
-import Geolocation from 'react-native-geolocation-service';
-import firebase from '@react-native-firebase/app';
+/* eslint-disable no-fallthrough */
+import {all, call, put, select, takeEvery} from 'redux-saga/effects';
 import {AxiosResponse} from 'axios';
-import {channel} from 'redux-saga';
 import * as moment from 'moment';
-import _ from 'lodash';
 
 import {
   clearCase,
   clearCasePartly,
   getCategories,
   getSituations,
-  getUserCoords,
   SELECT_CATEGORY,
   SELECT_SITUATION,
-  selectCategory,
-  selectSituation,
   updateHasRequired,
   selectLocation,
   getNearbyLocations,
   searchLocations,
   getPreferences,
+  VALIDATE_CASE_INFO,
 } from '@store/actions/case';
+import {getUserCoords} from '@store/actions/auth';
+import {getLikes} from '@store/actions/history';
 import {RootState} from '@store/reducers';
-import {CoordsInterface, CaseIndex} from '@store/reducers/case';
-import {updateContent, updateLoading} from '@store/actions/message';
+import {CaseIndex, LocationInterface} from '@store/reducers/case';
+import {updateMessage, showLoading, hideLoading} from '@store/actions/navbar';
+import {navigate} from '@utils/RootService';
 import {
   GetCategoriesRes,
   GetSituationsRes,
@@ -45,16 +34,27 @@ import {
 } from '@services/case';
 import * as api from '@services/case';
 import {getAddress, GetAddressRes} from '@services/coordinate';
-import {MY_LOCATION} from '@utils/consts';
-import {checkPermission} from '@utils/helper';
+import {LOCATION, SCREEN, MESSAGE} from '@utils/consts';
 
 function* clearCaseSaga() {
-  yield all([put(getUserCoords.request()), put(getCategories.request())]);
+  yield all([
+    put(getUserCoords.request()),
+    put(getCategories.request()),
+    put(getLikes.request()),
+  ]);
 }
 
 function* clearCasePartlySaga(action: ReturnType<typeof clearCasePartly>) {
-  if (action.payload !== CaseIndex.PREFERENCE) {
-    yield put(updateContent({content: '다시 고르겠나옹?', onPress: undefined}));
+  switch (action.payload) {
+    case CaseIndex.PREFERENCE:
+      break;
+    case CaseIndex.LOCATION:
+      yield put(getUserCoords.request());
+    // IMPORTANT! do not use `break` keyword
+    default:
+      yield put(
+        updateMessage({message: MESSAGE.SELECT_AGAIN, customAction: undefined}),
+      );
   }
 }
 
@@ -71,7 +71,7 @@ function* getCategoriesSaga() {
 }
 
 function* getSituationsSaga() {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const {category}: RootState['case'] = yield select(state => state.case);
     const response: AxiosResponse<GetSituationsRes> = yield call(
@@ -82,43 +82,13 @@ function* getSituationsSaga() {
   } catch (e) {
     yield put(getSituations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
-}
-
-function* getUserCoordsSaga() {
-  const successChannel = yield call(channel);
-  const failureChannel = yield call(channel);
-
-  yield call(checkPermission);
-  yield call(
-    Geolocation.getCurrentPosition,
-    ({coords}): CoordsInterface =>
-      successChannel.put(_.pick(coords, ['latitude', 'longitude'])),
-    e => failureChannel.put(e),
-    {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  );
-
-  yield fork(function*() {
-    const [coords, error]: [CoordsInterface, any] = yield race([
-      take(successChannel),
-      take(failureChannel),
-    ]);
-
-    if (coords) {
-      yield put(getUserCoords.success(coords));
-      yield put(getNearbyLocations.request({...coords, count: 10}));
-      yield firebase.analytics().logEvent('user_coordinate', coords);
-    }
-    if (error) {
-      yield put(getUserCoords.failure(error));
-    }
-  });
+  yield put(hideLoading());
 }
 
 function* getNearbyLocationSaga(
   action: ReturnType<typeof getNearbyLocations.request>,
 ) {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const response: AxiosResponse<GetNearbyLocationsRes> = yield call(
       api.getNearbyLocations,
@@ -128,22 +98,22 @@ function* getNearbyLocationSaga(
   } catch (e) {
     yield put(getNearbyLocations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* searchLocationsSaga(
   action: ReturnType<typeof searchLocations.request>,
 ) {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   if (action.payload.input === '') {
     // skip searching if input is empty
     yield put(searchLocations.success([]));
-    yield put(updateLoading({loading: false}));
+    yield put(hideLoading());
     return;
   }
 
   try {
-    const {userCoords} = yield select((state: RootState) => state.case);
+    const {userCoords}: RootState['auth'] = yield select(state => state.auth);
     const response: AxiosResponse<SearchLocationsAPIRes> = yield call(
       api.searchLocations,
       {
@@ -159,17 +129,17 @@ function* searchLocationsSaga(
       name: item.structured_formatting.main_text,
       place_id: item.place_id,
     }));
-    yield put(updateContent({content: '장소를 선택하라옹'}));
     yield put(searchLocations.success(flatten));
+    yield call(validateInfo, '장소를 선택하라옹');
   } catch (e) {
-    yield put(updateContent({content: '검색결과를 찾지 못했어옹...'}));
+    yield put(updateMessage({message: MESSAGE.CANNOT_FIND_RESULTS}));
     yield put(searchLocations.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* getPreferencesSaga() {
-  yield put(updateLoading({loading: true}));
+  yield put(showLoading());
   try {
     const {situation}: RootState['case'] = yield select(state => state.case);
     const response: AxiosResponse<GetPreferencesRes> = yield call(
@@ -180,22 +150,27 @@ function* getPreferencesSaga() {
   } catch (e) {
     yield put(getPreferences.failure(e));
   }
-  yield put(updateLoading({loading: false}));
+  yield put(hideLoading());
 }
 
 function* selectLocationSaga(
   action: ReturnType<typeof selectLocation.request>,
 ) {
+  function* putSuccess(params: LocationInterface) {
+    yield put(selectLocation.success(params));
+    yield call(validateInfo, '어떤 상황인가옹?');
+  }
+
   try {
     const {name, location, place_id} = action.payload;
-    if (name === MY_LOCATION) {
+    if (name === LOCATION.MY_LOCATION) {
       // * current user location
-      const {userCoords}: RootState['case'] = yield select(state => state.case);
+      const {userCoords}: RootState['auth'] = yield select(state => state.auth);
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
         getAddress,
         userCoords,
       );
-      yield put(selectLocation.success({name, address, ...userCoords}));
+      yield call(putSuccess, {name, address, ...userCoords});
       return;
     }
 
@@ -205,7 +180,7 @@ function* selectLocationSaga(
         getAddress,
         location,
       );
-      yield put(selectLocation.success({name, address, ...location}));
+      yield call(putSuccess, {name, address, ...location});
       return;
     }
 
@@ -228,7 +203,7 @@ function* selectLocationSaga(
         .join(' ');
       const {lat: latitude, lng: longitude} = geometry.location;
 
-      yield put(selectLocation.success({name, address, latitude, longitude}));
+      yield call(putSuccess, {name, address, latitude, longitude});
       return;
     }
 
@@ -238,37 +213,41 @@ function* selectLocationSaga(
   }
 }
 
-function* selectCategorySaga(action: ReturnType<typeof selectCategory>) {
-  yield call(checkRequiredInfo, action.payload.onPress, '어디서 먹나옹?');
+function* selectCategorySaga() {
+  yield call(validateInfo, '어디서 먹나옹?');
   yield put(getSituations.request());
 }
 
-function* selectSituationSaga(action: ReturnType<typeof selectSituation>) {
-  yield call(checkRequiredInfo, action.payload.onPress);
+function* selectSituationSaga() {
+  yield call(validateInfo);
 }
 
-// MIDDLEWARE OF MIDDLEWARE
-function* checkRequiredInfo(onPress: () => void, content?: string) {
+// MIDDLEWARE
+function* validateInfo(message?: string) {
   const {category, situation, location}: RootState['case'] = yield select(
     state => state.case,
   );
   const hasRequired =
     category !== '' && situation !== '' && location.name !== '';
 
-  if (hasRequired) {
-    yield put(updateContent({content: '뭐 먹을지 정해줄까옹?', onPress}));
-  } else if (content) {
-    yield put(updateContent({content}));
-  }
-
   yield put(updateHasRequired({hasRequired}));
+
+  if (hasRequired) {
+    yield put(
+      updateMessage({
+        message: MESSAGE.READY_TO_RECOMMEND,
+        customAction: () => navigate(SCREEN.RECOMMENDATIONS),
+      }),
+    );
+  } else if (message) {
+    yield put(updateMessage({message}));
+  }
 }
 
 export default function* root() {
   // async
   yield takeEvery(getCategories.request, getCategoriesSaga);
   yield takeEvery(getSituations.request, getSituationsSaga);
-  yield takeEvery(getUserCoords.request, getUserCoordsSaga);
   yield takeEvery(getNearbyLocations.request, getNearbyLocationSaga);
   yield takeEvery(searchLocations.request, searchLocationsSaga);
   yield takeEvery(getPreferences.request, getPreferencesSaga);
@@ -278,4 +257,5 @@ export default function* root() {
   yield takeEvery(clearCasePartly, clearCasePartlySaga);
   yield takeEvery(SELECT_CATEGORY, selectCategorySaga);
   yield takeEvery(SELECT_SITUATION, selectSituationSaga);
+  yield takeEvery(VALIDATE_CASE_INFO, validateInfo);
 }

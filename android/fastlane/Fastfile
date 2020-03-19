@@ -1,0 +1,61 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  before_all do
+  ensure_git_status_clean
+  end
+
+  desc "Increase build_number and version_number"
+  lane :increase_build_number do
+    version = prompt(text: "How to versioning this release? 'major', 'minor', 'patch(default)'")
+    case version
+    when 'major'
+      gradle(task: 'updateMajorVersion')
+    when 'minor'
+      gradle(task: 'updateMinorVersion')
+    else
+      gradle(task: 'updatePatchVersion')
+    end
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Release a new internal version to the Google Play"
+  lane :internal do
+    gradle(task: "clean")
+    gradle(task: 'assemble', build_type: 'Release')
+    upload_to_play_store(track: 'internal', skip_upload_aab: true, skip_upload_changelogs: true)
+  end
+
+  desc "Relase a new beta version to the Google Play"
+  lane :beta do
+    gradle(task: "clean")
+    gradle(task: 'assemble', build_type: 'Release')
+    upload_to_play_store(track: 'beta', skip_upload_aab: true, skip_upload_changelogs: true)
+  end
+
+  desc "Relase a new version to the Google Play"
+  lane :release do
+    gradle(task: "clean")
+    gradle(task: 'assemble', build_type: 'Release')
+    upload_to_play_store(skip_upload_aab: true, skip_upload_changelogs: true)
+  end
+end

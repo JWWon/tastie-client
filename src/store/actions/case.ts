@@ -1,5 +1,4 @@
 import {createAction, ActionType, createAsyncAction} from 'typesafe-actions';
-import {GeoError} from 'react-native-geolocation-service';
 import {AxiosError} from 'axios';
 
 import {
@@ -17,14 +16,10 @@ import {
   CaseIndex,
 } from '@store/reducers/case';
 
-interface ButtonInterface {
-  onPress: () => void;
-}
-
 // CLEAR_CASE
 export const CLEAR_CASE = '@case/CLEAR_CASE';
 
-export const clearCase = createAction(CLEAR_CASE, () => {})();
+export const clearCase = createAction(CLEAR_CASE)();
 // END CLEAR_CASE
 
 // CLEAR_CASE_PARTLY
@@ -59,18 +54,6 @@ export const getSituations = createAsyncAction(
   GET_SITUATIONS_FAILURE,
 )<undefined, GetSituationsRes, AxiosError>();
 // END GET_SITUATIONS
-
-// GET_USER_COORDS
-export const GET_USER_COORDS = '@case/GET_USER_COORDS_REQUEST';
-export const GET_USER_COORDS_SUCCESS = '@case/GET_USER_COORDS_SUCCESS';
-export const GET_USER_COORDS_FAILURE = '@case/GET_USER_COORDS_FAILURE';
-
-export const getUserCoords = createAsyncAction(
-  GET_USER_COORDS,
-  GET_USER_COORDS_SUCCESS,
-  GET_USER_COORDS_FAILURE,
-)<undefined, CoordsInterface, GeoError>();
-// END GET_USER_COORDS
 
 // GET_NEARBY_LOCATIONS
 export const GET_NEARBY_LOCATIONS = '@case/GET_NEARBY_LOCATIONS_REQUEST';
@@ -111,7 +94,7 @@ export const getPreferences = createAsyncAction(
 // END GET_PREFERENCES
 
 // SELECT_CATEGORY
-interface SelectCategory extends ButtonInterface {
+interface SelectCategory {
   category: string;
 }
 
@@ -124,7 +107,7 @@ export const selectCategory = createAction(
 // END SELECT_CATEGORY
 
 // SELECT_LOCATION
-interface SelectLocation extends ButtonInterface {
+interface SelectLocation {
   name: string;
   // NearbyLocations optional params
   location?: CoordsInterface;
@@ -144,7 +127,7 @@ export const selectLocation = createAsyncAction(
 // END SELECT_LOCATION
 
 // SELECT_SITUATION
-interface SelectSituation extends ButtonInterface {
+interface SelectSituation {
   situation: string;
 }
 
@@ -182,12 +165,17 @@ export const updateHasRequired = createAction(
 )();
 // END UPDATE_HAS_REQUIRED
 
+// VALIDATE_CASE_INFO
+export const VALIDATE_CASE_INFO = '@case/VALIDATE_CASE_INFO';
+
+export const validateCaseInfo = createAction(VALIDATE_CASE_INFO)();
+// END VALIDATE_CASE_INFO
+
 const actions = {
   clearCase,
   clearCasePartly,
   getCategories,
   getSituations,
-  getUserCoords,
   getNearbyLocations,
   searchLocations,
   getPreferences,
@@ -196,5 +184,6 @@ const actions = {
   selectSituation,
   selectPreference,
   updateHasRequired,
+  validateCaseInfo,
 };
 export type CaseAction = ActionType<typeof actions>;

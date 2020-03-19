@@ -1,6 +1,6 @@
 # Mobile Application of 'Tastie'
 
-> last update : 2020.02.15
+> last update : 2020.03.15
 
 ## How to start
 
@@ -11,48 +11,80 @@
 $ git clone git@gitlab.com:tastie/tastie-client.git
 ```
 
-3. Download packages
+3. Import `env.ts` and save on `src/utils` (Ask `@Jiwoon Won`)
+4. Download packages
 
 ```bash
 $ cd tastie-client
-
-# if you use npm
-$ npm install
-# else if you use yarn
 $ yarn install
-
+# for xcode
 $ cd ios
 $ pod install
 $ cd ..
 ```
 
-4. Start emulator
+5. Start emulator
 
 ```bash
-$ npm start
+$ yarn start
 # open another bash shell
 
 # if you want to run ios
-$ npm run ios
+$ yarn ios
 # if you want to run android
-$ npm run android
+$ yarn android
+```
+
+### Optional
+
+#### How to debug Firebase Analytics
+
+Set `setAnalyticsCollectionEnabled(true)` on `@navigations/index.ts`
+
+- For iOS
+
+```bash
+$ open ios/Tastie.xcworkspace
+
+# Press Run (Make sure schema is in debug mode)
+```
+
+- For android
+
+```bash
+$ yarn android
+$ yarn firebase-debug
+# if you want to stop debug
+$ yarn firebase-stop
 ```
 
 ## How to deploy
 
+### iOS
+
+https://docs.fastlane.tools/getting-started/ios/appstore-deployment/
+
+> CREATE RELEASE AUTOMATICALLY
+
 ### Android
 
 1. Set password on keychain access (for macOS) [Google Docs](https://docs.google.com/document/d/1mx7DgIPbfvOTDKyMyQ2hBDUfcssO3wagtNzMwWqQ7oc/edit#)
-2. Download `tastie-release.keystore` and place it on `~/android/app` [Google Drive](https://drive.google.com/drive/u/0/folders/1FtT6fO7f0NCUO48vvVGaSEFQhemA1XgJ)
-3. Generate Release APK
+2. Download `tastie-release.keystore`, `app-*.json` and place it on `~/android/app` [Google Drive](https://drive.google.com/drive/u/0/folders/1FtT6fO7f0NCUO48vvVGaSEFQhemA1XgJ)
+3. Generate Release AAB(Android App Bundle)
+
+https://docs.fastlane.tools/getting-started/android/release-deployment/
+
+> CREATE RELEASE AUTOMATICALLY
 
 ```bash
 $ cd android
 # for generate Android App Bundle
 $ ./gradlew bundleRelease
 # for generate APK
-$ ./gradlew assembleRelease
+$ ./gradlew app:assembleRelease
 ```
+
+> GENERATE FILE MANUALLY
 
 ## Notice
 

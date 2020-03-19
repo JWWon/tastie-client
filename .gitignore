@@ -41,6 +41,7 @@ npm-debug.log
 yarn-error.log
 package-lock.json
 yarn.lock
+env.ts
 
 # BUCK
 buck-out/
@@ -58,6 +59,7 @@ buck-out/
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
+android/app/api-*.json
 
 # Bundle artifact
 *.jsbundle
@@ -65,6 +67,3 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 Podfile.lock
-
-# Goorm IDE
-goorm.*

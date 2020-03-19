@@ -1,35 +1,38 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {FlatList} from 'react-native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {FlatList, TextInput, Keyboard} from 'react-native';
+import firebase from '@react-native-firebase/app';
 
 import Sentence from '@components/molcules/Sentence';
 import MoreButton from '@components/atoms/MoreButton';
 import {Props as SentenceProps} from '@components/molcules/Sentence';
-import {SelectAutocomplete} from '@components/atoms/HelperRow';
+import {SelectAutocomplete} from '@components/atoms/InputHelper';
 import {RootState} from '@store/reducers';
-import {getRecommendation} from '@store/actions/recommendation';
 import {
   selectCategory,
   selectSituation,
   selectPreference,
   selectLocation,
-  clearCase,
   clearCasePartly,
   searchLocations,
   getPreferences,
 } from '@store/actions/case';
+import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
-import {HomeParamList} from '@navigations/Home';
-import {MY_LOCATION} from '@utils/consts';
+import {RootNavigationProp} from '@navigations/Root';
+import {SCREEN, EVENT, LOCATION} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
-  navigation: BottomTabNavigationProp<HomeParamList, 'Case'>;
+  navigation: RootNavigationProp<typeof SCREEN.CASE>;
 }
 
 const Case: React.FC<Props> = ({navigation}) => {
+  // useDispatch
   const dispatch = useDispatch();
+  // useRef
+  const locationInputRef = useRef<TextInput>();
+  // useSelector
   const {
     categories,
     nearbyLocations,
@@ -45,45 +48,52 @@ const Case: React.FC<Props> = ({navigation}) => {
 
   const preferenceExist = preference !== undefined;
 
-  const searchRecommend = () => dispatch(getRecommendation.request(navigation));
-
   const handlePressMore = () => dispatch(getPreferences.request());
+  const handleClearPartly = (index: number) => {
+    dispatch(clearCasePartly(index));
+    firebase.analytics().logEvent(EVENT.CLEAR_CASE_PARTLY, {index});
+  };
 
   const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
-    dispatch(selectCategory({category: name, onPress: searchRecommend}));
-  const handleSelectLocation: SelectAutocomplete = value =>
-    dispatch(selectLocation.request({...value, onPress: searchRecommend}));
+    dispatch(selectCategory({category: name}));
+  const handleSelectLocation: SelectAutocomplete = value => {
+    if (value.name === LOCATION.SEARCH) {
+      locationInputRef.current?.focus();
+      firebase.analytics().logEvent(EVENT.PRESS_LOCATION_SEARCH);
+      return;
+    }
+    dispatch(selectLocation.request({...value}));
+    Keyboard.dismiss();
+  };
   const handleSelectSituation: SelectAutocomplete = ({name}) =>
-    dispatch(selectSituation({situation: name, onPress: searchRecommend}));
+    dispatch(selectSituation({situation: name}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
 
-  useEffect(() => {
-    dispatch(clearCase());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => setNavigation(navigation), []);
 
   return (
-    <s.Home>
+    <s.Container>
       <Sentence
         leadMessage="오늘 "
         maxSize={3}
-        message="은"
+        message="은(는)"
         autocomplete={{
           data: categories,
           onSelect: handleSelectCategory,
         }}
         value={category}
-        onPress={() => dispatch(clearCasePartly(CaseIndex.CATEGORY))}
+        onPress={() => handleClearPartly(CaseIndex.CATEGORY)}
       />
       {category !== '' && (
         <Sentence
           message="에서"
           autocomplete={{
             data: [
-              {name: MY_LOCATION, isDefault: true},
+              {name: LOCATION.MY_LOCATION, isDefault: true},
+              {name: LOCATION.SEARCH, isDefault: true},
               ...(searchedLocations.length > 0
                 ? searchedLocations
                 : nearbyLocations),
@@ -92,20 +102,21 @@ const Case: React.FC<Props> = ({navigation}) => {
           }}
           placeholder={location.address}
           value={location.name}
-          onPress={() => dispatch(clearCasePartly(CaseIndex.LOCATION))}
+          onPress={() => handleClearPartly(CaseIndex.LOCATION)}
           onChangeText={handleSearchLocation}
+          inputRef={locationInputRef}
         />
       )}
       {location.name !== '' && (
         <Sentence
           maxSize={11}
-          message="이야."
+          message="(이)야."
           autocomplete={{
             data: situations,
             onSelect: handleSelectSituation,
           }}
           value={situation}
-          onPress={() => dispatch(clearCasePartly(CaseIndex.SITUATION))}
+          onPress={() => handleClearPartly(CaseIndex.SITUATION)}
         />
       )}
       {hasRequired && !preferenceExist && (
@@ -121,14 +132,14 @@ const Case: React.FC<Props> = ({navigation}) => {
             data={[
               {
                 leadMessage: '나는 ',
-                maxSize: 8,
-                message: '걸',
+                maxSize: 10,
+                message: '을',
                 autocomplete: {
                   data: preferences,
                   onSelect: handleSelectPreference,
                 },
                 value: preference,
-                onPress: () => dispatch(clearCasePartly(CaseIndex.PREFERENCE)),
+                onPress: () => handleClearPartly(CaseIndex.PREFERENCE),
               },
               {
                 message: '좋아해.',
@@ -139,7 +150,7 @@ const Case: React.FC<Props> = ({navigation}) => {
           />
         </s.MoreSentenceWrapper>
       )}
-    </s.Home>
+    </s.Container>
   );
 };
 

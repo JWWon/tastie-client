@@ -1,9 +1,10 @@
 import firebase from '@react-native-firebase/app';
+import moment from 'moment';
 import {Platform, Alert, Linking} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 import {CoordsInterface} from '@store/reducers/case';
-import {APP_IDENTIFIER} from '@utils/consts';
+import {APP_IDENTIFIER, EVENT} from '@utils/consts';
 
 // REDUX HELPER
 export const setPending = <S>(state: S) => ({...state, error: undefined});
@@ -38,6 +39,11 @@ export const setErrorWithLoading = <S, A extends {payload: any}>(
   error: action.payload,
 });
 
+export function isAxiosError(error: any) {
+  return typeof error === 'object' && error.isAxiosError;
+}
+// END REDUX HELPER
+
 // PERMISSION HELPER
 const LOCATION_PERMISSON =
   Platform.OS === 'ios'
@@ -61,9 +67,9 @@ export const checkPermission = async () => {
         Alert.alert('지원하는 디바이스가 아닙니다.');
         break;
     }
-    firebase.analytics().logEvent('location_permission', {status});
+    firebase.analytics().logEvent(EVENT.LOCATION_PERMISSION, {status});
   } catch (e) {
-    console.error(e);
+    console.warn(e);
   }
   return false;
 };
@@ -95,12 +101,13 @@ export const getDistance = (
 
   const distKilometer = 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   if (distKilometer < 1) {
-    return (distKilometer * 1000).toString(10).slice(0, 3) + 'm';
+    return (distKilometer * 1000).toString(10).split('.')[0] + 'm';
   }
   return distKilometer.toString(10).slice(0, 3) + 'km';
 };
 // END CALCULATE_DISTANCE
 
+// OPEN_LINK HELPER
 const openLink = async (path: string, backupPath?: string) => {
   try {
     const url = encodeURI(path);
@@ -118,16 +125,13 @@ const openLink = async (path: string, backupPath?: string) => {
   }
 };
 
-// PHONE_CALL
 export const makePhoneCall = (phoneNumber: string) => {
   // only works on real iOS device!
   const filteredNumber = phoneNumber.replace(/-/g, '');
   const baseURL = Platform.select({ios: 'telprompt', android: 'tel'});
   openLink(`${baseURL}:${filteredNumber}`);
 };
-// END PHONE_CALL
 
-// OPEN_NAVER_MAP
 interface OpenNaverMap extends CoordsInterface {
   name: string;
 }
@@ -147,4 +151,43 @@ export const openNaverMap = (params: OpenNaverMap) => {
 
   openLink(`${baseURL}://place?${mapParams.join('&')}`, backupURL);
 };
-// END OPEN_NAVER_MAP
+// END OPEN_LINK HELPER
+
+// RECOMMENDATION_DETAIL
+export function getPriceLevel(level: number) {
+  switch (level) {
+    case 0:
+      return '5000원 미만';
+    case 1:
+      return '5000원 - 1만원';
+    case 2:
+      return '1만원 - 2만원';
+    case 3:
+      return '2만원 - 5만원';
+    case 4:
+      return '5만원 이상';
+    default:
+      return '알 수 없음';
+  }
+}
+
+export function getTodayOpeningHours(hours?: string[]): string {
+  const today = (moment().weekday() + 6) % 7;
+  return hours && typeof hours[today] === 'string'
+    ? hours[today].split(': ')[1].replace(', ', '\n')
+    : '알 수 없음';
+}
+// END RECOMMENDATION_DETAIL
+
+// SELECT_LIKE_ICON
+export function selectLikeIcon(params: {positive?: boolean; black?: boolean}) {
+  if (params.positive === undefined) {
+    if (params.black)
+      return require('@assets/images/icon-like/icon-like-empty-black.png');
+    return require('@assets/images/icon-like/icon-like-empty.png');
+  }
+
+  if (params.positive) return require('@assets/images/icon-like/icon-like.png');
+  return require('@assets/images/icon-dislike/icon-dislike.png');
+}
+// END SELECT_LIKE_ICON

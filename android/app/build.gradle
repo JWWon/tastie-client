@@ -95,7 +95,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore.
@@ -137,6 +137,37 @@ def getPassword(String currentUser, String keyChain) {
 }
 def keystorePW = getPassword("Jiwoon Won","tastie-release.keystore")
 
+/**
+ * Versioning
+ */
+def readVersion() {
+    def versionFile = new File(project.rootDir, 'version.properties')
+    def version = new Properties()
+    def stream
+    try {
+        stream = new FileInputStream(versionFile)
+        version.load(stream)
+    } catch (FileNotFoundException ignore) {
+    } finally {
+        if (stream != null) stream.close()
+    }
+    // safety defaults in case file is missing
+    if (!version['VERSION_MAJOR']) version['VERSION_MAJOR'] = "0"
+    if (!version['VERSION_MINOR']) version['VERSION_MAJOR'] = "0"
+    if (!version['VERSION_PATCH']) version['VERSION_PATCH'] = "0"
+    return version
+}
+
+def readVersionCode() {
+    def version = readVersion()
+    def code = version['VERSION_CODE'] as int
+    return code
+}
+def readVersionName() {
+    def version = readVersion()
+    return "${version['VERSION_MAJOR']}.${version['VERSION_MINOR']}.${version['VERSION_PATCH']}"
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -149,8 +180,8 @@ android {
         applicationId "me.tastie.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "0.1.3"
+        versionCode readVersionCode()
+        versionName readVersionName()
     }
     splits {
         abi {
@@ -179,14 +210,13 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            multiDexEnabled true
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
+            minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     // applicationVariants are e.g. debug, release
@@ -211,6 +241,8 @@ dependencies {
     // @react-navigation
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
+    // google-signin
+    implementation(project(":react-native-google-signin"))
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -228,6 +260,87 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
+/**
+ * Automation versioning
+ */
+def incrementVersionCode() {
+    def versionFile = new File(project.rootDir, 'version.properties')
+    def version = readVersion()
+
+    def code = version['VERSION_CODE'] as int
+    code++
+    version['VERSION_CODE'] = code.toString()
+
+    def stream = new FileOutputStream(versionFile)
+    try {
+        version.store(stream, null)
+    } finally {
+        stream.close()
+    }
+
+    return code
+}
+def incrementVersionName(def type="release") {
+    def versionFile = new File(project.rootDir, 'version.properties')
+    def version = readVersion()
+
+    def major = version['VERSION_MAJOR'] as int
+    def minor = version['VERSION_MINOR'] as int
+    def patch = version['VERSION_PATCH'] as int
+
+    switch (type) {
+        case 'major':
+            major++
+            minor = 0
+            patch = 0
+            break
+        case 'minor':
+            minor++
+            patch = 0
+            break
+        default:
+            patch++
+    }
+
+    version['VERSION_MAJOR'] = major.toString()
+    version['VERSION_MINOR'] = minor.toString()
+    version['VERSION_PATCH'] = patch.toString()
+
+    def stream = new FileOutputStream(versionFile)
+    try {
+        version.store(stream, null)
+    } finally {
+        stream.close()
+    }
+
+    return major + "." + minor + "." + patch
+}
+
+def version = "version"
+task updateMajorVersion(group: version) {
+    doLast {
+        incrementVersionCode()
+        String versionName = incrementVersionName('major')
+        println("INCREMENT_VERSION_NAME: ${versionName}")
+    }
+}
+
+task updateMinorVersion(group: version) {
+    doLast {
+        incrementVersionCode()
+        String versionName = incrementVersionName('minor')
+        println("INCREMENT_VERSION_NAME: ${versionName}")
+    }
+}
+
+task updatePatchVersion(group: version) {
+    doLast {
+        incrementVersionCode()
+        String versionName = incrementVersionName('patch')
+        println("INCREMENT_VERSION_NAME: ${versionName}")
+    }
+}
+
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-// @react-native-firebase/app
+// @react-native-firebase/app, google-signin
 apply plugin: 'com.google.gms.google-services'
