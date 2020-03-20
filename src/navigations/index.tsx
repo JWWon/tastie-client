@@ -5,7 +5,6 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
-import _ from 'lodash';
 import firebase from '@react-native-firebase/app';
 import dynamicLinks, {
   FirebaseDynamicLinksTypes,
@@ -21,7 +20,7 @@ import {
   hideMessage,
   showMessage,
 } from '@store/actions/navbar';
-import {clearCase, validateCaseInfo} from '@store/actions/case';
+import {validateCaseInfo, clearCase} from '@store/actions/case';
 import {
   getRecommendations,
   clearRecommendations,
@@ -75,44 +74,47 @@ export default () => {
   function stateChangeMiddleware(name: string) {
     // HANDLE_RECOMMENDATIONS
     if (prevName === SCREEN.CASE && name === SCREEN.RECOMMENDATIONS) {
+      // navigate CASE -> RECOMMENDATIONS
       dispatch(getRecommendations.request());
     }
     if (
       prevName === SCREEN.RECOMMENDATIONS &&
       name !== SCREEN.RECOMMENDATION_DETAIL
     ) {
-      if (name === SCREEN.CASE) {
-        // navigate RECOMMENDATIONS -> CASE
-        dispatch(validateCaseInfo());
-        dispatch(updateMessage({message: MESSAGE.DISMISS_RECOMMENDATIONS}));
-      }
+      // navigate RECOMMENDATIONS -> ???
       dispatch(clearRecommendations.request());
     }
     // END HANDLE_RECOMMENDATIONS
 
-    // CLEAR_CASE
-    if (
-      name === SCREEN.CASE &&
-      _.includes(
-        ['', SCREEN.WELCOME, SCREEN.LOGIN, SCREEN.SIGNUP_META],
-        prevName,
-      )
-    ) {
-      dispatch(clearCase());
+    // VALIDATE_CASE
+    if (name === SCREEN.CASE && prevName !== SCREEN.CASE) {
+      // navigate ??? -> CASE
+      dispatch(validateCaseInfo());
+      switch (prevName) {
+        case SCREEN.RECOMMENDATIONS:
+          dispatch(updateMessage({message: MESSAGE.DISMISS_RECOMMENDATIONS}));
+          break;
+        case SCREEN.WELCOME:
+        case SCREEN.LOGIN:
+        case SCREEN.SIGNUP:
+        case SCREEN.SIGNUP_META:
+        case '':
+          dispatch(clearCase());
+          break;
+      }
     }
-    // END CLEAR_CASE
+    // END VALIDATE_CASE
 
     // HANDLE_MESSAGE
-    switch (name) {
-      case SCREEN.CASE:
-      case SCREEN.RECOMMENDATIONS:
-        dispatch(showMessage());
-        break;
-      case SCREEN.RECOMMENDATION_DETAIL:
-      case SCREEN.HISTORY:
-      case SCREEN.PROFILE:
-        dispatch(hideMessage());
-        break;
+    if (status === 'USER_EXIST') {
+      switch (name) {
+        case SCREEN.CASE:
+        case SCREEN.RECOMMENDATIONS:
+          dispatch(showMessage());
+          break;
+        default:
+          dispatch(hideMessage());
+      }
     }
     // END HANDLE_MESSAGE
   }

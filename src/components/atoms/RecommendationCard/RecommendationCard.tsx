@@ -32,7 +32,9 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
       <s.BackgroundImage source={{uri: data.photoUrl}} />
       <s.ImageFilter>
         <s.Address>{data.address}</s.Address>
-        <s.Distance>{data.distance}</s.Distance>
+        <s.Distance>
+          {data.distance || '얼마나 멀리 있는지 몰라요..'}
+        </s.Distance>
 
         <s.BottomContent>
           <s.RowContent>
@@ -41,7 +43,7 @@ const RecommendationCard: React.FC<Props> = ({navigation, ...data}) => {
             ))}
           </s.RowContent>
           <s.RowContent>
-            <s.PlaceName>{data.name}</s.PlaceName>
+            <s.PlaceName>{data.name || '???'}</s.PlaceName>
             <s.IconButton
               source={selectLikeIcon({positive: data.positive})}
               onPress={handlePressLike}

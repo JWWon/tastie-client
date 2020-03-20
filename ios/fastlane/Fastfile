@@ -18,12 +18,11 @@ default_platform(:ios)
 platform :ios do
   before_all do
     cocoapods
-    ensure_git_status_clean
   end
 
   desc "Increase build_number and version_number"
   lane :increase_build_number do
-    increment_build_number
+    increment_build_number(xcodeproj: 'Tastie.xcodeproj')
     version = prompt(text: "How to versioning this release? 'major', 'minor', 'patch(default)'")
     case version
     when 'major'
@@ -33,19 +32,21 @@ platform :ios do
     else
       increment_version_number(bump_type: "patch")
     end
+    commit_version_bump(xcodeproj: 'Tastie.xcodeproj', force: true)
+    push_to_git_remote(remote_branch: "beta", force: true)
   end
 
   desc "Push a new release beta build to the App Store"
   lane :beta do
     sync_code_signing(type: "appstore", readonly: true, app_identifier: "me.tastie.client")
-    build_app(scheme: "Tastie", clean: true, output_directory: './fastlane/build')
+    build_app(scheme: "Tastie", output_directory: './fastlane/build')
     upload_to_testflight
   end
 
   desc "Push a new release build to the App Store"
   lane :release do
     sync_code_signing(type: "appstore", readonly: true, app_identifier: "me.tastie.client")
-    build_app(scheme: "Tastie", clean: true, output_directory: './fastlane/build')
+    build_app(scheme: "Tastie", output_directory: './fastlane/build')
     upload_to_app_store
   end
 end

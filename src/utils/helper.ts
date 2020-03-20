@@ -1,6 +1,6 @@
 import firebase from '@react-native-firebase/app';
 import moment from 'moment';
-import {Platform, Alert, Linking} from 'react-native';
+import {Platform, Linking} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 import {CoordsInterface} from '@store/reducers/case';
@@ -45,44 +45,22 @@ export function isAxiosError(error: any) {
 // END REDUX HELPER
 
 // PERMISSION HELPER
-const LOCATION_PERMISSON =
-  Platform.OS === 'ios'
-    ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-    : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+const LOCATION_PERMISSON = Platform.select({
+  ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+});
 
 export const checkPermission = async () => {
-  try {
-    let status = await check(LOCATION_PERMISSON);
-    if (status === RESULTS.DENIED) {
-      status = await requestPermission(LOCATION_PERMISSON);
-    }
+  if (!LOCATION_PERMISSON) return;
 
-    switch (status) {
-      case RESULTS.GRANTED:
-        return true;
-      case RESULTS.BLOCKED:
-        Alert.alert('정확한 음식 추천을 위해 위치정보를 승인해주세요.');
-        break;
-      case RESULTS.UNAVAILABLE:
-        Alert.alert('지원하는 디바이스가 아닙니다.');
-        break;
-    }
-    firebase.analytics().logEvent(EVENT.LOCATION_PERMISSION, {status});
-  } catch (e) {
-    console.warn(e);
-  }
-  return false;
-};
-
-const requestPermission = async (
-  PERMISSON: any,
-): Promise<'unavailable' | 'denied' | 'blocked' | 'granted'> => {
-  const status = await request(PERMISSON);
-
+  let status = await check(LOCATION_PERMISSON);
   if (status === RESULTS.DENIED) {
-    return requestPermission(PERMISSON);
+    status = await request(LOCATION_PERMISSON);
   }
-  return status;
+
+  firebase.analytics().logEvent(EVENT.LOCATION_PERMISSION, {status});
+
+  if (status !== RESULTS.GRANTED) Promise.reject('Permission not granted');
 };
 // END PERMISSION HELPER
 
