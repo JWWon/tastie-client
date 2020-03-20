@@ -1,6 +1,6 @@
 {
   "name": "tastie",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "firebase-debug": "adb shell setprop debug.firebase.analytics.app me.tastie.client",
