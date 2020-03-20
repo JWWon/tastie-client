@@ -36,7 +36,9 @@ function* mapAdditionalInfos(data: GetRecommendationsRes) {
   const nextData = data.map(item =>
     produce(item, draft => {
       // map distance
-      draft.distance = getDistance(userCoords, item.location);
+      if (userCoords) {
+        draft.distance = getDistance(userCoords, item.location);
+      }
       // map positive
       const idx = _.findIndex(likes, like => like.placeID === item.id);
       if (idx !== -1) draft.positive = likes[idx].positive;

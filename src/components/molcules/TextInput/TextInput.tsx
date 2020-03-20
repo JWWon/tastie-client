@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import {Props, Status} from './TextInput.type';
 import * as s from './TextInput.style';
-import {TextInput as InputType} from 'react-native';
+import {TextInput as InputType, Platform} from 'react-native';
 
 export default forwardRef<InputType, Props>((props, ref) => {
   const [status, setStatus] = useState<Status>('NONE');
@@ -59,6 +59,7 @@ export default forwardRef<InputType, Props>((props, ref) => {
         onChangeText={handleChange}
         returnKeyType={'next'}
         {...options}
+        secureTextEntry={Platform.OS === 'ios' && options.secureTextEntry} // TODO: Fix secureTextEntry is not appearing on android
       />
       <s.InputHelper status={status} placeholder={message} />
     </s.Wrapper>

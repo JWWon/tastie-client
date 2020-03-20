@@ -16,6 +16,7 @@ import {
   searchLocations,
   getPreferences,
   VALIDATE_CASE_INFO,
+  SELECT_PREFERENCE,
 } from '@store/actions/case';
 import {getUserCoords} from '@store/actions/auth';
 import {getLikes} from '@store/actions/history';
@@ -130,7 +131,7 @@ function* searchLocationsSaga(
       place_id: item.place_id,
     }));
     yield put(searchLocations.success(flatten));
-    yield call(validateInfo, '장소를 선택하라옹');
+    yield call(validateInfoSaga, '장소를 선택하라옹');
   } catch (e) {
     yield put(updateMessage({message: MESSAGE.CANNOT_FIND_RESULTS}));
     yield put(searchLocations.failure(e));
@@ -158,14 +159,15 @@ function* selectLocationSaga(
 ) {
   function* putSuccess(params: LocationInterface) {
     yield put(selectLocation.success(params));
-    yield call(validateInfo, '어떤 상황인가옹?');
+    yield call(validateInfoSaga, '어떤 상황인가옹?');
   }
 
   try {
+    const {userCoords}: RootState['auth'] = yield select(state => state.auth);
     const {name, location, place_id} = action.payload;
-    if (name === LOCATION.MY_LOCATION) {
+
+    if (name === LOCATION.MY_LOCATION && userCoords) {
       // * current user location
-      const {userCoords}: RootState['auth'] = yield select(state => state.auth);
       const {data: address}: AxiosResponse<GetAddressRes> = yield call(
         getAddress,
         userCoords,
@@ -214,16 +216,16 @@ function* selectLocationSaga(
 }
 
 function* selectCategorySaga() {
-  yield call(validateInfo, '어디서 먹나옹?');
+  yield call(validateInfoSaga, '어디서 먹나옹?');
   yield put(getSituations.request());
 }
 
-function* selectSituationSaga() {
-  yield call(validateInfo);
+function* selectOtherSaga() {
+  yield call(validateInfoSaga);
 }
 
 // MIDDLEWARE
-function* validateInfo(message?: string) {
+function* validateInfoSaga(message?: string) {
   const {category, situation, location}: RootState['case'] = yield select(
     state => state.case,
   );
@@ -239,7 +241,7 @@ function* validateInfo(message?: string) {
         customAction: () => navigate(SCREEN.RECOMMENDATIONS),
       }),
     );
-  } else if (message) {
+  } else if (typeof message === 'string') {
     yield put(updateMessage({message}));
   }
 }
@@ -256,6 +258,7 @@ export default function* root() {
   yield takeEvery(clearCase, clearCaseSaga);
   yield takeEvery(clearCasePartly, clearCasePartlySaga);
   yield takeEvery(SELECT_CATEGORY, selectCategorySaga);
-  yield takeEvery(SELECT_SITUATION, selectSituationSaga);
-  yield takeEvery(VALIDATE_CASE_INFO, validateInfo);
+  yield takeEvery(SELECT_SITUATION, selectOtherSaga);
+  yield takeEvery(SELECT_PREFERENCE, selectOtherSaga);
+  yield takeEvery(VALIDATE_CASE_INFO, validateInfoSaga);
 }

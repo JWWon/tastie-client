@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, RefObject} from 'react';
+import {TextInput} from 'react-native';
+import firebase from '@react-native-firebase/app';
 
-import {Props} from './Sentence.type';
-import * as s from './Sentence.style';
 import Text from '@components/atoms/TextHighlight';
 import Input from '@components/atoms/InputWithText';
 import Helper, {SelectAutocomplete} from '@components/atoms/InputHelper';
+import {SEARCH, EVENT} from '@utils/consts';
+import {Props} from './Sentence.type';
+import * as s from './Sentence.style';
 
 const Sentence: React.FC<Props> = ({
   value: storeValue,
@@ -12,11 +15,14 @@ const Sentence: React.FC<Props> = ({
   placeholder,
   onChangeText,
   onPress,
-  inputRef,
   ...props
 }) => {
+  // useRef
+  const inputRef = useRef() as RefObject<TextInput>;
+  // useState
   const [inputValue, setInputValue] = useState<string>('');
   const [isEditing, setIsEditing] = useState(false);
+
   const editable = onChangeText !== undefined;
 
   // * Active when editable={true}
@@ -44,8 +50,13 @@ const Sentence: React.FC<Props> = ({
 
   const handleSelect: SelectAutocomplete = value => {
     if (autocomplete) {
-      autocomplete.onSelect(value);
-      setIsEditing(false);
+      if (value.name === SEARCH) {
+        inputRef.current?.focus();
+        firebase.analytics().logEvent(EVENT.PRESS_LOCATION_SEARCH);
+      } else {
+        autocomplete.onSelect(value);
+        setIsEditing(false);
+      }
     }
   };
 

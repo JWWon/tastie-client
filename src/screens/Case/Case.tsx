@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {FlatList, TextInput, Keyboard} from 'react-native';
+import {FlatList, Keyboard} from 'react-native';
 import firebase from '@react-native-firebase/app';
 
 import Sentence from '@components/molcules/Sentence';
@@ -20,7 +20,7 @@ import {
 import {setNavigation} from '@utils/RootService';
 import {CaseIndex} from '@store/reducers/case';
 import {RootNavigationProp} from '@navigations/Root';
-import {SCREEN, EVENT, LOCATION} from '@utils/consts';
+import {SCREEN, EVENT, LOCATION, SEARCH} from '@utils/consts';
 import * as s from './Case.style';
 
 interface Props {
@@ -30,8 +30,6 @@ interface Props {
 const Case: React.FC<Props> = ({navigation}) => {
   // useDispatch
   const dispatch = useDispatch();
-  // useRef
-  const locationInputRef = useRef<TextInput>();
   // useSelector
   const {
     categories,
@@ -45,25 +43,26 @@ const Case: React.FC<Props> = ({navigation}) => {
     preference,
     hasRequired,
   } = useSelector((state: RootState) => state.case);
+  const {userCoords} = useSelector((state: RootState) => state.auth);
 
   const preferenceExist = preference !== undefined;
+  const locationData = [
+    {name: SEARCH, isDefault: true},
+    ...(searchedLocations.length > 0 ? searchedLocations : nearbyLocations),
+  ];
 
   const handlePressMore = () => dispatch(getPreferences.request());
   const handleClearPartly = (index: number) => {
     dispatch(clearCasePartly(index));
     firebase.analytics().logEvent(EVENT.CLEAR_CASE_PARTLY, {index});
   };
-
   const handleSearchLocation = (value: string) =>
     dispatch(searchLocations.request({input: value}));
+
+  // HANDLE_SELECT
   const handleSelectCategory: SelectAutocomplete = ({name}) =>
     dispatch(selectCategory({category: name}));
   const handleSelectLocation: SelectAutocomplete = value => {
-    if (value.name === LOCATION.SEARCH) {
-      locationInputRef.current?.focus();
-      firebase.analytics().logEvent(EVENT.PRESS_LOCATION_SEARCH);
-      return;
-    }
     dispatch(selectLocation.request({...value}));
     Keyboard.dismiss();
   };
@@ -71,6 +70,7 @@ const Case: React.FC<Props> = ({navigation}) => {
     dispatch(selectSituation({situation: name}));
   const handleSelectPreference: SelectAutocomplete = ({name}) =>
     dispatch(selectPreference({preference: name}));
+  // END HANDLE_SELECT
 
   useEffect(() => setNavigation(navigation), []);
 
@@ -91,20 +91,15 @@ const Case: React.FC<Props> = ({navigation}) => {
         <Sentence
           message="에서"
           autocomplete={{
-            data: [
-              {name: LOCATION.MY_LOCATION, isDefault: true},
-              {name: LOCATION.SEARCH, isDefault: true},
-              ...(searchedLocations.length > 0
-                ? searchedLocations
-                : nearbyLocations),
-            ],
+            data: userCoords
+              ? [{name: LOCATION.MY_LOCATION, isDefault: true}, ...locationData]
+              : locationData,
             onSelect: handleSelectLocation,
           }}
           placeholder={location.address}
           value={location.name}
           onPress={() => handleClearPartly(CaseIndex.LOCATION)}
           onChangeText={handleSearchLocation}
-          inputRef={locationInputRef}
         />
       )}
       {location.name !== '' && (
