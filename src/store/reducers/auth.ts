@@ -37,7 +37,7 @@ export interface AuthInterface {
 interface AuthState extends AuthInterface {
   loading: boolean;
   status: 'PENDING' | 'NO_USER' | 'USER_EXIST';
-  userCoords: CoordsInterface;
+  userCoords?: CoordsInterface;
   error?: any;
 }
 
@@ -48,8 +48,6 @@ const initState: AuthState = {
   type: 'email',
   name: '',
   email: '',
-  // USER INFO FROM SERVICE
-  userCoords: {latitude: 0, longitude: 0},
 };
 
 // HELPERS

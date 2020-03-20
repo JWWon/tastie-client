@@ -62,9 +62,9 @@ export const MESSAGE = {
 
 export const LOCATION = {
   MY_LOCATION: '내 위치',
-  SEARCH: '직접 입력하기',
 };
 
 // String
 export const APP_IDENTIFIER = 'me.tastie.client';
 export const CHARACTER_NAME = '고양이';
+export const SEARCH = '직접 입력하기';

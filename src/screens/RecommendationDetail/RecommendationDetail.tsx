@@ -166,7 +166,7 @@ const RecommendationDetail: React.FC<Props> = ({navigation, route}) => {
       const likeIdx = _.findIndex(likes, like => like.placeID === placeID);
 
       const recommendation = {...response.data};
-      if (userCoords.latitude !== 0 && userCoords.longitude !== 0)
+      if (userCoords)
         recommendation.distance = getDistance(
           response.data.location,
           userCoords,

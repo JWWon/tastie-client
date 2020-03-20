@@ -61,7 +61,6 @@ interface CaseState {
   situation: string;
   location: LocationInterface;
   // META DATA
-  userCoords: CoordsInterface;
   preference?: string; // meta data
   // ERROR
   error?: any;
@@ -80,7 +79,6 @@ const initState: CaseState = {
   category: '',
   situation: '',
   location: {latitude: 0, longitude: 0, name: '', address: ''},
-  userCoords: {latitude: 0, longitude: 0},
   // OTHERS
   hasRequired: false,
 };
