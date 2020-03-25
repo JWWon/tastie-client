@@ -71,6 +71,8 @@ export const Label = styled(RawLabel).attrs(({theme}) => ({
 }))``;
 
 // Button
-export const IconButton = styled(RawIconButton)`
+export const IconButton = styled(RawIconButton).attrs({
+  extraSpace: true,
+})`
   padding-left: ${({theme}) => theme.space.wide}px;
 `;
