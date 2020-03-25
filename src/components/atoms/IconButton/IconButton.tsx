@@ -6,6 +6,7 @@ import {Props} from './IconButton.type';
 
 const IconButton: React.FC<Props> = ({
   onPress,
+  extraSpace,
   message,
   messageColor,
   ...image
@@ -14,7 +15,7 @@ const IconButton: React.FC<Props> = ({
   const aspectRatio = width / height;
 
   return (
-    <s.Button onPress={onPress}>
+    <s.Button extraSpace={extraSpace} onPress={onPress}>
       <s.Icon
         {...image}
         style={[image.style, {aspectRatio}]}
