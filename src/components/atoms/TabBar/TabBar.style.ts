@@ -3,8 +3,8 @@ import styled from 'styled-components/native';
 import {shadow} from '@styles/mixins';
 
 export const RoundBox = styled.View`
-  height: ${({theme}) => theme.size.button.cat}px;
-  border-radius: ${({theme}) => theme.size.button.cat / 2}px;
+  height: ${({theme}) => theme.size.button.tabbar}px;
+  border-radius: ${({theme}) => theme.size.button.tabbar / 2}px;
   background: ${({theme}) => theme.color.white};
   flex-direction: row;
   ${shadow}
@@ -30,7 +30,7 @@ export const ButtonBorder = styled.View<BorderProps>`
   right: 0;
 
   border-width: 1px;
-  border-radius: ${({theme}) => theme.size.button.cat / 2}px;
+  border-radius: ${({theme}) => theme.size.button.tabbar / 2}px;
   border-color: ${({alertMode, theme}) =>
     alertMode ? theme.color.blue : '#bcbcbc'};
   opacity: 0.25;
@@ -42,11 +42,11 @@ interface IconProps {
   currentScreen: boolean;
 }
 
-const catSize = 0.5; // relative size
+const iconRatio = 0.5; // relative size
 export const Icon = styled.Image.attrs({
   resizeMode: 'contain',
 })<IconProps>`
-  width: ${({theme}) => theme.size.button.cat * catSize}px;
-  height: ${({theme}) => theme.size.button.cat * catSize}px;
+  width: ${({theme}) => theme.size.button.tabbar * iconRatio}px;
+  height: ${({theme}) => theme.size.button.tabbar * iconRatio}px;
   opacity: ${({currentScreen}) => (currentScreen ? 1 : 0.25)};
 `;

@@ -17,7 +17,7 @@ export const Carousel = styled(RawCarousel).attrs<PagerCustomProps>(
       paddingBottom:
         messageHeight +
         theme.space.basic +
-        theme.size.button.cat +
+        theme.size.button.tabbar +
         theme.space.rootBottom,
     },
     sliderWidth: width,
