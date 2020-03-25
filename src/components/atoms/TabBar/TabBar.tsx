@@ -14,7 +14,7 @@ import profileIcon from '@assets/images/icon-profile/icon-profile.png';
 import * as s from './TabBar.style';
 
 const minBorderOpacity = 0.25;
-const buttonSize = size.button.cat;
+const buttonSize = size.button.tabbar;
 
 const getCatIcon = (thinking: boolean, message: string) => {
   if (thinking) return catThinkingIcon;
