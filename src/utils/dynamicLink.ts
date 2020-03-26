@@ -11,8 +11,8 @@ type Navigate = (name: string, params?: object) => void;
 export function handleLinkDetailScreen(url: string, navigate: Navigate) {
   if (__DEV__) console.info(`GET_DYNAMIC_LINK: ${url}`);
   const parsedUrl = queryString.parseUrl(url);
-  if (parsedUrl.url === `${LINK_URL}/recommendation`) {
-    navigate(SCREEN.RECOMMENDATION_DETAIL, parsedUrl.query);
+  if (parsedUrl.url === `${LINK_URL}/discovery`) {
+    navigate(SCREEN.DISCOVERY_DETAIL, parsedUrl.query);
   }
 }
 

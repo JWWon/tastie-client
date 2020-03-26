@@ -21,12 +21,12 @@ const getCatIcon = (thinking: boolean, message: string) => {
 
   switch (message) {
     case MESSAGE.POSITIVE:
-    case MESSAGE.READY_TO_RECOMMEND:
+    case MESSAGE.READY_TO_DISCOVER:
       return require('@assets/images/icon-cat/icon-cat-happy.png');
     case MESSAGE.NEGATIVE:
-    case MESSAGE.CANNOT_FIND_RECOMMENDATIONS:
+    case MESSAGE.FAIL_TO_DISCOVER:
     case MESSAGE.CANNOT_FIND_RESULTS:
-    case MESSAGE.DISMISS_RECOMMENDATIONS:
+    case MESSAGE.DISMISS_DISCOVERIES:
       return require('@assets/images/icon-cat/icon-cat-sad.png');
     default:
       return require('@assets/images/icon-cat/icon-cat.png');
@@ -49,7 +49,7 @@ const TabBar: React.FC = () => {
 
   const isCurrentHistory = screenName === SCREEN.HISTORY;
   const isCurrentHome =
-    screenName === SCREEN.CASE || screenName === SCREEN.RECOMMENDATIONS;
+    screenName === SCREEN.CASE || screenName === SCREEN.DISCOVERIES;
   const isCurrentProfile = screenName === SCREEN.PROFILE;
 
   const getIcon = () => {
@@ -57,7 +57,7 @@ const TabBar: React.FC = () => {
       case SCREEN.HISTORY:
         return historyIcon;
       case SCREEN.CASE:
-      case SCREEN.RECOMMENDATIONS:
+      case SCREEN.DISCOVERIES:
         return getCatIcon(loading || !showMessage, message);
       case SCREEN.PROFILE:
         return profileIcon;

@@ -1,13 +1,7 @@
-import {Family} from '@styles/fonts';
 import styled from 'styled-components/native';
 import RawMapView, {Marker as RawMarker} from 'react-native-maps';
 
-export const Container = styled.View`
-  border-radius: ${({theme}) => theme.size.border.basic}px;
-  overflow: hidden;
-  width: 100%;
-  height: 160px;
-`;
+import {Family} from '@styles/fonts';
 
 export const MapView = styled(RawMapView)`
   position: absolute;
@@ -37,18 +31,22 @@ export const Stick = styled.View`
   background: ${({theme}) => theme.color.black};
 `;
 
-export const AddressWrapper = styled.View`
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(12, 12, 12, 0.4);
+export const Shadow = styled.View`
+  width: 3px;
+  height: 3px;
+  border-radius: 1.5px;
+  margin-top: -1px;
+  background: ${({theme}) => theme.color.blackBorder};
+  transform: scaleX(4);
 `;
 
 // Text
-export const Address = styled.Text`
-  ${({theme}) => theme.font.size10}
+export const Name = styled.Text`
+margin-top: 2px;
+  ${({theme}) => theme.font.size12}
   font-family: ${Family.NanumSquare.B};
-  color: ${({theme}) => theme.color.white};
+  color: ${({theme}) => theme.color.black};
+  text-shadow-color: ${({theme}) => theme.color.whiteMild};
+  text-shadow-radius: 2px;
+  /* text-shadow: 2px 2px 2px ${({theme}) => theme.color.white}; */
 `;

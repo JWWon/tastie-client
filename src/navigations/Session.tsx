@@ -13,9 +13,9 @@ import Login from '@screens/Login';
 import ResetPassword from '@screens/ResetPassword';
 import ConfirmEmail from '@screens/ConfirmEmail';
 import {SignupReq} from '@services/auth';
-import RecommendationDetail, {
-  Params as RecommendationDetailParams,
-} from '@screens/RecommendationDetail';
+import DiscoveryDetail, {
+  Params as DiscoveryDetailParams,
+} from '@screens/DiscoveryDetail';
 import WebView, {Params as WebViewParams} from '@screens/WebView';
 
 type SessionParamList = {
@@ -26,7 +26,7 @@ type SessionParamList = {
   [SCREEN.RESET_PASSWORD]: undefined;
   [SCREEN.CONFIRM_EMAIL]: undefined;
   // OTHERS
-  [SCREEN.RECOMMENDATION_DETAIL]: RecommendationDetailParams;
+  [SCREEN.DISCOVERY_DETAIL]: DiscoveryDetailParams;
   [SCREEN.WEB_VIEW]: WebViewParams;
 };
 
@@ -51,8 +51,8 @@ export default () => (
     <Session.Screen name={SCREEN.CONFIRM_EMAIL} component={ConfirmEmail} />
     {/* OTHERS */}
     <Session.Screen
-      name={SCREEN.RECOMMENDATION_DETAIL}
-      component={RecommendationDetail}
+      name={SCREEN.DISCOVERY_DETAIL}
+      component={DiscoveryDetail}
     />
     <Session.Screen name={SCREEN.WEB_VIEW} component={WebView} />
   </Session.Navigator>

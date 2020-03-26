@@ -1,7 +1,7 @@
 import {AxiosError} from 'axios';
 import {createAsyncAction, ActionType, createAction} from 'typesafe-actions';
 
-import {RecommendationDetail} from '@services/recommendations';
+import {DiscoveryDetail} from '@services/discoveries';
 import {Like, DeleteLike} from '@services/user';
 import {ResponseError} from '@services/axios.base';
 
@@ -21,28 +21,26 @@ export const getLikes = createAsyncAction(
 )<undefined, GetLikesRes, AxiosError<ResponseError>>();
 // END GET_LIKES
 
-// ADD_EMPTY_RECOMMENDATIONS
-export const ADD_EMPTY_RECOMMENDATIONS = '@history/ADD_EMPTY_RECOMMENDATIONS';
+// ADD_EMPTY_DISCOVERYIES
+export const ADD_EMPTY_DISCOVERYIES = '@history/ADD_EMPTY_DISCOVERYIES';
 
-export const addEmptyRecommendations = createAction(
-  ADD_EMPTY_RECOMMENDATIONS,
-)();
-// END ADD_EMPTY_RECOMMENDATIONS
+export const addEmptyDiscoveries = createAction(ADD_EMPTY_DISCOVERYIES)();
+// END ADD_EMPTY_DISCOVERYIES
 
-// SET_RECOMMENDATION_DATA
-export const SET_RECOMMENDATION_DATA =
-  '@history/SET_RECOMMENDATION_DATA_REQUEST';
-export const SET_RECOMMENDATION_DATA_SUCCESS =
-  '@history/SET_RECOMMENDATION_DATA_SUCCESS';
-export const SET_RECOMMENDATION_DATA_FAILURE =
-  '@history/SET_RECOMMENDATION_DATA_FAILURE';
+// SET_DISCOVERY_CARD_DATA
+export const SET_DISCOVERY_CARD_DATA =
+  '@history/SET_DISCOVERY_CARD_DATA_REQUEST';
+export const SET_DISCOVERY_CARD_DATA_SUCCESS =
+  '@history/SET_DISCOVERY_CARD_DATA_SUCCESS';
+export const SET_DISCOVERY_CARD_DATA_FAILURE =
+  '@history/SET_DISCOVERY_CARD_DATA_FAILURE';
 
-export const setRecommendationData = createAsyncAction(
-  SET_RECOMMENDATION_DATA,
-  SET_RECOMMENDATION_DATA_SUCCESS,
-  SET_RECOMMENDATION_DATA_FAILURE,
-)<string, RecommendationDetail, AxiosError<ResponseError>>();
-// END SET_RECOMMENDATION_DATA
+export const setDiscoveryCardData = createAsyncAction(
+  SET_DISCOVERY_CARD_DATA,
+  SET_DISCOVERY_CARD_DATA_SUCCESS,
+  SET_DISCOVERY_CARD_DATA_FAILURE,
+)<string, DiscoveryDetail, AxiosError<ResponseError>>();
+// END SET_DISCOVERY_CARD_DATA
 
 // ADD_LIKE
 export const ADD_LIKE = '@history/ADD_LIKE';
@@ -61,8 +59,8 @@ export const removeLike = createAction(
 
 const actions = {
   getLikes,
-  addEmptyRecommendations,
-  setRecommendationData,
+  addEmptyDiscoveries,
+  setDiscoveryCardData,
   addLike,
   removeLike,
 };

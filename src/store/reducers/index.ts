@@ -5,7 +5,7 @@ import auth from './auth';
 import caseReducer from './case';
 import device from './device';
 import history from './history';
-import recommendations from './recommendations';
+import discoveries from './discoveries';
 import navbar from './navbar';
 
 const rootReducer = combineReducers({
@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
   case: caseReducer,
   device,
   history,
-  recommendations,
+  discoveries,
   navbar,
 });
 
