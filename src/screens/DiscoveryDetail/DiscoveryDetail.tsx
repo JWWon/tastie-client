@@ -8,7 +8,7 @@ import dynamicLinks, {
 import _ from 'lodash';
 
 import {RootState} from '@store/reducers';
-import {EVENT, SCREEN} from '@utils/consts';
+import {EVENT, SCREEN, APP_IDENTIFIER} from '@utils/consts';
 import {
   getPriceLevel,
   getTodayOpeningHours,
@@ -32,7 +32,7 @@ import * as s from './DiscoveryDetail.style';
 const dynamicLinksOption = (
   data: api.DiscoveryDetail,
 ): FirebaseDynamicLinksTypes.DynamicLinkParameters => ({
-  link: `https://app.tastie.me/discovery?placeID=${data.id}`,
+  link: `https://${APP_IDENTIFIER}/discovery?placeID=${data.id}`,
   domainUriPrefix: 'https://link.tastie.me',
   analytics: {campaign: 'click_discovery_link'},
   social: {
@@ -41,12 +41,11 @@ const dynamicLinksOption = (
     imageUrl: _.head(data.photoUrls),
   },
   android: {
-    packageName: 'me.tastie.client',
-    fallbackUrl:
-      'https://play.google.com/store/apps/details?id=me.tastie.client',
+    packageName: APP_IDENTIFIER,
+    fallbackUrl: `https://play.google.com/store/apps/details?id=${APP_IDENTIFIER}`,
   },
   ios: {
-    bundleId: 'me.tastie.client',
+    bundleId: APP_IDENTIFIER,
     appStoreId: '1499347694',
   },
 });
