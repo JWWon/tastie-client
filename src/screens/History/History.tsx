@@ -3,20 +3,20 @@ import {FlatList} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
 import HistoryCard, {HistoryEmpty} from '@components/atoms/HistoryCard';
-import {addEmptyRecommendations} from '@store/actions/history';
+import {addEmptyDiscoveries} from '@store/actions/history';
 import {RootState} from '@store/reducers';
 import * as s from './History.style';
 
 let endReachCall: any;
 
 const History: React.FC = () => {
-  const {recommendations} = useSelector((state: RootState) => state.history);
+  const {discoveries} = useSelector((state: RootState) => state.history);
   const dispatch = useDispatch();
 
   function handleEndReach() {
     if (!endReachCall) {
       endReachCall = setTimeout(() => {
-        dispatch(addEmptyRecommendations());
+        dispatch(addEmptyDiscoveries());
         endReachCall = false;
       }, 240);
     }
@@ -25,7 +25,7 @@ const History: React.FC = () => {
   return (
     <s.Container>
       <FlatList
-        data={recommendations}
+        data={discoveries}
         ListHeaderComponent={
           <s.HeaderWrapper>
             <s.TextHighlight message="나의 <b>평가</b>" />

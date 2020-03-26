@@ -237,8 +237,8 @@ function* validateInfoSaga(message?: string) {
   if (hasRequired) {
     yield put(
       updateMessage({
-        message: MESSAGE.READY_TO_RECOMMEND,
-        customAction: () => navigate(SCREEN.RECOMMENDATIONS),
+        message: MESSAGE.READY_TO_DISCOVER,
+        customAction: () => navigate(SCREEN.DISCOVERIES),
       }),
     );
   } else if (typeof message === 'string') {
