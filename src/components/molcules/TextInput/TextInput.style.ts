@@ -17,6 +17,7 @@ const borderColor = (status: Status) => {
 
 interface InputProps {
   status: Status;
+  secureTextEntry?: boolean;
 }
 
 export const Wrapper = styled.View`
@@ -24,13 +25,21 @@ export const Wrapper = styled.View`
   padding-bottom: ${({theme}) => theme.space.wide}px;
 `;
 
+/**
+ * Not apply NanumSquare on secureTextInput
+ * https://gitlab.com/tastie/tastie-client/-/issues/3
+ */
 export const Input = styled.TextInput.attrs({
   autoCapitalize: 'none',
   autoCorrect: false,
   underlineColorAndroid: 'transparent',
   blurOnSubmit: false,
 })<InputProps>`
-  ${({theme}) => theme.font.size24}
+  ${({secureTextEntry, theme}) =>
+    secureTextEntry
+      ? `font-size: 24px;
+      font-weight: 600;`
+      : theme.font.size24}
   color: ${({theme}) => theme.color.black};
   width: 100%;
   border: 0px solid ${({status}) => borderColor(status)};
