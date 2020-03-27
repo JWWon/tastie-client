@@ -32,7 +32,7 @@ platform :ios do
     else
       increment_version_number(bump_type: "patch")
     end
-    commit_version_bump(xcodeproj: 'Tastie.xcodeproj', force: true)
+    commit_version_bump(xcodeproj: 'Tastie.xcodeproj', message: 'Increase iOS version', force: true)
     push_to_git_remote(remote_branch: "beta", force: true)
   end
 
