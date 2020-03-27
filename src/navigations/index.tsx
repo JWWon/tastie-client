@@ -57,17 +57,6 @@ export default () => {
     (state: RootState) => state.navbar,
   );
 
-  function init() {
-    // Axios
-    axios.config();
-    // Firebase
-    configFirebase();
-    // Social Login
-    GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
-    // Check Keychain
-    dispatch(checkKeychain.request());
-  }
-
   function stateChangeMiddleware(name: string) {
     // HANDLE_DISCOVERIES
     if (prevName === SCREEN.CASE && name === SCREEN.DISCOVERIES) {
@@ -126,19 +115,16 @@ export default () => {
     }
   }
 
-  function renderNavigator() {
-    switch (status) {
-      case 'PENDING':
-        return <Splash />;
-      case 'USER_EXIST':
-        return <RootNavigator />;
-      case 'NO_USER':
-        return <SessionNavigator />;
-    }
-  }
-
   useEffect(() => {
-    init();
+    // Axios
+    axios.config();
+    // Firebase
+    configFirebase();
+    // Social Login
+    GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
+    // Check Keychain
+    dispatch(checkKeychain.request());
+
     const unsubscribe = dynamicLinks().onLink(
       (link: FirebaseDynamicLinksTypes.DynamicLink) => {
         const navigate =
@@ -147,14 +133,19 @@ export default () => {
       },
     );
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   return (
     <NavigationContainer onStateChange={handleStateChange}>
-      {renderNavigator()}
+      {status === 'PENDING' ? (
+        <Splash />
+      ) : status === 'USER_EXIST' ? (
+        <RootNavigator />
+      ) : (
+        <SessionNavigator />
+      )}
+      {/* Modals */}
       <LikesModal />
     </NavigationContainer>
   );
