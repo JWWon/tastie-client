@@ -13,7 +13,7 @@ export const ButtonWrapper = styled.View`
   padding: ${({theme}) => theme.space.wide}px;
 `;
 
-const buttonSize = 48;
+const buttonSize = 52;
 export const Button = styled.TouchableOpacity.attrs({
   activeOpacity: 0.7,
 })`
@@ -30,7 +30,8 @@ export const Button = styled.TouchableOpacity.attrs({
 export const Icon = styled.Image.attrs({
   resizeMode: 'contain',
 })`
-  height: 18px;
+  width: 48%;
+  height: 48%;
 `;
 
 export const Message = styled.Text`

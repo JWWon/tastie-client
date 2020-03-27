@@ -20,6 +20,8 @@
 // react-native-maps
 #import <GoogleMaps/GoogleMaps.h>
 
+static NSString *const CUSTOM_URL_SCHEME = @"me.tastie.client";
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -41,6 +43,7 @@
   [self.window makeKeyAndVisible];
   
   // @react-native-firebase/app
+  [FIROptions defaultOptions].deepLinkURLScheme = CUSTOM_URL_SCHEME;
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }
@@ -50,16 +53,29 @@
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-
-  BOOL handled =
-  // Facebook
-  [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]
-  // Google
-  || [RNGoogleSignin application:application openURL:url options:options]
-  // Firebase DeepLinks
-  || [RCTLinkingManager application:application openURL:url options:options];
-  // Add any custom logic here.
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  BOOL handled = NO;
+  
+  FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
+  
+  if (dynamicLink) {
+    if (dynamicLink.url) {
+      handled = [RCTLinkingManager application:application openURL:dynamicLink.url options:options];
+      // || [[RNFirebaseLinks instance] application:application openURL:dynamicLink.url options:options];
+      }
+  }
+                 
+  if (!handled) {
+    handled =
+      // Facebook
+      [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options]
+      // Google
+      || [RNGoogleSignin application:application openURL:url options:options]
+      // Firebase Dynamic Links
+      || [RCTLinkingManager application:application openURL:url options:options];
+  }
+  
   return handled;
 }
 
@@ -77,9 +93,21 @@
 continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
- return [RCTLinkingManager application:application
-                  continueUserActivity:userActivity
-                    restorationHandler:restorationHandler];
+ BOOL handled = [[FIRDynamicLinks dynamicLinks]
+     handleUniversalLink:userActivity.webpageURL
+     completion:^(FIRDynamicLink * _Nullable dynamicLink,
+     NSError * _Nullable error) {
+  if (!error) {
+    [RCTLinkingManager application:application openURL:dynamicLink.url options:nil];
+    // [[RNFirebaseLinks instance] application:application openURL:dynamicLink.url options:nil];
+  }
+ }];
+  
+ if(!handled) {
+   handled = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+ }
+  
+ return handled;
 }
 
 @end

@@ -3,9 +3,9 @@ import _ from 'lodash';
 import {takeEvery, put, call, select} from 'redux-saga/effects';
 
 import {RootState} from '@store/reducers';
-import * as recommendationsApi from '@services/recommendations';
+import * as discoveriesApi from '@services/discoveries';
 import * as api from '@services/user';
-import {getLikes, setRecommendationData} from '@store/actions/history';
+import {getLikes, setDiscoveryCardData} from '@store/actions/history';
 
 function* getLikesSaga() {
   try {
@@ -17,8 +17,8 @@ function* getLikesSaga() {
   }
 }
 
-function* setRecommendationDataSaga(
-  action: ReturnType<typeof setRecommendationData.request>,
+function* setDiscoveryDataSaga(
+  action: ReturnType<typeof setDiscoveryCardData.request>,
 ) {
   try {
     const {likes}: RootState['history'] = yield select(
@@ -27,26 +27,26 @@ function* setRecommendationDataSaga(
 
     const placeID = action.payload;
     // eslint-disable-next-line prettier/prettier
-    const response: AxiosResponse<recommendationsApi.RecommendationDetail> = yield call(
-      recommendationsApi.getRecommendation,
+    const response: AxiosResponse<discoveriesApi.DiscoveryDetail> = yield call(
+      discoveriesApi.getDiscovery,
       placeID,
     );
 
     const likeIdx = _.findIndex(likes, item => item.placeID === placeID);
-    const data: recommendationsApi.RecommendationDetail = {
+    const data: discoveriesApi.DiscoveryDetail = {
       ...response.data,
       positive: likes[likeIdx].positive,
     };
 
-    yield put(setRecommendationData.success(data));
+    yield put(setDiscoveryCardData.success(data));
   } catch (e) {
-    yield put(setRecommendationData.failure(e));
+    yield put(setDiscoveryCardData.failure(e));
   }
 }
 
 export default function* root() {
   // async
   yield takeEvery(getLikes.request, getLikesSaga);
-  yield takeEvery(setRecommendationData.request, setRecommendationDataSaga);
+  yield takeEvery(setDiscoveryCardData.request, setDiscoveryDataSaga);
   // sync
 }

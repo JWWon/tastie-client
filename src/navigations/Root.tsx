@@ -7,14 +7,18 @@ import {
 
 import {NAVIGATOR, SCREEN} from '@utils/consts';
 import ContentNavigator, {ContentParamList} from './Content';
-import RecommendationDetail, {
-  Params as RecommendationDetailParams,
-} from '@screens/RecommendationDetail';
+import DiscoveryDetail, {
+  Params as DiscoveryDetailParams,
+} from '@screens/DiscoveryDetail';
+import MapFullscreen, {
+  Params as MapFullscreenParams,
+} from '@screens/MapFullscreen';
 import WebView, {Params as WebViewParams} from '@screens/WebView';
 
 type RootParamList = ContentParamList & {
   [NAVIGATOR.CONTENT]: undefined;
-  [SCREEN.RECOMMENDATION_DETAIL]: RecommendationDetailParams;
+  [SCREEN.DISCOVERY_DETAIL]: DiscoveryDetailParams;
+  [SCREEN.MAP_FULLSCREEN]: MapFullscreenParams;
   [SCREEN.WEB_VIEW]: WebViewParams;
 };
 
@@ -32,10 +36,8 @@ const Root = createStackNavigator<RootParamList>();
 export default () => (
   <Root.Navigator initialRouteName={NAVIGATOR.CONTENT} headerMode="none">
     <Root.Screen name={NAVIGATOR.CONTENT} component={ContentNavigator} />
-    <Root.Screen
-      name={SCREEN.RECOMMENDATION_DETAIL}
-      component={RecommendationDetail}
-    />
+    <Root.Screen name={SCREEN.DISCOVERY_DETAIL} component={DiscoveryDetail} />
+    <Root.Screen name={SCREEN.MAP_FULLSCREEN} component={MapFullscreen} />
     <Root.Screen name={SCREEN.WEB_VIEW} component={WebView} />
   </Root.Navigator>
 );

@@ -11,5 +11,5 @@ export const ContentWrapper = styled.View`
   flex: 1;
   padding-top: ${({theme}) => theme.space.rootTop}px;
   padding-bottom: ${({theme}) =>
-    theme.size.button.cat + theme.space.rootBottom}px;
+    theme.size.button.tabbar + theme.space.rootBottom}px;
 `;

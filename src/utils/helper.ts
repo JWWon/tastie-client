@@ -129,9 +129,20 @@ export const openNaverMap = (params: OpenNaverMap) => {
 
   openLink(`${baseURL}://place?${mapParams.join('&')}`, backupURL);
 };
+
+interface OpenGoogleMap {
+  address: string;
+  placeID: string;
+}
+export const openGoogleMap = (params: OpenGoogleMap) => {
+  openLink(
+    // eslint-disable-next-line prettier/prettier
+    `https://www.google.com/maps/search/?api=1&query=${params.address}&query_place_id=${params.placeID}`,
+  );
+};
 // END OPEN_LINK HELPER
 
-// RECOMMENDATION_DETAIL
+// DISCOVERY_DETAIL
 export function getPriceLevel(level: number) {
   switch (level) {
     case 0:
@@ -155,7 +166,7 @@ export function getTodayOpeningHours(hours?: string[]): string {
     ? hours[today].split(': ')[1].replace(', ', '\n')
     : '알 수 없음';
 }
-// END RECOMMENDATION_DETAIL
+// END DISCOVERY_DETAIL
 
 // SELECT_LIKE_ICON
 export function selectLikeIcon(params: {positive?: boolean; black?: boolean}) {

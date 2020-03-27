@@ -1,5 +1,5 @@
-import {Recommendation} from '@services/recommendations';
+import {DiscoveryDetail} from '@services/discoveries';
 
-export type EmptyProps = Pick<Recommendation, 'id'>;
+export type EmptyProps = Pick<DiscoveryDetail, 'id'>;
 
-export type Props = Recommendation;
+export type Props = DiscoveryDetail;

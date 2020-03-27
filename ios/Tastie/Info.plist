@@ -46,10 +46,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Firebase Dynamic Links</string>
+			<string>App Bundle</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>link.tastie.me</string>
+				<string>me.tastie.client</string>
 			</array>
 		</dict>
 	</array>
@@ -117,5 +117,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://link.tastie.me</string>
+	</array>
 </dict>
 </plist>
