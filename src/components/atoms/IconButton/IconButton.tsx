@@ -6,22 +6,33 @@ import {Props} from './IconButton.type';
 
 const IconButton: React.FC<Props> = ({
   onPress,
+  extraSpace,
   message,
-  messageColor,
+  messageStyle,
   ...image
 }) => {
   const {width, height} = Image.resolveAssetSource(image.source);
   const aspectRatio = width / height;
 
-  return (
-    <s.Button onPress={onPress}>
+  const Icon = () => (
+    <>
       <s.Icon
         {...image}
         style={[image.style, {aspectRatio}]}
         resizeMode="contain"
       />
-      {message && <s.Message messageColor={messageColor}>{message}</s.Message>}
+      {message && <s.Message style={messageStyle}>{message}</s.Message>}
+    </>
+  );
+
+  return onPress ? (
+    <s.Button extraSpace={extraSpace} onPress={onPress}>
+      <Icon />
     </s.Button>
+  ) : (
+    <s.Wrapper>
+      <Icon />
+    </s.Wrapper>
   );
 };
 

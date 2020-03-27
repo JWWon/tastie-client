@@ -1,8 +1,9 @@
-import {ImageProps} from 'react-native';
+import {ImageProps, ViewStyle} from 'react-native';
 
 export interface Props extends ImageProps {
-  onPress: () => void;
+  onPress?: () => void;
+  extraSpace?: boolean;
   height?: number;
   message?: string;
-  messageColor?: string;
+  messageStyle?: ViewStyle;
 }

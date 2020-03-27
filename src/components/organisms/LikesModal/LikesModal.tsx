@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import Modal from '@components/templates/Modal';
 import {selectLikeIcon} from '@utils/helper';
 import {RootState} from '@store/reducers';
-import {hideLikesModal, createLike} from '@store/actions/recommendations';
+import {hideLikesModal, createLike} from '@store/actions/discoveries';
 import * as s from './LikesModal.style';
 
 interface Button {
@@ -15,7 +15,7 @@ interface Button {
 
 const LikesModal: React.FC = () => {
   const {selectedID, onSelectPositive} = useSelector(
-    (state: RootState) => state.recommendations,
+    (state: RootState) => state.discoveries,
   );
   const dispatch = useDispatch();
 

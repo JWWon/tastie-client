@@ -21,10 +21,7 @@ import {
   showMessage,
 } from '@store/actions/navbar';
 import {validateCaseInfo, clearCase} from '@store/actions/case';
-import {
-  getRecommendations,
-  clearRecommendations,
-} from '@store/actions/recommendations';
+import {getDiscoveries, clearDiscoveries} from '@store/actions/discoveries';
 import {SCREEN, MESSAGE} from '@utils/consts';
 import {RootState} from '@store/reducers';
 import {GOOGLE_WEB_CLIENT} from '@utils/env';
@@ -60,39 +57,25 @@ export default () => {
     (state: RootState) => state.navbar,
   );
 
-  function init() {
-    // Axios
-    axios.config();
-    // Firebase
-    configFirebase();
-    // Social Login
-    GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
-    // Check Keychain
-    dispatch(checkKeychain.request());
-  }
-
   function stateChangeMiddleware(name: string) {
-    // HANDLE_RECOMMENDATIONS
-    if (prevName === SCREEN.CASE && name === SCREEN.RECOMMENDATIONS) {
-      // navigate CASE -> RECOMMENDATIONS
-      dispatch(getRecommendations.request());
+    // HANDLE_DISCOVERIES
+    if (prevName === SCREEN.CASE && name === SCREEN.DISCOVERIES) {
+      // navigate CASE -> DISCOVERIES
+      dispatch(getDiscoveries.request());
     }
-    if (
-      prevName === SCREEN.RECOMMENDATIONS &&
-      name !== SCREEN.RECOMMENDATION_DETAIL
-    ) {
-      // navigate RECOMMENDATIONS -> ???
-      dispatch(clearRecommendations.request());
+    if (prevName === SCREEN.DISCOVERIES && name !== SCREEN.DISCOVERY_DETAIL) {
+      // navigate DISCOVERIES -> ???
+      dispatch(clearDiscoveries.request());
     }
-    // END HANDLE_RECOMMENDATIONS
+    // END HANDLE_DISCOVERIES
 
     // VALIDATE_CASE
     if (name === SCREEN.CASE && prevName !== SCREEN.CASE) {
       // navigate ??? -> CASE
       dispatch(validateCaseInfo());
       switch (prevName) {
-        case SCREEN.RECOMMENDATIONS:
-          dispatch(updateMessage({message: MESSAGE.DISMISS_RECOMMENDATIONS}));
+        case SCREEN.DISCOVERIES:
+          dispatch(updateMessage({message: MESSAGE.DISMISS_DISCOVERIES}));
           break;
         case SCREEN.WELCOME:
         case SCREEN.LOGIN:
@@ -109,7 +92,7 @@ export default () => {
     if (status === 'USER_EXIST') {
       switch (name) {
         case SCREEN.CASE:
-        case SCREEN.RECOMMENDATIONS:
+        case SCREEN.DISCOVERIES:
           dispatch(showMessage());
           break;
         default:
@@ -132,19 +115,16 @@ export default () => {
     }
   }
 
-  function renderNavigator() {
-    switch (status) {
-      case 'PENDING':
-        return <Splash />;
-      case 'USER_EXIST':
-        return <RootNavigator />;
-      case 'NO_USER':
-        return <SessionNavigator />;
-    }
-  }
-
   useEffect(() => {
-    init();
+    // Axios
+    axios.config();
+    // Firebase
+    configFirebase();
+    // Social Login
+    GoogleSignin.configure({webClientId: GOOGLE_WEB_CLIENT});
+    // Check Keychain
+    dispatch(checkKeychain.request());
+
     const unsubscribe = dynamicLinks().onLink(
       (link: FirebaseDynamicLinksTypes.DynamicLink) => {
         const navigate =
@@ -153,14 +133,19 @@ export default () => {
       },
     );
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   return (
     <NavigationContainer onStateChange={handleStateChange}>
-      {renderNavigator()}
+      {status === 'PENDING' ? (
+        <Splash />
+      ) : status === 'USER_EXIST' ? (
+        <RootNavigator />
+      ) : (
+        <SessionNavigator />
+      )}
+      {/* Modals */}
       <LikesModal />
     </NavigationContainer>
   );

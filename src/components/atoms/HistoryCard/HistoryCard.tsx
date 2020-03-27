@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux';
 import _ from 'lodash';
 
 import Loading from '@components/atoms/Loading';
-import {setRecommendationData} from '@store/actions/history';
+import {setDiscoveryCardData} from '@store/actions/history';
 import {navigate} from '@utils/RootService';
 import {SCREEN} from '@utils/consts';
 import * as s from './HistoryCard.style';
@@ -14,7 +14,7 @@ export const HistoryEmpty: React.FC<EmptyProps> = ({id}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setRecommendationData.request(id));
+    dispatch(setDiscoveryCardData.request(id));
   }, []);
 
   return (
@@ -27,8 +27,7 @@ export const HistoryEmpty: React.FC<EmptyProps> = ({id}) => {
 };
 
 const HistoryFull: React.FC<Props> = data => (
-  <s.Link
-    onPress={() => navigate(SCREEN.RECOMMENDATION_DETAIL, {placeID: data.id})}>
+  <s.Link onPress={() => navigate(SCREEN.DISCOVERY_DETAIL, {placeID: data.id})}>
     <s.Image source={{uri: _.head(data.photoUrls)}} />
 
     <s.ImageFilter>
