@@ -26,8 +26,8 @@
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="@string/fb_login_protocol_scheme" />
-            <data android:host="app.tasite.me/discovery" android:scheme="http"/>
-    		<data android:host="app.tastie.me/discovery" android:scheme="https"/>
+            <data android:host="me.tastie.client/discovery" android:scheme="http"/>
+    		<data android:host="me.tastie.client/discovery" android:scheme="https"/>
         </intent-filter>
         </activity>
         <!-- END Facebook SDK -->

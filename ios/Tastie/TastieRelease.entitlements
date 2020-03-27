@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:link.tastie.me</string>
+		<string>applinks:me.tastie.client.app.goo.gl</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
